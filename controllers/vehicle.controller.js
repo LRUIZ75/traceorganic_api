@@ -3,30 +3,30 @@
 'use strict'
 
 const os = require('os');
-const personModel = require('../models/person.model');
+const vehicleModel = require('../models/vehicle.model');
 const validator = require('validator');
 const fs = require('fs');
 const path = require('path');
 const { ObjectId } = require('mongodb');
-const { findOneAndDelete } = require('../models/person.model');
+const { findOneAndDelete } = require('../models/vehicle.model');
 
 
 /**
  * @swagger
  * tags:
- *   name: Person
- *   description: a person
+ *   name: Vehicle
+ *   description: a collector vehicle
  */
 
-var personController = {
+var vehicleController = {
 
     /**
      * @openapi
-     * /api/person/{id}:
+     * /api/vehicle/{id}:
      *   get:
      *     tags: 
-     *       - Person
-     *     description: Get a person by Id
+     *       - Vehicle
+     *     description: Get a collector vehicle by Id
      *     security:
      *       - ApiKeyAuth: []
      *     parameters:
@@ -42,7 +42,7 @@ var personController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Person"
+     *               $ref: "#/components/schemas/Vehicle"
      *       404:
      *         description: Not Found
      *       500:
@@ -51,11 +51,11 @@ var personController = {
 
     /**
      * @openapi
-     * /api/person:
+     * /api/vehicle:
      *   get:
      *     tags: 
-     *       - Person
-     *     description: Get list of a person
+     *       - Vehicle
+     *     description: Get list of a collector vehicle
      *     security:
      *       - ApiKeyAuth: []
      *     responses:
@@ -66,14 +66,14 @@ var personController = {
      *             schema:
      *               type: array
      *               items:
-     *                 $ref: "#/components/schemas/Person"
+     *                 $ref: "#/components/schemas/Vehicle"
      *       404:
      *         description: Not Found
      *       500:
      *         description: Internal Server Error
      */
 
-    getPerson: (req, res) => {
+    getVehicle: (req, res) => {
 
         var id = req.params.id;
 
@@ -84,7 +84,7 @@ var personController = {
 
         console.log(query);
 
-        personModel.find(query, (err, objects) => {
+        vehicleModel.find(query, (err, objects) => {
 
 
             if (err) {
@@ -100,7 +100,7 @@ var personController = {
                 return (res.status(404).send({
                     status: "error",
                     message: "Registro(s) no encontrado(s)",
-                    links: [{ "Agregar registro => curl -X POST ": global.baseURL + "/api/person" }]
+                    links: [{ "Agregar registro => curl -X POST ": global.baseURL + "/api/vehicle" }]
                 }
 
                 ));
@@ -117,31 +117,31 @@ var personController = {
 
     /**
      * @openapi
-     * /api/person:
+     * /api/vehicle:
      *   post:
      *     tags: 
-     *       - Person
-     *     description: Create a person
+     *       - Vehicle
+     *     description: Create a collector vehicle
      *     security:
      *       - bearerAuth: []
      *     parameters:
      *       - in: body
      *         required: true
      *         schema:
-     *           $ref: "#/components/schemas/Person"
+     *           $ref: "#/components/schemas/Vehicle"
      *     responses:
      *       201:
      *         description: Created
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Person"
+     *               $ref: "#/components/schemas/Vehicle"
      *       400:
      *         description: Bad Request
      *       500:
      *         description: Internal Server Error
      */
-    addPerson: (req, res) => {
+    addVehicle: (req, res) => {
 
 
         var data = req.body;
@@ -158,12 +158,12 @@ var personController = {
         }
 
 
-        var newPerson = new personModel(data);
+        var newVehicle = new vehicleModel(data);
 
 
 
         //INTENTAR GUARDAR EL NUEVO OBJETO
-        newPerson.save((err, storedObject) => {
+        newVehicle.save((err, storedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -190,11 +190,11 @@ var personController = {
 
     /**
      * @openapi
-     * /api/person/{id}:
+     * /api/vehicle/{id}:
      *   put:
      *     tags: 
-     *       - Person
-     *     description: Update a person
+     *       - Vehicle
+     *     description: Update a collector vehicle
      *     security:
      *       - bearerAuth: []
      *     parameters:
@@ -206,14 +206,14 @@ var personController = {
      *       - in: body
      *         required: true
      *         schema:
-     *           $ref: "#/components/schemas/Person"
+     *           $ref: "#/components/schemas/Vehicle"
      *     responses:
      *       200:
      *         description: Ok
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Person"
+     *               $ref: "#/components/schemas/Vehicle"
      *       400:
      *         description: Bad Request
      *       404:
@@ -221,7 +221,7 @@ var personController = {
      *       500:
      *         description: Internal Server Error
      */
-    editPerson: (req, res) => {
+    editVehicle: (req, res) => {
 
         var id = req.params.id;
         var data = req.body;
@@ -242,7 +242,7 @@ var personController = {
         var query = { '_id': { $eq: id } };
         var command = { $set: data };
 
-        personModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
+        vehicleModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -269,11 +269,11 @@ var personController = {
 
     /**
      * @openapi
-     * /api/person/{id}:
+     * /api/vehicle/{id}:
      *   delete:
      *     tags: 
-     *       - Person
-     *     description: Delete a person by id
+     *       - Vehicle
+     *     description: Delete a collector vehicle by id
      *     security:
      *       - bearerAuth: []
      *     parameters:
@@ -288,7 +288,7 @@ var personController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Person"
+     *               $ref: "#/components/schemas/Vehicle"
      *       400:
      *         description: Bad Request
      *       404:
@@ -296,7 +296,7 @@ var personController = {
      *       500:
      *         description: Internal Server Error
      */
-    deletePerson: (req, res) => {
+    deleteVehicle: (req, res) => {
 
 
         var personId = req.params.id;
@@ -336,11 +336,11 @@ var personController = {
 
     /**
      * @openapi
-     * /api/person/picture/{id}:
+     * /api/vehicle/picture/{id}:
      *   put:
      *     tags: 
-     *       - Person
-     *     description: Upload a person picture
+     *       - Vehicle
+     *     description: Upload a collector vehicle picture
      *     security:
      *       - bearerAuth: []
      *     parameters:
@@ -350,7 +350,7 @@ var personController = {
      *         type: string
      *         required: true
      *       - in: form-data
-     *         name: logo
+     *         name: picture
      *         required: true
      *         content:
      *           file:
@@ -363,7 +363,7 @@ var personController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Person"
+     *               $ref: "#/components/schemas/Vehicle"
      *       400:
      *         description: Bad Request
      *       404:
@@ -418,7 +418,7 @@ var personController = {
                 var command = { $set: { 'picture': file_name } };
 
 
-                personModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
+                vehicleModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
 
                     if (err) {
 
@@ -467,11 +467,11 @@ var personController = {
 
     /**
      * @openapi
-     * /api/person/picture/{filename}:
+     * /api/vehicle/picture/{filename}:
      *   get:
      *     tags: 
-     *       - Person
-     *     description: Get general a person picture by filename
+     *       - Vehicle
+     *     description: Get general a collector vehicle picture by filename
      *     parameters:
      *       - in: path
      *         name: filename
@@ -525,4 +525,4 @@ var personController = {
 
 }
 
-module.exports = personController;
+module.exports = vehicleController;

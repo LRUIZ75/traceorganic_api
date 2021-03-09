@@ -53,10 +53,7 @@ var usersController = {
 
                 ));
             } else {
-                /* #swagger.responses[200] = { 
-               schema: { $ref: "#/definitions/Users" },
-               description: '<b>Lista de Objetos</b>' 
-                } */
+
 
                 return (res.status(200).send({
                     status: "ok",
@@ -68,19 +65,7 @@ var usersController = {
 
     addUsers: (req, res) => {
 
-        // #swagger.tags = ['User']
-        // #swagger.description = 'CREAR UN REGISTRO.'
-        // #swagger.schema = { $ref: "#/definitions/Users" }
         var data = req.body;
-
-        /*
-            #swagger.parameters['data'] = {
-            in: "body",
-            name: "data",
-            type: "object",
-            required: true
-          }
-        */
 
         //SIN PARAMETROS
         if (!data) {
@@ -119,10 +104,6 @@ var usersController = {
                 }));
             }
 
-            /* #swagger.responses[201] = { 
-            schema: { $ref: "#/definitions/Users" },
-            description: '<b>Creado</b>' 
-            } */
             return (res.status(201).send({
                 status: "ok",
                 created: storedObject
@@ -134,22 +115,7 @@ var usersController = {
 
     editUsers: (req, res) => {
 
-        // #swagger.tags = ['User']
-        // #swagger.description = 'ACTULIZAR DATOS.'
 
-        /* #swagger.parameters['id'] = {
-        description: 'Id del registro en la coleccion' ,
-        type: 'string',
-        required: true} 
-        */
-        /*
-            #swagger.parameters['data'] = {
-            in: "body",
-            name: "data",
-            type: "object",
-            required: true
-          }
-        */
         var id = req.params.id;
         var data = req.body;
 
@@ -184,10 +150,7 @@ var usersController = {
                     message: "No se encontró el registro a modificar"
                 }));
             }
-            /* #swagger.responses[200] = { 
-           schema: { $ref: "#/definitions/Users" },
-           description: '<b>Actualizado</b>' 
-            } */
+
             return (res.status(200).send({
                 status: "ok",
                 updated: updatedObject
@@ -198,14 +161,7 @@ var usersController = {
     },
 
     deleteUsers: (req, res) => {
-        // #swagger.tags = ['User']
-        // #swagger.description = 'ELIMINAR DATOS.'
 
-        /* #swagger.parameters['id'] = {
-           description: 'Id del registro en la coleccion' ,
-           type: 'string',
-        required: true} 
-        */
 
         var personId = req.params.id;
         if (!personId || personId == undefined) {
@@ -233,10 +189,7 @@ var usersController = {
                 }));
             }
 
-            /* #swagger.responses[200] = { 
-           schema: { $ref: "#/definitions/Users" },
-           description: '<b>Borrado</b>' 
-            } */
+
             return (res.status(200).send({
                 status: "ok",
                 deleted: deletedObject

@@ -31,7 +31,7 @@ const GeneralSettingSchema = Schema({
  *       properties: 
  *         companyName:
  *           type: "string"
- *           required: "true"
+ *           example: "AgroExport"
  *         taxPayerCode:
  *           type: "string"
  *         countryISOCode:
@@ -39,6 +39,8 @@ const GeneralSettingSchema = Schema({
  *           example: "NIC"
  *         logo:
  *           type: "string"
+ *       required:
+ *         - companyName
  *
  */
 

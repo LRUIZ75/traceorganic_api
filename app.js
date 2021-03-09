@@ -20,11 +20,15 @@ var appRoutes = require('./routes/app.routes');
 
 var personRoutes = require('./routes/person.routes');
 var generalsettingRoutes = require('./routes/generalsetting.routes');
+var driverRoutes = require('./routes/driver.routes');
+var vehicleRoutes = require('./routes/vehicle.routes');
 
 var apiRoutes = [
   appRoutes, 
   generalsettingRoutes,
-  personRoutes
+  personRoutes,
+  driverRoutes,
+  vehicleRoutes
 ];
 
 var rootRoutes = require('./routes/root.routes');

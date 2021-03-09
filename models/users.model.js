@@ -13,7 +13,7 @@ const UserSchema = Schema({
 
 	userName: {
         type: String,
-        required: [true,'Nombre de usuario requrido'],
+        required: [true,'el campo es requerido'],
         unique: true,
         minLength: 4,
         maxLength: 20,
@@ -24,7 +24,7 @@ const UserSchema = Schema({
         type: String,
         trim: true,
         minLength: 8,
-        required: [true, 'La contraseña es requerida'],
+        required: [true, 'el campo es requerido'],
         set: v=> {
             var salt=bcrypt.genSaltSync(10);
             var hash = bcrypt.hashSync(v, salt);
@@ -33,14 +33,14 @@ const UserSchema = Schema({
     },
 	personId: {
         type: mongoose.ObjectId,
-       //required: [true, "Datos de persona requeridos"]
+       required: [true, "el campo es requerido"]
     },
-	registeredEmail: {
+	email: {
         type: String, 
         trim: true, 
         lowercase: true, 
         unique: true, 
-        required:[true, 'El correo es requrido'],
+        required:[true, 'el campo es requerido'],
         validate: {
             validator: validator.isEmail,
             message: '{VALUE} no es una dirección de correo válida',
@@ -48,23 +48,51 @@ const UserSchema = Schema({
         }
     }, 
 	isVerifiedEmail: Boolean,
-	ssoProviderId: mongoose.ObjectId,
-
 	registrationDate: {
         type: Date,
         default: Date.now()},
-	pinOTP: String,
-	pinOTPExpiration: Date,
 	profilesNames: Array(String),
-	clientId: mongoose.ObjectId,
+	companyId: mongoose.ObjectId,
 	refreshAccessToken: String,
-	isLoggedOn: Boolean,
-	lastLogOn: Date,
 	isActive: Boolean,
 	
 });
 
-
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       properties: 
+ *         userName:
+ *           type: "string"
+ *         password:
+ *           type: "string"
+ *           format: "password"
+ *         personId: 
+ *           type: "string"
+ *         email:
+ *           type: "string"
+ *           format: "email"
+ *         isVerifiedEmail:
+ *           type: "boolean"
+ *         profilesNames:
+ *            type: "array"
+ *            items:
+ *              type: "string"
+ *         companyId:
+ *           type: "string"
+ *         refreshAccessToken:
+ *           type: "string"
+ *         isActive:
+ *           type: "boolean"
+ *       required:
+ *         - userName
+ *         - password
+ *         - personId
+ *         - email
+ *
+ */
 
 module.exports = mongoose.model('User',UserSchema);
 // mongoDB creará la collección, con documentos de estructura del modelo.

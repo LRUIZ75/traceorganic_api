@@ -3,30 +3,30 @@
 'use strict'
 
 const os = require('os');
-const personModel = require('../models/person.model');
+const driverModel = require('../models/driver.model');
 const validator = require('validator');
 const fs = require('fs');
 const path = require('path');
 const { ObjectId } = require('mongodb');
-const { findOneAndDelete } = require('../models/person.model');
+const { findOneAndDelete } = require('../models/driver.model');
 
 
 /**
  * @swagger
  * tags:
- *   name: Person
- *   description: a person
+ *   name: Driver
+ *   description: a driver
  */
 
-var personController = {
+var driverController = {
 
     /**
      * @openapi
-     * /api/person/{id}:
+     * /api/driver/{id}:
      *   get:
      *     tags: 
-     *       - Person
-     *     description: Get a person by Id
+     *       - Driver
+     *     description: Get a driver by Id
      *     security:
      *       - ApiKeyAuth: []
      *     parameters:
@@ -42,7 +42,7 @@ var personController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Person"
+     *               $ref: "#/components/schemas/Driver"
      *       404:
      *         description: Not Found
      *       500:
@@ -51,11 +51,11 @@ var personController = {
 
     /**
      * @openapi
-     * /api/person:
+     * /api/driver:
      *   get:
      *     tags: 
-     *       - Person
-     *     description: Get list of a person
+     *       - Driver
+     *     description: Get list of a driver
      *     security:
      *       - ApiKeyAuth: []
      *     responses:
@@ -66,14 +66,14 @@ var personController = {
      *             schema:
      *               type: array
      *               items:
-     *                 $ref: "#/components/schemas/Person"
+     *                 $ref: "#/components/schemas/Driver"
      *       404:
      *         description: Not Found
      *       500:
      *         description: Internal Server Error
      */
 
-    getPerson: (req, res) => {
+    getDriver: (req, res) => {
 
         var id = req.params.id;
 
@@ -84,7 +84,7 @@ var personController = {
 
         console.log(query);
 
-        personModel.find(query, (err, objects) => {
+        driverModel.find(query, (err, objects) => {
 
 
             if (err) {
@@ -100,7 +100,7 @@ var personController = {
                 return (res.status(404).send({
                     status: "error",
                     message: "Registro(s) no encontrado(s)",
-                    links: [{ "Agregar registro => curl -X POST ": global.baseURL + "/api/person" }]
+                    links: [{ "Agregar registro => curl -X POST ": global.baseURL + "/api/driver" }]
                 }
 
                 ));
@@ -117,31 +117,31 @@ var personController = {
 
     /**
      * @openapi
-     * /api/person:
+     * /api/driver:
      *   post:
      *     tags: 
-     *       - Person
-     *     description: Create a person
+     *       - Driver
+     *     description: Create a driver
      *     security:
      *       - bearerAuth: []
      *     parameters:
      *       - in: body
      *         required: true
      *         schema:
-     *           $ref: "#/components/schemas/Person"
+     *           $ref: "#/components/schemas/Driver"
      *     responses:
      *       201:
      *         description: Created
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Person"
+     *               $ref: "#/components/schemas/Driver"
      *       400:
      *         description: Bad Request
      *       500:
      *         description: Internal Server Error
      */
-    addPerson: (req, res) => {
+    addDriver: (req, res) => {
 
 
         var data = req.body;
@@ -158,12 +158,12 @@ var personController = {
         }
 
 
-        var newPerson = new personModel(data);
+        var newDriver = new driverModel(data);
 
 
 
         //INTENTAR GUARDAR EL NUEVO OBJETO
-        newPerson.save((err, storedObject) => {
+        newDriver.save((err, storedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -190,11 +190,11 @@ var personController = {
 
     /**
      * @openapi
-     * /api/person/{id}:
+     * /api/driver/{id}:
      *   put:
      *     tags: 
-     *       - Person
-     *     description: Update a person
+     *       - Driver
+     *     description: Update a driver
      *     security:
      *       - bearerAuth: []
      *     parameters:
@@ -206,14 +206,14 @@ var personController = {
      *       - in: body
      *         required: true
      *         schema:
-     *           $ref: "#/components/schemas/Person"
+     *           $ref: "#/components/schemas/Driver"
      *     responses:
      *       200:
      *         description: Ok
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Person"
+     *               $ref: "#/components/schemas/Driver"
      *       400:
      *         description: Bad Request
      *       404:
@@ -221,7 +221,7 @@ var personController = {
      *       500:
      *         description: Internal Server Error
      */
-    editPerson: (req, res) => {
+    editDriver: (req, res) => {
 
         var id = req.params.id;
         var data = req.body;
@@ -242,7 +242,7 @@ var personController = {
         var query = { '_id': { $eq: id } };
         var command = { $set: data };
 
-        personModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
+        driverModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -269,11 +269,11 @@ var personController = {
 
     /**
      * @openapi
-     * /api/person/{id}:
+     * /api/driver/{id}:
      *   delete:
      *     tags: 
-     *       - Person
-     *     description: Delete a person by id
+     *       - Driver
+     *     description: Delete a driver by id
      *     security:
      *       - bearerAuth: []
      *     parameters:
@@ -288,7 +288,7 @@ var personController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Person"
+     *               $ref: "#/components/schemas/Driver"
      *       400:
      *         description: Bad Request
      *       404:
@@ -296,7 +296,7 @@ var personController = {
      *       500:
      *         description: Internal Server Error
      */
-    deletePerson: (req, res) => {
+    deleteDriver: (req, res) => {
 
 
         var personId = req.params.id;
@@ -334,195 +334,6 @@ var personController = {
     },
     
 
-    /**
-     * @openapi
-     * /api/person/picture/{id}:
-     *   put:
-     *     tags: 
-     *       - Person
-     *     description: Upload a person picture
-     *     security:
-     *       - bearerAuth: []
-     *     parameters:
-     *       - in: path
-     *         name: id
-     *         description: "Object Id"
-     *         type: string
-     *         required: true
-     *       - in: form-data
-     *         name: logo
-     *         required: true
-     *         content:
-     *           file:
-     *             schema:
-     *               type: string
-     *               format: base64
-     *     responses:
-     *       200:
-     *         description: Ok
-     *         content:
-     *           application/json:
-     *             schema:
-     *               $ref: "#/components/schemas/Person"
-     *       400:
-     *         description: Bad Request
-     *       404:
-     *         description: Not Found
-     *       500:
-     *         description: Internal Server Error
-     */
-    setPicture: (req, res) => {
-
-        //description: 'Archivo grafico: PNG JPEG GIF' ,
-
-        //recojer fichero de petición
-        var file_name = 'Imagen no proporcionada...';
-        var id = req.params.id;
-
-        // console.log(req.files);
-
-        if (!req.files.picture) {
-            return res.status(400).send({
-                status: 'error',
-                message: 'No hay parametro: logo',
-                file_name
-            });
-        }
-        if (!id) {
-
-            return res.status(400).send({
-                status: 'error',
-                message: 'No hay parámetro: Id'
-            });
-        }
-
-        //conseguir nombre y extensión del archivo
-        var file_path = req.files.picture.path;
-
-        var file_name = path.basename(file_path);
-
-        var file_ext = path.extname(file_name);
-
-
-        console.log(file_ext);
-
-        switch (file_ext) {
-            case '.png':
-            case '.jpg':
-            case '.jpeg':
-            case '.gif':
-                //Archivo aceptable
-
-
-                var query = { '_id': { $eq: id } };
-                var command = { $set: { 'picture': file_name } };
-
-
-                personModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
-
-                    if (err) {
-
-                        fs.unlinkSync(file_path);
-
-                        return res.status(500).send({
-                            status: 'error',
-                            error: err
-                        });
-                    }
-
-                    if (!updatedObject) {
-
-                        fs.unlinkSync(file_path);
-
-                        return res.status(404).send({
-                            status: 'error',
-                            message: 'No se pudo encontrar el registro'
-                        });
-                    }
-
-                    return res.status(200).send({
-                        status: 'ok',
-                        updated: updatedObject
-                    });
-                });
-                break;
-
-            default:
-                //Archivo no aceptado
-
-                //Borrar el archivo
-
-                fs.unlinkSync(file_path);
-
-                return res.status(400).send({
-                    status: 'error',
-                    message: 'Tipo de archivo no es imagen',
-                    file_name
-                }
-                );
-                break;
-        };
-    },
-
-
-    /**
-     * @openapi
-     * /api/person/picture/{filename}:
-     *   get:
-     *     tags: 
-     *       - Person
-     *     description: Get general a person picture by filename
-     *     parameters:
-     *       - in: path
-     *         name: filename
-     *         description: Image filename
-     *         required: true
-     *         schema:
-     *           type: string
-     *     responses:
-     *       200:
-     *         description: OK
-     *         content:
-     *           image/png:
-     *             type: image
-     *       400:
-     *         description: Bad Request
-     *       404:
-     *         description: Not Found
-     *       500:
-     *         description: Internal Server Error
-     */
-    getPicture: (req, res) => {
-
-
-       var file = req.params.filename;
-       if (validator.isEmpty(file)) {
-           return (res.status(400).send({
-               status: "error",
-               message: "falta el nombre del archivo"
-           }));
-       }
-
-       var path_file = './uploads/pictures/' + file;
-
-       fs.stat(path_file, (err) => {
-
-           if (err) {
-
-               return res.status(404).send({
-                   status: 'error',
-                   message: 'archivo no encontrado',
-                   path: path_file
-               });
-           }
-
-           return res.status(200).sendFile(path.resolve(path_file));
-
-       });
-
-
-    }
-
 }
 
-module.exports = personController;
+module.exports = driverController;
