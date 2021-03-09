@@ -102,3 +102,9 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Developer Defined
+/uploads/logos/*.jpg
+/uploads/pictures/*.jpg
+/backups
+
