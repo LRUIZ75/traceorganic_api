@@ -1,78 +1,108 @@
-﻿'use strict'
+﻿// Last Updated: 05/05/2021 12:47:00 a. m.
+// Updated By  : @YourName
+"use strict";
 
-const mongoose = require('mongoose');
-const validator = require('validator');
+const mongoose = require("mongoose");
+const validator = require("validator");
 
 const Schema = mongoose.Schema;
 
+//ToDo: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!//ToDo: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
 const PersonSchema = Schema({
-    names:
-      {
-      type: String,
-      minLength: 2,
-      required: [true, 'campo requerido'] 
-      },
-    surnames:
-      {
-        type: String,
-        minLength: 2,
-        required: [true, 'campo requerido'] 
-      },
-    
-    identNumber:
-      { type: String },
-    identType:
-      { type: String,
-        enum: ['Pasaporte', 'Cédula', 'Residencia', 'Licencia Conductor'] },
-    genre:
-      { type: String,
-        enum: ['Hombre', 'Mujer', 'No binario', ''],
-        default: '' },
-    birthdate:
-      { type: Date },
-    picture:
-      { type: String }
-    
+  names: {
+    type: String,
+    trim: true,
+    minlength: 2,
+    required: [true, "ES REQUERIDO"],
+  },
+  lastNames: {
+    type: String,
+    trim: true,
+    minlength: 2,
+    required: [true, "ES REQUERIDO"],
+  },
+  idType: {
+    type: String,
+    enum: [
+      "ID-CARD",
+      "PASSPORT",
+      "RESIDENCE",
+      "DRIVER",
+    ],
+    required: [true, "ES REQUERIDO"],
+    description: "Citinzenship ID Type"
+  },
+  idNumber: {
+    type: String,
+    unique: true,
+    minlength: 5,
+    trim: true,
+    required: [true, "ES REQUERIDO"],
+    description: "Citinzenship ID Number"
+  },
+  genre: {
+    type: String,
+    minlength: 1,
+    maxlength: 1,
+    enum: ["M", "F", "U"],
+    required: [true, "ES REQUERIDO"],
+  },
+  birthDate: {
+    type: Date,
+  },
+  picture: { type: String },
+  isUser: {
+    type: Boolean,
+    default: false
+  },
+  isDriver: {
+    type: Boolean,
+    default: false
+  }
+
 });
 
-
-PersonSchema.virtual('fullName').get(function () {
-  return this.names + ' ' + this.surnames;
-});
-
-
-//ToDo: Modify this!!!
+//ToDo: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
 /**
  * @swagger
  * components:
  *   schemas:
  *     Person:
- *       properties: 
+ *       properties:
  *         names:
  *           type: "string"
- *           example: "Emilio"
- *         surnames:
+ *         lastNames:
  *           type: "string"
- *           example: "Morales"
- *         identNumber:
+ *         idType:
  *           type: "string"
- *           example: "213-120545-0242S"
- *         identType:
+ *           enum: ["ID-CARD", "PASSPORT", "RESIDENCE", "DRIVER"]
+ *           example: "ID-CARD"
+ *         idNumber:
  *           type: "string"
- *           example: "Cédula"   
  *         genre:
  *           type: "string"
- *           example: "Hombre"
- *         birthdate:
+ *           enum: ["M", "F", "U"]
+ *           example: "M"
+ *         birthDate:
  *           type: "string"
  *           format: "date"
  *         picture:
  *           type: "string"
+ *           example: ""
+ *         isUser: 
+ *           type: "boolean"
+ *           default: "false"
+ *         isDriver: 
+ *           type: "boolean"
+ *           default: "false" 
  *       required:
  *         - names
- *         - surnames
+ *         - lastNames
+ *         - idType
+ *         - idNumber
+ *         - genre
+ * 
  */
 
-module.exports = mongoose.model('Person',PersonSchema);
+module.exports = mongoose.model("Person", PersonSchema);
 // mongoDB creará la collección, con documentos de estructura del modelo.
-

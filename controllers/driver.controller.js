@@ -1,5 +1,5 @@
-﻿
-
+﻿// Last Updated: 05/05/2021 03:58:22 a. m.
+// Updated By  : @YourName
 'use strict'
 
 const os = require('os');
@@ -15,7 +15,7 @@ const { findOneAndDelete } = require('../models/driver.model');
  * @swagger
  * tags:
  *   name: Driver
- *   description: a driver
+ *   description: Driver Data
  */
 
 var driverController = {
@@ -26,13 +26,11 @@ var driverController = {
      *   get:
      *     tags: 
      *       - Driver
-     *     description: Get a driver by Id
-     *     security:
-     *       - ApiKeyAuth: []
+     *     summary: GET ONE DRIVER BY ID 
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: Object Id
+     *         description: Driver Id
      *         required: false
      *         schema:
      *           type: string
@@ -55,9 +53,7 @@ var driverController = {
      *   get:
      *     tags: 
      *       - Driver
-     *     description: Get list of a driver
-     *     security:
-     *       - ApiKeyAuth: []
+     *     summary: GET ALL DRIVER
      *     responses:
      *       200:
      *         description: OK
@@ -90,7 +86,7 @@ var driverController = {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
-                    error: err.message
+                    message: err.message
                 })
                 );
             }
@@ -121,14 +117,13 @@ var driverController = {
      *   post:
      *     tags: 
      *       - Driver
-     *     description: Create a driver
-     *     security:
-     *       - bearerAuth: []
-     *     parameters:
-     *       - in: body
-     *         required: true
-     *         schema:
-     *           $ref: "#/components/schemas/Driver"
+     *     summary: ADD NEW DRIVER
+     *     requestBody:
+     *       required: true
+     *       content: 
+     *         application/json:
+     *           schema:
+     *             $ref: "#/components/schemas/Driver"
      *     responses:
      *       201:
      *         description: Created
@@ -152,7 +147,7 @@ var driverController = {
 
             return (res.status(400).send({
                 status: "error",
-                messager: "Faltan parámetros de request en formato JSON"
+                message: "Faltan parámetros de request en formato JSON"
             })
             );
         }
@@ -167,7 +162,7 @@ var driverController = {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
-                    error: err.message
+                    message: err.message
                 }));
 
             } else {
@@ -194,22 +189,22 @@ var driverController = {
      *   put:
      *     tags: 
      *       - Driver
-     *     description: Update a driver
-     *     security:
-     *       - bearerAuth: []
+     *     summary: UPDATE ONE DRIVER BY ID
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "Object Id"
+     *         description: "Driver Id"
      *         type: string
      *         required: true
-     *       - in: body
-     *         required: true
-     *         schema:
-     *           $ref: "#/components/schemas/Driver"
+     *     requestBody:
+     *       required: true
+     *       content: 
+     *         application/json:
+     *           schema:
+     *             $ref: "#/components/schemas/Driver"
      *     responses:
      *       200:
-     *         description: Ok
+     *         description: OK
      *         content:
      *           application/json:
      *             schema:
@@ -246,7 +241,7 @@ var driverController = {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
-                    error: err.message
+                    message: err.message
                 }));
             }
 
@@ -273,13 +268,11 @@ var driverController = {
      *   delete:
      *     tags: 
      *       - Driver
-     *     description: Delete a driver by id
-     *     security:
-     *       - bearerAuth: []
+     *     summary: DELETE ONE DRIVER BY ID
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "Object Id"
+     *         description: "Driver Id"
      *         type: string
      *         required: true
      *     responses:
@@ -299,21 +292,21 @@ var driverController = {
     deleteDriver: (req, res) => {
 
 
-        var personId = req.params.id;
-        if (!personId || personId == undefined) {
+        var id = req.params.id;
+        if (!id || id == undefined) {
             return (res.status(400).send({
                 status: "error",
                 message: "falta parámetro requerido ID"
             }));
         }
 
-        var query = { '_id': { $eq: personId } };
+        var query = { '_id': { $eq: id } };
 
-        personsModel.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
+        driver.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
-                    error: err.message
+                    message: err.message
                 }));
             }
 

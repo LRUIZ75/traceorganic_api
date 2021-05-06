@@ -48,7 +48,7 @@ app.use(bodyParser.json());
 // Configurar cabeceras y cors
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, x-access-token, Content-Type, Accept, Access-Control-Allow-Request-Method');
+  res.header('Access-Control-Allow-Headers', 'authorization, X-API-KEY, Origin, X-Requested-With, x-access-token, Content-Type, Accept, Access-Control-Allow-Request-Method');
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE, PATCH');
   res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE, PATCH');
   global.baseURL = req.hostname + ":" + global.PORT;

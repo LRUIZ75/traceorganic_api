@@ -1,5 +1,5 @@
-﻿
-
+﻿// Last Updated: 05/05/2021 04:03:26 a. m.
+// Updated By  : @YourName
 'use strict'
 
 const os = require('os');
@@ -15,7 +15,7 @@ const { findOneAndDelete } = require('../models/generalsetting.model');
  * @swagger
  * tags:
  *   name: GeneralSetting
- *   description: a General Setting
+ *   description: Application General Setting
  */
 
 var generalsettingController = {
@@ -26,13 +26,11 @@ var generalsettingController = {
      *   get:
      *     tags: 
      *       - GeneralSetting
-     *     description: Get a General Setting by Id
-     *     security:
-     *       - ApiKeyAuth: []
+     *     summary: GET ONE GENERALSETTING BY ID 
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: Object Id
+     *         description: GeneralSetting Id
      *         required: false
      *         schema:
      *           type: string
@@ -55,9 +53,7 @@ var generalsettingController = {
      *   get:
      *     tags: 
      *       - GeneralSetting
-     *     description: Get list of a General Setting
-     *     security:
-     *       - ApiKeyAuth: []
+     *     summary: GET ALL GENERALSETTING
      *     responses:
      *       200:
      *         description: OK
@@ -90,7 +86,7 @@ var generalsettingController = {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
-                    error: err.message
+                    message: err.message
                 })
                 );
             }
@@ -121,14 +117,13 @@ var generalsettingController = {
      *   post:
      *     tags: 
      *       - GeneralSetting
-     *     description: Create a General Setting
-     *     security:
-     *       - bearerAuth: []
-     *     parameters:
-     *       - in: body
-     *         required: true
-     *         schema:
-     *           $ref: "#/components/schemas/GeneralSetting"
+     *     summary: ADD NEW GENERALSETTING
+     *     requestBody:
+     *       required: true
+     *       content: 
+     *         application/json:
+     *           schema:
+     *             $ref: "#/components/schemas/GeneralSetting"
      *     responses:
      *       201:
      *         description: Created
@@ -152,7 +147,7 @@ var generalsettingController = {
 
             return (res.status(400).send({
                 status: "error",
-                messager: "Faltan parámetros de request en formato JSON"
+                message: "Faltan parámetros de request en formato JSON"
             })
             );
         }
@@ -167,7 +162,7 @@ var generalsettingController = {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
-                    error: err.message
+                    message: err.message
                 }));
 
             } else {
@@ -194,22 +189,22 @@ var generalsettingController = {
      *   put:
      *     tags: 
      *       - GeneralSetting
-     *     description: Update a General Setting
-     *     security:
-     *       - bearerAuth: []
+     *     summary: UPDATE ONE GENERALSETTING BY ID
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "Object Id"
+     *         description: "GeneralSetting Id"
      *         type: string
      *         required: true
-     *       - in: body
-     *         required: true
-     *         schema:
-     *           $ref: "#/components/schemas/GeneralSetting"
+     *     requestBody:
+     *       required: true
+     *       content: 
+     *         application/json:
+     *           schema:
+     *             $ref: "#/components/schemas/GeneralSetting"
      *     responses:
      *       200:
-     *         description: Ok
+     *         description: OK
      *         content:
      *           application/json:
      *             schema:
@@ -246,7 +241,7 @@ var generalsettingController = {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
-                    error: err.message
+                    message: err.message
                 }));
             }
 
@@ -273,13 +268,11 @@ var generalsettingController = {
      *   delete:
      *     tags: 
      *       - GeneralSetting
-     *     description: Delete a General Setting by id
-     *     security:
-     *       - bearerAuth: []
+     *     summary: DELETE ONE GENERALSETTING BY ID
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "Object Id"
+     *         description: "GeneralSetting Id"
      *         type: string
      *         required: true
      *     responses:
@@ -299,21 +292,21 @@ var generalsettingController = {
     deleteGeneralSetting: (req, res) => {
 
 
-        var personId = req.params.id;
-        if (!personId || personId == undefined) {
+        var id = req.params.id;
+        if (!id || id == undefined) {
             return (res.status(400).send({
                 status: "error",
                 message: "falta parámetro requerido ID"
             }));
         }
 
-        var query = { '_id': { $eq: personId } };
+        var query = { '_id': { $eq: id } };
 
-        personsModel.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
+        generalsetting.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
-                    error: err.message
+                    message: err.message
                 }));
             }
 
@@ -336,30 +329,35 @@ var generalsettingController = {
 
     /**
      * @openapi
-     * /api/generalsetting/logo/{id}:
+     * /api/generalsetting/{field}/{id}:
      *   put:
      *     tags: 
      *       - GeneralSetting
-     *     description: Upload a General Setting logo
-     *     security:
-     *       - bearerAuth: []
+     *     summary: UPLOAD GENERALSETTING LOGO BY ID
+     *     requestBody:
+     *       content:
+     *         multipart/form-data:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               logo:
+     *                 type: string
+     *                 format: base64
      *     parameters:
      *       - in: path
+     *         name: field
+     *         description: "fieldname for picture"
+     *         type: string
+     *         default: "insuranceCard"
+     *         required: true
+     *       - in: path
      *         name: id
-     *         description: "Object Id"
+     *         description: "GeneralSetting Id"
      *         type: string
      *         required: true
-     *       - in: form-data
-     *         name: logo
-     *         required: true
-     *         content:
-     *           file:
-     *             schema:
-     *               type: string
-     *               format: base64
      *     responses:
      *       200:
-     *         description: Ok
+     *         description: OK
      *         content:
      *           application/json:
      *             schema:
@@ -378,6 +376,7 @@ var generalsettingController = {
         //recojer fichero de petición
         var file_name = 'Imagen no proporcionada...';
         var id = req.params.id;
+        var fieldname = req.params.field;
 
         // console.log(req.files);
 
@@ -388,12 +387,23 @@ var generalsettingController = {
                 file_name
             });
         }
-        if (!id) {
 
-            return res.status(400).send({
-                status: 'error',
-                message: 'No hay parámetro: Id'
-            });
+        if (!id || !fieldname) {
+          return res.status(400).send({
+            status: "error",
+            message: "Parámetros de ruta, son incorrectos",
+          });
+        }
+
+
+        //TODO: Revisar y controlar los campos válidos para imagenes de la colección
+        var validFields = ["picture"];
+
+        if (!(fieldname in validFields)) {
+          return res.status(400).send({
+            status: "error",
+            message: "Parámetros de ruta, son incorrectos"
+          });
         }
 
         //conseguir nombre y extensión del archivo
@@ -401,77 +411,84 @@ var generalsettingController = {
 
         var file_name = path.basename(file_path);
 
-        var file_ext = path.extname(file_name);
+        var file_ext = path.extname(file_name).toLowerCase();
+        var oldValue = "";
 
+        const validExtensions = ['.png','.jpg', '.jpeg', '.webp', '.gif'];
+        if (validExtensions.includes(file_ext)) 
+          {
+            //Archivo aceptable
 
-        console.log(file_ext);
+            var query = { _id: { $eq: id } };
+            // licenseCard | insuranceCard
 
-        switch (file_ext) {
-            case '.png':
-            case '.jpg':
-            case '.jpeg':
-            case '.gif':
-                //Archivo aceptable
+            var command = { $set: { [fieldname]: file_name } };
 
-
-                var query = { '_id': { $eq: id } };
-                var command = { $set: { 'logo': file_name } };
-
-
-                generalsettingModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
-
-                    if (err) {
-
-                        fs.unlinkSync(file_path);
-
-                        return res.status(500).send({
-                            status: 'error',
-                            error: err
-                        });
-                    }
-
-                    if (!updatedObject) {
-
-                        fs.unlinkSync(file_path);
-
-                        return res.status(404).send({
-                            status: 'error',
-                            message: 'No se pudo encontrar el registro'
-                        });
-                    }
-
-                    return res.status(200).send({
-                        status: 'ok',
-                        updated: updatedObject
-                    });
-                });
-                break;
-
-            default:
-                //Archivo no aceptado
-
-                //Borrar el archivo
-
+            generalsetting.findOne(query, (err, doc) => {
+                if (err)
+                  return res.status(500).send({
+                    status: "error",
+                    message: err.message,
+                  });
+                if (doc) {
+                  var object = JSON.parse(JSON.stringify(doc._doc));
+                  oldvalue = object[fieldname];
+                  oldvalue = "/uploads/picture/" + oldvalue;
+                  console.log(`Deleting: ${oldvalue}`);
+                  fs.unlinkSync(oldvalue);
+                 }});
+         generalsetting.findOneAndUpdate(
+            query,
+            command,
+            { new: true },
+            (err, updatedObject) => {
+              if (err) {
                 fs.unlinkSync(file_path);
 
-                return res.status(400).send({
-                    status: 'error',
-                    message: 'Tipo de archivo no es imagen',
-                    file_name
-                }
-                );
-                break;
-        };
+                return res.status(500).send({
+                  status: "error",
+                  message: err.message,
+                });
+              }
+
+              if (!updatedObject) {
+                fs.unlinkSync(file_path);
+
+                return res.status(404).send({
+                  status: "error",
+                  message: "No se pudo encontrar el registro",
+                });
+              }
+
+              return res.status(200).send({
+                status: "ok",
+                updated: updatedObject,
+              });
+            }
+          );
+        } else {
+          //Archivo no aceptado
+
+          //Borrar el archivo
+
+          fs.unlinkSync(file_path);
+
+          return res.status(400).send({
+            status: "error",
+            message: "Tipo de archivo no es imagen",
+            file_name,
+          });
+        }
     },
 
 
     /**
      * @openapi
-     * /api/generalsetting/logo/{filename}:
+     * /api/generalsetting/picture/{filename}:
      *   get:
      *     tags: 
      *       - GeneralSetting
-     *     description: Get general a General Setting logo by filename
+     *     summary: GET GENERALSETTING PICTURE BY FILENAME
      *     parameters:
      *       - in: path
      *         name: filename

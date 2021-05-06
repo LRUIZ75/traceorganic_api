@@ -31,9 +31,10 @@ const UserSchema = Schema({
             return hash;
         }
     },
-	personId: {
-        type: mongoose.ObjectId,
-       required: [true, "el campo es requerido"]
+	person: {
+        type: Schema.Types.ObjectId, 
+        ref: 'Person',
+        required: [true, "el campo es requerido"]
     },
 	email: {
         type: String, 
@@ -69,8 +70,9 @@ const UserSchema = Schema({
  *         password:
  *           type: "string"
  *           format: "password"
- *         personId: 
+ *         person: 
  *           type: "string"
+ *           format: "ObjectId"
  *         email:
  *           type: "string"
  *           format: "email"

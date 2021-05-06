@@ -22,13 +22,14 @@ D for Delete: HTTP DELETE
 
 
 // GENERALSETTING
-router.post('/generalsetting', verify, generalsettingController.addGeneralSetting); //CREATE
+router.post('/generalsetting',  generalsettingController.addGeneralSetting); //CREATE
 
 router.put('/generalsetting/picture/:id', [verify, md_uploadpictures], generalsettingController.setPicture); //UPDATE IMAGE 
-router.put('/generalsetting/:id', verify, generalsettingController.editGeneralSetting); //UPDATE
+//router.put('/generalsetting/:id', verify, generalsettingController.editGeneralSetting); //UPDATE
+router.put('/generalsettin/:id', generalsettingController.editGeneralSetting); //UPDATE
 
-router.get('/generalsetting/:id?', verify,generalsettingController.getGeneralSetting); //RETRIEVE
-router.get('/generalsetting', verify, generalsettingController.getGeneralSetting); //RETRIEVE
+router.get('/generalsetting/:id?', generalsettingController.getGeneralSetting); //RETRIEVE
+router.get('/generalsetting',  generalsettingController.getGeneralSetting); //RETRIEVE
 router.get('/generalsetting/picture/:filename', generalsettingController.getPicture); //RETRIEVE IMAGE 
 
 router.delete('/generalsetting/:id', verify, generalsettingController.deleteGeneralSetting); //DELETE

@@ -1,5 +1,5 @@
-﻿
-
+﻿// Last Updated: 05/05/2021 03:53:58 a. m.
+// Updated By  : @YourName
 'use strict'
 
 const os = require('os');
@@ -15,7 +15,7 @@ const { findOneAndDelete } = require('../models/person.model');
  * @swagger
  * tags:
  *   name: Person
- *   description: a person
+ *   description: Person Data
  */
 
 var personController = {
@@ -26,13 +26,11 @@ var personController = {
      *   get:
      *     tags: 
      *       - Person
-     *     description: Get a person by Id
-     *     security:
-     *       - ApiKeyAuth: []
+     *     summary: GET ONE PERSON BY ID 
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: Object Id
+     *         description: Person Id
      *         required: false
      *         schema:
      *           type: string
@@ -55,9 +53,7 @@ var personController = {
      *   get:
      *     tags: 
      *       - Person
-     *     description: Get list of a person
-     *     security:
-     *       - ApiKeyAuth: []
+     *     summary: GET ALL PERSON
      *     responses:
      *       200:
      *         description: OK
@@ -90,7 +86,7 @@ var personController = {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
-                    error: err.message
+                    message: err.message
                 })
                 );
             }
@@ -121,14 +117,13 @@ var personController = {
      *   post:
      *     tags: 
      *       - Person
-     *     description: Create a person
-     *     security:
-     *       - bearerAuth: []
-     *     parameters:
-     *       - in: body
-     *         required: true
-     *         schema:
-     *           $ref: "#/components/schemas/Person"
+     *     summary: ADD NEW PERSON
+     *     requestBody:
+     *       required: true
+     *       content: 
+     *         application/json:
+     *           schema:
+     *             $ref: "#/components/schemas/Person"
      *     responses:
      *       201:
      *         description: Created
@@ -152,7 +147,7 @@ var personController = {
 
             return (res.status(400).send({
                 status: "error",
-                messager: "Faltan parámetros de request en formato JSON"
+                message: "Faltan parámetros de request en formato JSON"
             })
             );
         }
@@ -167,7 +162,7 @@ var personController = {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
-                    error: err.message
+                    message: err.message
                 }));
 
             } else {
@@ -194,22 +189,22 @@ var personController = {
      *   put:
      *     tags: 
      *       - Person
-     *     description: Update a person
-     *     security:
-     *       - bearerAuth: []
+     *     summary: UPDATE ONE PERSON BY ID
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "Object Id"
+     *         description: "Person Id"
      *         type: string
      *         required: true
-     *       - in: body
-     *         required: true
-     *         schema:
-     *           $ref: "#/components/schemas/Person"
+     *     requestBody:
+     *       required: true
+     *       content: 
+     *         application/json:
+     *           schema:
+     *             $ref: "#/components/schemas/Person"
      *     responses:
      *       200:
-     *         description: Ok
+     *         description: OK
      *         content:
      *           application/json:
      *             schema:
@@ -246,7 +241,7 @@ var personController = {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
-                    error: err.message
+                    message: err.message
                 }));
             }
 
@@ -273,13 +268,11 @@ var personController = {
      *   delete:
      *     tags: 
      *       - Person
-     *     description: Delete a person by id
-     *     security:
-     *       - bearerAuth: []
+     *     summary: DELETE ONE PERSON BY ID
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "Object Id"
+     *         description: "Person Id"
      *         type: string
      *         required: true
      *     responses:
@@ -299,21 +292,21 @@ var personController = {
     deletePerson: (req, res) => {
 
 
-        var personId = req.params.id;
-        if (!personId || personId == undefined) {
+        var id = req.params.id;
+        if (!id || id == undefined) {
             return (res.status(400).send({
                 status: "error",
                 message: "falta parámetro requerido ID"
             }));
         }
 
-        var query = { '_id': { $eq: personId } };
+        var query = { '_id': { $eq: id } };
 
-        personsModel.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
+        person.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
-                    error: err.message
+                    message: err.message
                 }));
             }
 
@@ -336,30 +329,35 @@ var personController = {
 
     /**
      * @openapi
-     * /api/person/picture/{id}:
+     * /api/person/{field}/{id}:
      *   put:
      *     tags: 
      *       - Person
-     *     description: Upload a person picture
-     *     security:
-     *       - bearerAuth: []
+     *     summary: UPLOAD PERSON PICTURE BY ID
+     *     requestBody:
+     *       content:
+     *         multipart/form-data:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               picture:
+     *                 type: string
+     *                 format: base64
      *     parameters:
      *       - in: path
+     *         name: field
+     *         description: "fieldname for picture"
+     *         type: string
+     *         default: "insuranceCard"
+     *         required: true
+     *       - in: path
      *         name: id
-     *         description: "Object Id"
+     *         description: "Person Id"
      *         type: string
      *         required: true
-     *       - in: form-data
-     *         name: logo
-     *         required: true
-     *         content:
-     *           file:
-     *             schema:
-     *               type: string
-     *               format: base64
      *     responses:
      *       200:
-     *         description: Ok
+     *         description: OK
      *         content:
      *           application/json:
      *             schema:
@@ -378,6 +376,7 @@ var personController = {
         //recojer fichero de petición
         var file_name = 'Imagen no proporcionada...';
         var id = req.params.id;
+        var fieldname = req.params.field;
 
         // console.log(req.files);
 
@@ -388,12 +387,23 @@ var personController = {
                 file_name
             });
         }
-        if (!id) {
 
-            return res.status(400).send({
-                status: 'error',
-                message: 'No hay parámetro: Id'
-            });
+        if (!id || !fieldname) {
+          return res.status(400).send({
+            status: "error",
+            message: "Parámetros de ruta, son incorrectos",
+          });
+        }
+
+
+        //TODO: Revisar y controlar los campos válidos para imagenes de la colección
+        var validFields = ["picture"];
+
+        if (!(fieldname in validFields)) {
+          return res.status(400).send({
+            status: "error",
+            message: "Parámetros de ruta, son incorrectos"
+          });
         }
 
         //conseguir nombre y extensión del archivo
@@ -401,67 +411,74 @@ var personController = {
 
         var file_name = path.basename(file_path);
 
-        var file_ext = path.extname(file_name);
+        var file_ext = path.extname(file_name).toLowerCase();
+        var oldValue = "";
 
+        const validExtensions = ['.png','.jpg', '.jpeg', '.webp', '.gif'];
+        if (validExtensions.includes(file_ext)) 
+          {
+            //Archivo aceptable
 
-        console.log(file_ext);
+            var query = { _id: { $eq: id } };
+            // licenseCard | insuranceCard
 
-        switch (file_ext) {
-            case '.png':
-            case '.jpg':
-            case '.jpeg':
-            case '.gif':
-                //Archivo aceptable
+            var command = { $set: { [fieldname]: file_name } };
 
-
-                var query = { '_id': { $eq: id } };
-                var command = { $set: { 'picture': file_name } };
-
-
-                personModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
-
-                    if (err) {
-
-                        fs.unlinkSync(file_path);
-
-                        return res.status(500).send({
-                            status: 'error',
-                            error: err
-                        });
-                    }
-
-                    if (!updatedObject) {
-
-                        fs.unlinkSync(file_path);
-
-                        return res.status(404).send({
-                            status: 'error',
-                            message: 'No se pudo encontrar el registro'
-                        });
-                    }
-
-                    return res.status(200).send({
-                        status: 'ok',
-                        updated: updatedObject
-                    });
-                });
-                break;
-
-            default:
-                //Archivo no aceptado
-
-                //Borrar el archivo
-
+            person.findOne(query, (err, doc) => {
+                if (err)
+                  return res.status(500).send({
+                    status: "error",
+                    message: err.message,
+                  });
+                if (doc) {
+                  var object = JSON.parse(JSON.stringify(doc._doc));
+                  oldvalue = object[fieldname];
+                  oldvalue = "/uploads/picture/" + oldvalue;
+                  console.log(`Deleting: ${oldvalue}`);
+                  fs.unlinkSync(oldvalue);
+                 }});
+         person.findOneAndUpdate(
+            query,
+            command,
+            { new: true },
+            (err, updatedObject) => {
+              if (err) {
                 fs.unlinkSync(file_path);
 
-                return res.status(400).send({
-                    status: 'error',
-                    message: 'Tipo de archivo no es imagen',
-                    file_name
-                }
-                );
-                break;
-        };
+                return res.status(500).send({
+                  status: "error",
+                  message: err.message,
+                });
+              }
+
+              if (!updatedObject) {
+                fs.unlinkSync(file_path);
+
+                return res.status(404).send({
+                  status: "error",
+                  message: "No se pudo encontrar el registro",
+                });
+              }
+
+              return res.status(200).send({
+                status: "ok",
+                updated: updatedObject,
+              });
+            }
+          );
+        } else {
+          //Archivo no aceptado
+
+          //Borrar el archivo
+
+          fs.unlinkSync(file_path);
+
+          return res.status(400).send({
+            status: "error",
+            message: "Tipo de archivo no es imagen",
+            file_name,
+          });
+        }
     },
 
 
@@ -471,7 +488,7 @@ var personController = {
      *   get:
      *     tags: 
      *       - Person
-     *     description: Get general a person picture by filename
+     *     summary: GET PERSON PICTURE BY FILENAME
      *     parameters:
      *       - in: path
      *         name: filename
