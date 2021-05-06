@@ -78,7 +78,7 @@ var generalsettingController = {
         if (!id || id === undefined) query = {};
         else query = { '_id': { $eq: id } };
 
-        console.log(query);
+        //console.log(query);
 
         generalsettingModel.find(query, (err, objects) => {
 
@@ -434,7 +434,7 @@ var generalsettingController = {
                   var object = JSON.parse(JSON.stringify(doc._doc));
                   oldvalue = object[fieldname];
                   oldvalue = "/uploads/picture/" + oldvalue;
-                  console.log(`Deleting: ${oldvalue}`);
+                  //console.log(`Deleting: ${oldvalue}`);
                   fs.unlinkSync(oldvalue);
                  }});
          generalsetting.findOneAndUpdate(

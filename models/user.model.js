@@ -11,10 +11,11 @@ const Schema = mongoose.Schema;
 
 const UserSchema = Schema({
 
-	userName: {
+	username: {
         type: String,
-        required: [true,'el campo es requerido'],
+        required: [true, "ES REQUERIDO"],
         unique: true,
+        index: true,
         minLength: 4,
         maxLength: 20,
         lowercase: true,
@@ -24,7 +25,7 @@ const UserSchema = Schema({
         type: String,
         trim: true,
         minLength: 8,
-        required: [true, 'el campo es requerido'],
+        required: [true, "ES REQUERIDO"],
         set: v=> {
             var salt=bcrypt.genSaltSync(10);
             var hash = bcrypt.hashSync(v, salt);
@@ -34,28 +35,45 @@ const UserSchema = Schema({
 	person: {
         type: Schema.Types.ObjectId, 
         ref: 'Person',
-        required: [true, "el campo es requerido"]
+        required: [true, "ES REQUERIDO"]
     },
 	email: {
         type: String, 
         trim: true, 
         lowercase: true, 
         unique: true, 
-        required:[true, 'el campo es requerido'],
+        index: true,
+        required: [true, "ES REQUERIDO"],
         validate: {
             validator: validator.isEmail,
             message: '{VALUE} no es una dirección de correo válida',
             isAsync: false
         }
     }, 
-	isVerifiedEmail: Boolean,
-	registrationDate: {
+	isVerifiedEmail: {
+        type: Boolean,
+        default: false
+    },
+	creationDate: {
         type: Date,
         default: Date.now()},
-	profilesNames: Array(String),
-	companyId: mongoose.ObjectId,
-	refreshAccessToken: String,
-	isActive: Boolean,
+	roles: {
+        type: Array(Schema.Types.ObjectId),
+        ref: 'role'
+    },
+	company: {  
+        type: Schema.Types.ObjectId,
+        ref: 'company',
+        required: [true, "ES REQUERIDO"]
+    },
+	refreshAccessToken: {
+        type: String,
+        default: null
+    },
+	isActive: {
+        type: Boolean,
+        default: false
+    },
 	
 });
 
@@ -65,34 +83,42 @@ const UserSchema = Schema({
  *   schemas:
  *     User:
  *       properties: 
- *         userName:
+ *         username:
  *           type: "string"
  *         password:
  *           type: "string"
  *           format: "password"
  *         person: 
  *           type: "string"
- *           format: "ObjectId"
+ *           format: "oid"
  *         email:
  *           type: "string"
  *           format: "email"
  *         isVerifiedEmail:
  *           type: "boolean"
- *         profilesNames:
+ *           default: "false"
+ *         creationDate:
+ *           type: "string"
+ *           format: "date"
+ *         roles:
  *            type: "array"
  *            items:
  *              type: "string"
- *         companyId:
+ *              format: oid
+ *         company:
  *           type: "string"
+ *           format: "oid"
  *         refreshAccessToken:
  *           type: "string"
  *         isActive:
  *           type: "boolean"
+ *           default: false
  *       required:
- *         - userName
+ *         - username
  *         - password
  *         - personId
  *         - email
+ *         - company
  *
  */
 

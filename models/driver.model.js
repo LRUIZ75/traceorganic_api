@@ -1,21 +1,31 @@
-﻿'use strict'
+﻿"use strict";
 
-const mongoose = require('mongoose');
-const validator = require('validator');
+const mongoose = require("mongoose");
+const validator = require("validator");
 
 const Schema = mongoose.Schema;
 
 const DriverSchema = Schema({
-    personId:
-      { 
-        type: mongoose.ObjectId,
-        required: [true, "el campo es requerido"]
-      },
-    registerDate:
-      { type: Date },
-    isActive:
-      { type: Boolean }
-    
+  person: {
+    type: Schema.Types.ObjectId,
+    ref: "Person",
+    required: [true, "ES REQUERIDO"],
+  },
+  creationDate: { type: Date, default: Date.now },
+  licenseCard: {
+    type: String,
+    trim: true,
+    minlength: 5,
+    unique: true,
+    index: true,
+    required: [true, "ES REQUERIDO"],
+  },
+  insuranceCard: {
+    type: String,
+    trim: true,
+    default: null
+  },
+  isActive: { type: Boolean, default: true },
 });
 
 //ToDo: Modify this!!!
@@ -24,19 +34,26 @@ const DriverSchema = Schema({
  * components:
  *   schemas:
  *     Driver:
- *       properties: 
- *         personId:
+ *       properties:
+ *         person:
  *           type: "string"
- *         registerDate:
+ *           format: "oid"
+ *         creationDate:
  *           type: "string"
- *           format: "date-time"
+ *           format: "date"
+ *         licenseCard:
+ *           type: string
+ *         insuranceCard:
+ *           type: string
+ *           default: null
  *         isActive:
  *           type: "boolean"
+ *           default: true
  *       required:
- *         - personId
+ *         - person
+ *         - licenseCard
  *
  */
 
-module.exports = mongoose.model('Driver',DriverSchema);
+module.exports = mongoose.model("Driver", DriverSchema);
 // mongoDB creará la collección, con documentos de estructura del modelo.
-

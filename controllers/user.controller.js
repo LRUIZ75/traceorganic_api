@@ -1,36 +1,36 @@
-﻿// Last Updated: 05/05/2021 03:58:22 a. m.
+﻿// Last Updated: 05/05/2021 09:03:03 p. m.
 // Updated By  : @YourName
 'use strict'
 
 const os = require('os');
-const driverModel = require('../models/driver.model');
+const userModel = require('../models/user.model');
 const validator = require('validator');
 const fs = require('fs');
 const path = require('path');
 const { ObjectId } = require('mongodb');
-const { findOneAndDelete } = require('../models/driver.model');
+const { findOneAndDelete } = require('../models/user.model');
 
 
 /**
  * @swagger
  * tags:
- *   name: Driver
- *   description: Driver Data
+ *   name: User
+ *   description: User Data
  */
 
-var driverController = {
+var userController = {
 
     /**
      * @openapi
-     * /api/driver/{id}:
+     * /api/user/{id}:
      *   get:
      *     tags: 
-     *       - Driver
-     *     summary: GET ONE DRIVER BY ID 
+     *       - User
+     *     summary: GET ONE USER BY ID 
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: Driver Id
+     *         description: User Id
      *         required: false
      *         schema:
      *           type: string
@@ -40,7 +40,7 @@ var driverController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Driver"
+     *               $ref: "#/components/schemas/User"
      *       404:
      *         description: Not Found
      *       500:
@@ -49,11 +49,11 @@ var driverController = {
 
     /**
      * @openapi
-     * /api/driver:
+     * /api/user:
      *   get:
      *     tags: 
-     *       - Driver
-     *     summary: GET ALL DRIVER
+     *       - User
+     *     summary: GET ALL USER
      *     responses:
      *       200:
      *         description: OK
@@ -62,14 +62,14 @@ var driverController = {
      *             schema:
      *               type: array
      *               items:
-     *                 $ref: "#/components/schemas/Driver"
+     *                 $ref: "#/components/schemas/User"
      *       404:
      *         description: Not Found
      *       500:
      *         description: Internal Server Error
      */
 
-    getDriver: (req, res) => {
+    getUser: (req, res) => {
 
         var id = req.params.id;
 
@@ -80,7 +80,7 @@ var driverController = {
 
         //console.log(query);
 
-        driverModel.find(query, (err, objects) => {
+        userModel.find(query, (err, objects) => {
 
 
             if (err) {
@@ -96,7 +96,7 @@ var driverController = {
                 return (res.status(404).send({
                     status: "error",
                     message: "Registro(s) no encontrado(s)",
-                    links: [{ "Agregar registro => curl -X POST ": global.baseURL + "/api/driver" }]
+                    links: [{ "Agregar registro => curl -X POST ": global.baseURL + "/api/user" }]
                 }
 
                 ));
@@ -113,30 +113,30 @@ var driverController = {
 
     /**
      * @openapi
-     * /api/driver:
+     * /api/user:
      *   post:
      *     tags: 
-     *       - Driver
-     *     summary: ADD NEW DRIVER
+     *       - User
+     *     summary: ADD NEW USER
      *     requestBody:
      *       required: true
      *       content: 
      *         application/json:
      *           schema:
-     *             $ref: "#/components/schemas/Driver"
+     *             $ref: "#/components/schemas/User"
      *     responses:
      *       201:
      *         description: Created
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Driver"
+     *               $ref: "#/components/schemas/User"
      *       400:
      *         description: Bad Request
      *       500:
      *         description: Internal Server Error
      */
-    addDriver: (req, res) => {
+    addUser: (req, res) => {
 
 
         var data = req.body;
@@ -153,12 +153,12 @@ var driverController = {
         }
 
 
-        var newDriver = new driverModel(data);
+        var newUser = new userModel(data);
 
 
 
         //INTENTAR GUARDAR EL NUEVO OBJETO
-        newDriver.save((err, storedObject) => {
+        newUser.save((err, storedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -185,15 +185,15 @@ var driverController = {
 
     /**
      * @openapi
-     * /api/driver/{id}:
+     * /api/user/{id}:
      *   put:
      *     tags: 
-     *       - Driver
-     *     summary: UPDATE ONE DRIVER BY ID
+     *       - User
+     *     summary: UPDATE ONE USER BY ID
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "Driver Id"
+     *         description: "User Id"
      *         type: string
      *         required: true
      *     requestBody:
@@ -201,14 +201,14 @@ var driverController = {
      *       content: 
      *         application/json:
      *           schema:
-     *             $ref: "#/components/schemas/Driver"
+     *             $ref: "#/components/schemas/User"
      *     responses:
      *       200:
      *         description: OK
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Driver"
+     *               $ref: "#/components/schemas/User"
      *       400:
      *         description: Bad Request
      *       404:
@@ -216,7 +216,7 @@ var driverController = {
      *       500:
      *         description: Internal Server Error
      */
-    editDriver: (req, res) => {
+    editUser: (req, res) => {
 
         var id = req.params.id;
         var data = req.body;
@@ -237,7 +237,7 @@ var driverController = {
         var query = { '_id': { $eq: id } };
         var command = { $set: data };
 
-        driverModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
+        userModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -264,15 +264,15 @@ var driverController = {
 
     /**
      * @openapi
-     * /api/driver/{id}:
+     * /api/user/{id}:
      *   delete:
      *     tags: 
-     *       - Driver
-     *     summary: DELETE ONE DRIVER BY ID
+     *       - User
+     *     summary: DEACTIVATE ONE USER BY ID
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "Driver Id"
+     *         description: "User Id"
      *         type: string
      *         required: true
      *     responses:
@@ -281,7 +281,7 @@ var driverController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Driver"
+     *               $ref: "#/components/schemas/User"
      *       400:
      *         description: Bad Request
      *       404:
@@ -289,7 +289,7 @@ var driverController = {
      *       500:
      *         description: Internal Server Error
      */
-    deleteDriver: (req, res) => {
+    deleteUser: (req, res) => {
 
 
         var id = req.params.id;
@@ -302,7 +302,7 @@ var driverController = {
 
         var query = { '_id': { $eq: id } };
 
-        driver.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
+        user.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -329,4 +329,4 @@ var driverController = {
 
 }
 
-module.exports = driverController;
+module.exports = userController;

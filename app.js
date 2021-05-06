@@ -7,28 +7,32 @@ const swaggerUI = require('swagger-ui-express');
 
 var bodyParser = require('body-parser');
 var express = require('express');
+const Cabin = require('cabin');
+const cabin = new Cabin();
 const jwt = require('jsonwebtoken');
 
 // Ejecutar expresss (htpp)
 var app = express();
 
+app.use(cabin.middleware);
+
 global.baseURL = 'localhost';
 
 // Cargar ficheros rutas
-var appRoutes = require('./routes/app.routes');
-//Añadir manualmente los requires para nuevas rutas parciales
-
+var authRoutes = require('./routes/auth.routes');
 var personRoutes = require('./routes/person.routes');
 var generalsettingRoutes = require('./routes/generalsetting.routes');
 var driverRoutes = require('./routes/driver.routes');
 var vehicleRoutes = require('./routes/vehicle.routes');
+var userRoutes = require('./routes/user.routes');
 
 var apiRoutes = [
-  appRoutes, 
+  authRoutes, 
   generalsettingRoutes,
   personRoutes,
   driverRoutes,
-  vehicleRoutes
+  vehicleRoutes,
+  userRoutes
 ];
 
 var rootRoutes = require('./routes/root.routes');
@@ -48,7 +52,7 @@ app.use(bodyParser.json());
 // Configurar cabeceras y cors
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'authorization, X-API-KEY, Origin, X-Requested-With, x-access-token, Content-Type, Accept, Access-Control-Allow-Request-Method');
+  res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, X-Access-Token, Content-Type, Accept, Access-Control-Allow-Request-Method');
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE, PATCH');
   res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE, PATCH');
   global.baseURL = req.hostname + ":" + global.PORT;
@@ -74,39 +78,51 @@ const swaggerOptions = {
         url: "https://www.gnu.org/licenses/agpl-3.0-standalone.html"
       },
       contact: {
-        name: "CSI HIALEAH",
+        name: "CSi Hialeah",
         url: "http://csihialeah.odoo.com",
         email: "csihialeah@gmail.com"
       },
       servers: [
         {
-          url: "http://localhost:5000/"
+          url: "https://traceorganic-api.herokuapp.com/api",
+          description: "Heroku Server"
+        },
+        {
+          url: "http://localhost:5000/api",
+          description: "Local Server"
         }
-      ],
-      basePath: "/api"
+      ]
     },
   },
   components: {
     schemas: {
     },
     securitySchemes: {
-      bearerAuth: {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT'
+      BasicAuth: {
+        type: "http",
+        scheme: "basic"
+      },
+      BearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT"
+      },
+      API_Key: {
+        type: "apiKey",
+        name: "API_Key",
+        in: "header"
       }
-    }
-  },
-  securityDefinitions: {
-    ApiKeyAuth: {
-      type: "apiKey",
-      in: "header",
-      name: "X-API-KEY"
     }
   },
   security: [
     {
-      ApiKeyAuth: []
+      BasicAuth: []
+    },
+    {
+      BearerAuth: []
+    },
+    {
+      API_Key: []
     }
   ],
   apis: ['./controllers/*.controller.js', './models/*.model.js'], // files containing annotations as above

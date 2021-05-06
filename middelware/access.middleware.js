@@ -6,7 +6,7 @@ exports.verify = function(req, res, next) {
     var accessToken = req.headers["authorization"] || req.headers["x-access-token"];
 
     if(!accessToken) {
-        console.log(req.headers);
+        //console.log(req.headers);
         return(res.status(403).send({
             message: "No token provided!"
         }));
@@ -14,7 +14,7 @@ exports.verify = function(req, res, next) {
 
      if(accessToken.startsWith('Bearer ')){
         accessToken = accessToken.slice(7,accessToken.length);
-        console.log(accessToken);
+        //console.log(accessToken);
     }
 
     jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET,(err, decoded)=>{
@@ -26,7 +26,7 @@ exports.verify = function(req, res, next) {
             }));
         }
 
-        console.log(decoded);
+        //console.log(decoded);
 
         next();
 
