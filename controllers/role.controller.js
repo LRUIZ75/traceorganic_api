@@ -1,38 +1,38 @@
-﻿// Last Updated: 07/05/2021 05:00:22 p. m.
+﻿// Last Updated: 07/05/2021 03:37:58 p. m.
 // Updated By  : @YourName
 'use strict'
 
 const os = require('os');
-const userModel = require('../models/user.model');
+const roleModel = require('../models/role.model');
 const validator = require('validator');
 const fs = require('fs');
 const path = require('path');
 const { ObjectId } = require('mongodb');
-const { findOneAndDelete } = require('../models/user.model');
+const { findOneAndDelete } = require('../models/role.model');
 
 
 /**
  * @swagger
  * tags:
- *   name: User
- *   description: User Data
+ *   name: Role
+ *   description: Role Data
  */
 
-var userController = {
+var roleController = {
 
     /**
      * @openapi
-     * /api/user/{id}:
+     * /api/role/{id}:
      *   get:
      *     tags: 
-     *       - User
-     *     summary: GET ONE USER BY ID 
+     *       - Role
+     *     summary: GET ONE ROLE BY ID 
      *     security:
      *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: User Id
+     *         description: Role Id
      *         required: false
      *         schema:
      *           type: string
@@ -42,7 +42,7 @@ var userController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/User"
+     *               $ref: "#/components/schemas/Role"
      *       404:
      *         description: Not Found
      *       500:
@@ -51,11 +51,11 @@ var userController = {
 
     /**
      * @openapi
-     * /api/user:
+     * /api/role:
      *   get:
      *     tags: 
-     *       - User
-     *     summary: GET ALL USER
+     *       - Role
+     *     summary: GET ALL ROLE
      *     security:
      *       - BearerAuth: []
      *     responses:
@@ -66,14 +66,14 @@ var userController = {
      *             schema:
      *               type: array
      *               items:
-     *                 $ref: "#/components/schemas/User"
+     *                 $ref: "#/components/schemas/Role"
      *       404:
      *         description: Not Found
      *       500:
      *         description: Internal Server Error
      */
 
-    getUser: (req, res) => {
+    getRole: (req, res) => {
 
         var id = req.params.id;
 
@@ -84,7 +84,7 @@ var userController = {
 
         console.log(query);
 
-        userModel.find(query, (err, objects) => {
+        roleModel.find(query, (err, objects) => {
 
 
             if (err) {
@@ -100,7 +100,7 @@ var userController = {
                 return (res.status(404).send({
                     status: "error",
                     message: "Registro(s) no encontrado(s)",
-                    links: [{ "Agregar registro => curl -X POST ": global.baseURL + "/api/user" }]
+                    links: [{ "Agregar registro => curl -X POST ": global.baseURL + "/api/role" }]
                 }
 
                 ));
@@ -117,11 +117,11 @@ var userController = {
 
     /**
      * @openapi
-     * /api/user:
+     * /api/role:
      *   post:
      *     tags: 
-     *       - User
-     *     summary: ADD NEW USER
+     *       - Role
+     *     summary: ADD NEW ROLE
      *     security:
      *       - BearerAuth: []
      *     requestBody:
@@ -129,20 +129,20 @@ var userController = {
      *       content: 
      *         application/json:
      *           schema:
-     *             $ref: "#/components/schemas/User"
+     *             $ref: "#/components/schemas/Role"
      *     responses:
      *       201:
      *         description: Created
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/User"
+     *               $ref: "#/components/schemas/Role"
      *       400:
      *         description: Bad Request
      *       500:
      *         description: Internal Server Error
      */
-    addUser: (req, res) => {
+    addRole: (req, res) => {
 
 
         var data = req.body;
@@ -159,12 +159,12 @@ var userController = {
         }
 
 
-        var newUser = new userModel(data);
+        var newRole = new roleModel(data);
 
 
 
         //INTENTAR GUARDAR EL NUEVO OBJETO
-        newUser.save((err, storedObject) => {
+        newRole.save((err, storedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -191,17 +191,17 @@ var userController = {
 
     /**
      * @openapi
-     * /api/user/{id}:
+     * /api/role/{id}:
      *   put:
      *     tags: 
-     *       - User
-     *     summary: UPDATE ONE USER BY ID
+     *       - Role
+     *     summary: UPDATE ONE ROLE BY ID
      *     security:
      *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "User Id"
+     *         description: "Role Id"
      *         type: string
      *         required: true
      *     requestBody:
@@ -209,14 +209,14 @@ var userController = {
      *       content: 
      *         application/json:
      *           schema:
-     *             $ref: "#/components/schemas/User"
+     *             $ref: "#/components/schemas/Role"
      *     responses:
      *       200:
      *         description: OK
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/User"
+     *               $ref: "#/components/schemas/Role"
      *       400:
      *         description: Bad Request
      *       404:
@@ -224,7 +224,7 @@ var userController = {
      *       500:
      *         description: Internal Server Error
      */
-    editUser: (req, res) => {
+    editRole: (req, res) => {
 
         var id = req.params.id;
         var data = req.body;
@@ -245,7 +245,7 @@ var userController = {
         var query = { '_id': { $eq: id } };
         var command = { $set: data };
 
-        userModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
+        roleModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -272,17 +272,17 @@ var userController = {
 
     /**
      * @openapi
-     * /api/user/{id}:
+     * /api/role/{id}:
      *   delete:
      *     tags: 
-     *       - User
-     *     summary: DELETE ONE USER BY ID
+     *       - Role
+     *     summary: DELETE ONE ROLE BY ID
      *     security:
      *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "User Id"
+     *         description: "Role Id"
      *         type: string
      *         required: true
      *     responses:
@@ -291,7 +291,7 @@ var userController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/User"
+     *               $ref: "#/components/schemas/Role"
      *       400:
      *         description: Bad Request
      *       404:
@@ -299,7 +299,7 @@ var userController = {
      *       500:
      *         description: Internal Server Error
      */
-    deleteUser: (req, res) => {
+    deleteRole: (req, res) => {
 
 
         var id = req.params.id;
@@ -312,7 +312,7 @@ var userController = {
 
         var query = { '_id': { $eq: id } };
 
-        user.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
+        role.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -339,4 +339,4 @@ var userController = {
 
 }
 
-module.exports = userController;
+module.exports = roleController;

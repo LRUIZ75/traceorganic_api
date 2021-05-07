@@ -1,8 +1,9 @@
-﻿// Last Updated: 05/05/2021 09:03:03 p. m.
+﻿// Last Updated: 07/05/2021 05:00:22 p. m.
 // Updated By  : @YourName
 'use strict'
 
 var express = require('express');
+const { verify } = require('../middelware/access.middleware');
 
 var userController = require('../controllers/user.controller');
 
@@ -21,16 +22,16 @@ D for Delete: HTTP DELETE
 
 
 // USER
-router.post('/user',  userController.addUser); //CREATE
+router.post('/user',  verify(), userController.addUser); //CREATE
 
 
-router.put('/user/:id',  userController.editUser); //UPDATE
+router.put('/user/:id',  verify(), userController.editUser); //UPDATE
 
-router.get('/user/:id?', userController.getUser); //RETRIEVE
-router.get('/user',  userController.getUser); //RETRIEVE
+router.get('/user/:id?',  verify(),userController.getUser); //RETRIEVE
+router.get('/user',  verify(), userController.getUser); //RETRIEVE
 
 
-router.delete('/user/:id',  userController.deleteUser); //DELETE
+router.delete('/user/:id',  verify(), userController.deleteUser); //DELETE
 
 
 module.exports = router;

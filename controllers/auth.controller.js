@@ -32,7 +32,7 @@ var authController = {
    *           application/json:
    *             schema:
    *               properties:
-   *                 userName:
+   *                 username:
    *                   type: string
    *                   example: 'admin'
    *                 password:
@@ -48,6 +48,8 @@ var authController = {
    *                 status:
    *                   type: string
    *                   example: 'ok'
+   *                 user:
+   *                   $ref: "#/components/schemas/User"
    *                 token:
    *                   type: string
    *                   example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImxydWl6NzUiLCJpYXQiOjE2MTQ2NDgzNDEsImV4cCI6MTYxNDY1MTk0MX0.4w78Mk1ztSuBhayQCbPOv-v5xrlscpgoAz9OSo2Cm4'
@@ -60,28 +62,28 @@ var authController = {
    */
   login: (req, res) => {
     var userData = JSON.parse(JSON.stringify(req.body));
-    var userName = "";
+    var username = "";
     var password = "";
 
     if (!userData) {
       return res.status(400).send({
         status: "error",
-        message: "Parámetros de llamada no válidos",
+        message: "Parámetros no son válidos",
       });
     }
 
-    userName = userData.userName;
+    username = userData.username;
     password = userData.password;
 
-    if (!userName || !password) {
+    if (!username || !password) {
       return res.status(400).send({
         status: "error",
-        message: "Parámetros de llamada no válidos",
+        message: "Parámetros no son válidos",
       });
     }
 
-    var query = { userName: { $eq: userName } };
-    usersModel.findOne(query, (err, userObject) => {
+    var query = { username: { $eq: username } };
+    usersModel.findOne(query, (err, user) => {
       if (err) {
         return res.status(500).send({
           status: "error",
@@ -89,14 +91,24 @@ var authController = {
         });
       }
 
-      if (!userObject) {
+      if (!user) {
         return res.status(401).send({
           status: "error",
           message: "No autorizado",
         });
       }
 
-      if (!bcrypt.compareSync(password, userObject.password)) {
+      if(!user.isActive || !user.isVerifiedEmail) {
+        return res.status(401).send({
+          status: "error",
+          message: "No autorizado",
+        });
+      }
+
+      //console.log(password);
+      //console.log(user.password);      
+
+      if (!bcrypt.compareSync(password, user.password)) {
         return res.status(401).send({
           status: "error",
           message: "No autorizado",
@@ -104,7 +116,7 @@ var authController = {
       }
 
       // Proceder con la autorización, crear el JWT y devolverlo con un codigo
-      let payload = { userName: userName };
+      let payload = { username: user.username, company: user.company, roles: user.roles };
       let accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
         algorithm: "HS256",
         expiresIn: process.env.ACCESS_TOKEN_LIFE,
@@ -120,6 +132,7 @@ var authController = {
 
       return res.status(200).send({
         status: "ok",
+        user: user,
         token: accessToken,
       });
     });

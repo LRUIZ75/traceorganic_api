@@ -4,6 +4,8 @@ var express = require('express');
 
 const { verify } = require('../middelware/access.middleware');
 
+const passport = require('passport');
+
 
 const authController = require('../controllers/auth.controller');
 

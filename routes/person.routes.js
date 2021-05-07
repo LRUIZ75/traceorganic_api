@@ -1,8 +1,9 @@
-﻿// Last Updated: 05/05/2021 12:47:00 a. m.
+﻿// Last Updated: 07/05/2021 04:58:40 p. m.
 // Updated By  : @YourName
 'use strict'
 
 var express = require('express');
+const { verify } = require('../middelware/access.middleware');
 
 var personController = require('../controllers/person.controller');
 
@@ -21,16 +22,16 @@ D for Delete: HTTP DELETE
 
 
 // PERSON
-router.post('/person',  personController.addPerson); //CREATE
+router.post('/person',  verify(), personController.addPerson); //CREATE
 
-router.put('/person/:field/:id', [ md_uploadpictures], personController.setPicture); //UPDATE IMAGE 
-router.put('/person/:id',  personController.editPerson); //UPDATE
+router.put('/person/:field/:id', [ verify(), md_uploadpictures], personController.setPicture); //UPDATE IMAGE 
+router.put('/person/:id',  verify(), personController.editPerson); //UPDATE
 
-router.get('/person/:id?', personController.getPerson); //RETRIEVE
-router.get('/person',  personController.getPerson); //RETRIEVE
+router.get('/person/:id?',  verify(),personController.getPerson); //RETRIEVE
+router.get('/person',  verify(), personController.getPerson); //RETRIEVE
 router.get('/person/picture/:filename', personController.getPicture); //RETRIEVE IMAGE 
 
-router.delete('/person/:id',  personController.deletePerson); //DELETE
+router.delete('/person/:id',  verify(), personController.deletePerson); //DELETE
 
 
 module.exports = router;

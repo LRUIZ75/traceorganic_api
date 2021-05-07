@@ -21,24 +21,26 @@ global.baseURL = 'localhost';
 // Cargar ficheros rutas
 var authRoutes = require('./routes/auth.routes');
 var personRoutes = require('./routes/person.routes');
-var generalsettingRoutes = require('./routes/generalsetting.routes');
+var companyRoutes = require('./routes/company.routes');
 var driverRoutes = require('./routes/driver.routes');
 var vehicleRoutes = require('./routes/vehicle.routes');
 var userRoutes = require('./routes/user.routes');
+var roleRoutes = require('./routes/role.routes');
 
 var apiRoutes = [
   authRoutes, 
-  generalsettingRoutes,
+  userRoutes,
+  roleRoutes,
+  companyRoutes,
   personRoutes,
   driverRoutes,
   vehicleRoutes,
-  userRoutes
 ];
 
 var rootRoutes = require('./routes/root.routes');
 
 process.env.ACCESS_TOKEN_SECRET = "xv2pXfdXV&aDs91P";
-process.env.ACCESS_TOKEN_LIFE = '1h';
+process.env.ACCESS_TOKEN_LIFE = '4h';
 process.env.REFRESH_TOKEN_SECRET = "hw782wujnd99ahmmakhanjkajikhi&aDs91P";
 process.env.REFRESH_TOKEN_LIFE = '24h';
 
@@ -46,6 +48,13 @@ process.env.REFRESH_TOKEN_LIFE = '24h';
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+
+/* <PASSPORT> */
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+app.use(passport.initialize());
+/* </PASSPORT> */
 
 
 // Activar CORS
@@ -64,83 +73,21 @@ console.debug('listening on port ' + global.PORT);
 
 app.disable('x-powered-by');
 
+
+/* <SWAGGER> */
 const swaggerJsdoc = require('swagger-jsdoc');
-
-const swaggerOptions = {
-  definition: {
-    openapi: '3.0.3',
-    info: {
-      title: 'TraceOrganic API',
-      description: 'An API Rest for TraceOrganic',
-      version: '1.0.0',
-      license: {
-        name: "GNU AGPL3",
-        url: "https://www.gnu.org/licenses/agpl-3.0-standalone.html"
-      },
-      contact: {
-        name: "CSi Hialeah",
-        url: "http://csihialeah.odoo.com",
-        email: "csihialeah@gmail.com"
-      },
-      servers: [
-        {
-          url: "https://traceorganic-api.herokuapp.com/api",
-          description: "Heroku Server"
-        },
-        {
-          url: "http://localhost:5000/api",
-          description: "Local Server"
-        }
-      ]
-    },
-  },
-  components: {
-    schemas: {
-    },
-    securitySchemes: {
-      BasicAuth: {
-        type: "http",
-        scheme: "basic"
-      },
-      BearerAuth: {
-        type: "http",
-        scheme: "bearer",
-        bearerFormat: "JWT"
-      },
-      API_Key: {
-        type: "apiKey",
-        name: "API_Key",
-        in: "header"
-      }
-    }
-  },
-  security: [
-    {
-      BasicAuth: []
-    },
-    {
-      BearerAuth: []
-    },
-    {
-      API_Key: []
-    }
-  ],
-  apis: ['./controllers/*.controller.js', './models/*.model.js'], // files containing annotations as above
-};
-
+var json_data = require('./swagger.json');
+const swaggerOptions = JSON.parse(JSON.stringify(json_data));
 const openapiSpecification = swaggerJsdoc(swaggerOptions);
-
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(openapiSpecification, { explorer: true }));
+/* </SWAGGER> */
+
 
 // Añadir prefijos a las rutas / Cargar rutas
 // Añadir manualmente las rutas parciales en el arreglo
 app.use('/api', apiRoutes);
 app.use('/', rootRoutes);
 
-
-
-// /* Endpoints */
-// require('./src/endpoints')(app);
 
 
 // Exportar módulo (fichero actual)

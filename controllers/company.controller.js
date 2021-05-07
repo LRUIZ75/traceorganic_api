@@ -1,36 +1,38 @@
-﻿// Last Updated: 05/05/2021 04:03:26 a. m.
+﻿// Last Updated: 07/05/2021 03:38:42 p. m.
 // Updated By  : @YourName
 'use strict'
 
 const os = require('os');
-const generalsettingModel = require('../models/generalsetting.model');
+const companyModel = require('../models/company.model');
 const validator = require('validator');
 const fs = require('fs');
 const path = require('path');
 const { ObjectId } = require('mongodb');
-const { findOneAndDelete } = require('../models/generalsetting.model');
+const { findOneAndDelete } = require('../models/company.model');
 
 
 /**
  * @swagger
  * tags:
- *   name: GeneralSetting
- *   description: Application General Setting
+ *   name: Company
+ *   description: Company Data
  */
 
-var generalsettingController = {
+var companyController = {
 
     /**
      * @openapi
-     * /api/generalsetting/{id}:
+     * /api/company/{id}:
      *   get:
      *     tags: 
-     *       - GeneralSetting
-     *     summary: GET ONE GENERALSETTING BY ID 
+     *       - Company
+     *     summary: GET ONE COMPANY BY ID 
+     *     security:
+     *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: GeneralSetting Id
+     *         description: Company Id
      *         required: false
      *         schema:
      *           type: string
@@ -40,7 +42,7 @@ var generalsettingController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/GeneralSetting"
+     *               $ref: "#/components/schemas/Company"
      *       404:
      *         description: Not Found
      *       500:
@@ -49,11 +51,13 @@ var generalsettingController = {
 
     /**
      * @openapi
-     * /api/generalsetting:
+     * /api/company:
      *   get:
      *     tags: 
-     *       - GeneralSetting
-     *     summary: GET ALL GENERALSETTING
+     *       - Company
+     *     summary: GET ALL COMPANY
+     *     security:
+     *       - BearerAuth: []
      *     responses:
      *       200:
      *         description: OK
@@ -62,14 +66,14 @@ var generalsettingController = {
      *             schema:
      *               type: array
      *               items:
-     *                 $ref: "#/components/schemas/GeneralSetting"
+     *                 $ref: "#/components/schemas/Company"
      *       404:
      *         description: Not Found
      *       500:
      *         description: Internal Server Error
      */
 
-    getGeneralSetting: (req, res) => {
+    getCompany: (req, res) => {
 
         var id = req.params.id;
 
@@ -78,9 +82,9 @@ var generalsettingController = {
         if (!id || id === undefined) query = {};
         else query = { '_id': { $eq: id } };
 
-        //console.log(query);
+        console.log(query);
 
-        generalsettingModel.find(query, (err, objects) => {
+        companyModel.find(query, (err, objects) => {
 
 
             if (err) {
@@ -96,7 +100,7 @@ var generalsettingController = {
                 return (res.status(404).send({
                     status: "error",
                     message: "Registro(s) no encontrado(s)",
-                    links: [{ "Agregar registro => curl -X POST ": global.baseURL + "/api/generalsetting" }]
+                    links: [{ "Agregar registro => curl -X POST ": global.baseURL + "/api/company" }]
                 }
 
                 ));
@@ -113,30 +117,32 @@ var generalsettingController = {
 
     /**
      * @openapi
-     * /api/generalsetting:
+     * /api/company:
      *   post:
      *     tags: 
-     *       - GeneralSetting
-     *     summary: ADD NEW GENERALSETTING
+     *       - Company
+     *     summary: ADD NEW COMPANY
+     *     security:
+     *       - BearerAuth: []
      *     requestBody:
      *       required: true
      *       content: 
      *         application/json:
      *           schema:
-     *             $ref: "#/components/schemas/GeneralSetting"
+     *             $ref: "#/components/schemas/Company"
      *     responses:
      *       201:
      *         description: Created
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/GeneralSetting"
+     *               $ref: "#/components/schemas/Company"
      *       400:
      *         description: Bad Request
      *       500:
      *         description: Internal Server Error
      */
-    addGeneralSetting: (req, res) => {
+    addCompany: (req, res) => {
 
 
         var data = req.body;
@@ -153,12 +159,12 @@ var generalsettingController = {
         }
 
 
-        var newGeneralSetting = new generalsettingModel(data);
+        var newCompany = new companyModel(data);
 
 
 
         //INTENTAR GUARDAR EL NUEVO OBJETO
-        newGeneralSetting.save((err, storedObject) => {
+        newCompany.save((err, storedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -185,15 +191,17 @@ var generalsettingController = {
 
     /**
      * @openapi
-     * /api/generalsetting/{id}:
+     * /api/company/{id}:
      *   put:
      *     tags: 
-     *       - GeneralSetting
-     *     summary: UPDATE ONE GENERALSETTING BY ID
+     *       - Company
+     *     summary: UPDATE ONE COMPANY BY ID
+     *     security:
+     *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "GeneralSetting Id"
+     *         description: "Company Id"
      *         type: string
      *         required: true
      *     requestBody:
@@ -201,14 +209,14 @@ var generalsettingController = {
      *       content: 
      *         application/json:
      *           schema:
-     *             $ref: "#/components/schemas/GeneralSetting"
+     *             $ref: "#/components/schemas/Company"
      *     responses:
      *       200:
      *         description: OK
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/GeneralSetting"
+     *               $ref: "#/components/schemas/Company"
      *       400:
      *         description: Bad Request
      *       404:
@@ -216,7 +224,7 @@ var generalsettingController = {
      *       500:
      *         description: Internal Server Error
      */
-    editGeneralSetting: (req, res) => {
+    editCompany: (req, res) => {
 
         var id = req.params.id;
         var data = req.body;
@@ -237,7 +245,7 @@ var generalsettingController = {
         var query = { '_id': { $eq: id } };
         var command = { $set: data };
 
-        generalsettingModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
+        companyModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -264,15 +272,17 @@ var generalsettingController = {
 
     /**
      * @openapi
-     * /api/generalsetting/{id}:
+     * /api/company/{id}:
      *   delete:
      *     tags: 
-     *       - GeneralSetting
-     *     summary: DELETE ONE GENERALSETTING BY ID
+     *       - Company
+     *     summary: DELETE ONE COMPANY BY ID
+     *     security:
+     *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "GeneralSetting Id"
+     *         description: "Company Id"
      *         type: string
      *         required: true
      *     responses:
@@ -281,7 +291,7 @@ var generalsettingController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/GeneralSetting"
+     *               $ref: "#/components/schemas/Company"
      *       400:
      *         description: Bad Request
      *       404:
@@ -289,7 +299,7 @@ var generalsettingController = {
      *       500:
      *         description: Internal Server Error
      */
-    deleteGeneralSetting: (req, res) => {
+    deleteCompany: (req, res) => {
 
 
         var id = req.params.id;
@@ -302,7 +312,7 @@ var generalsettingController = {
 
         var query = { '_id': { $eq: id } };
 
-        generalsetting.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
+        company.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -329,11 +339,13 @@ var generalsettingController = {
 
     /**
      * @openapi
-     * /api/generalsetting/{field}/{id}:
+     * /api/company/{field}/{id}:
      *   put:
      *     tags: 
-     *       - GeneralSetting
-     *     summary: UPLOAD GENERALSETTING LOGO BY ID
+     *       - Company
+     *     summary: UPLOAD COMPANY LOGO BY ID
+     *     security:
+     *       - BearerAuth: []
      *     requestBody:
      *       content:
      *         multipart/form-data:
@@ -352,7 +364,7 @@ var generalsettingController = {
      *         required: true
      *       - in: path
      *         name: id
-     *         description: "GeneralSetting Id"
+     *         description: "Company Id"
      *         type: string
      *         required: true
      *     responses:
@@ -361,7 +373,7 @@ var generalsettingController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/GeneralSetting"
+     *               $ref: "#/components/schemas/Company"
      *       400:
      *         description: Bad Request
      *       404:
@@ -397,7 +409,7 @@ var generalsettingController = {
 
 
         //TODO: Revisar y controlar los campos válidos para imagenes de la colección
-        var validFields = ["picture"];
+        var validFields = ["logo"];
 
         if (!(fieldname in validFields)) {
           return res.status(400).send({
@@ -424,7 +436,7 @@ var generalsettingController = {
 
             var command = { $set: { [fieldname]: file_name } };
 
-            generalsetting.findOne(query, (err, doc) => {
+            company.findOne(query, (err, doc) => {
                 if (err)
                   return res.status(500).send({
                     status: "error",
@@ -434,10 +446,10 @@ var generalsettingController = {
                   var object = JSON.parse(JSON.stringify(doc._doc));
                   oldvalue = object[fieldname];
                   oldvalue = "/uploads/picture/" + oldvalue;
-                  //console.log(`Deleting: ${oldvalue}`);
+                  console.log(`Deleting: ${oldvalue}`);
                   fs.unlinkSync(oldvalue);
                  }});
-         generalsetting.findOneAndUpdate(
+         company.findOneAndUpdate(
             query,
             command,
             { new: true },
@@ -484,11 +496,11 @@ var generalsettingController = {
 
     /**
      * @openapi
-     * /api/generalsetting/picture/{filename}:
+     * /api/company/picture/{filename}:
      *   get:
      *     tags: 
-     *       - GeneralSetting
-     *     summary: GET GENERALSETTING PICTURE BY FILENAME
+     *       - Company
+     *     summary: GET COMPANY PICTURE BY FILENAME
      *     parameters:
      *       - in: path
      *         name: filename
@@ -542,4 +554,4 @@ var generalsettingController = {
 
 }
 
-module.exports = generalsettingController;
+module.exports = companyController;

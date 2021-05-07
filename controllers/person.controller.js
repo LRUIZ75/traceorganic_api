@@ -1,4 +1,4 @@
-﻿// Last Updated: 05/05/2021 03:53:58 a. m.
+﻿// Last Updated: 07/05/2021 04:58:40 p. m.
 // Updated By  : @YourName
 'use strict'
 
@@ -27,6 +27,8 @@ var personController = {
      *     tags: 
      *       - Person
      *     summary: GET ONE PERSON BY ID 
+     *     security:
+     *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
@@ -54,6 +56,8 @@ var personController = {
      *     tags: 
      *       - Person
      *     summary: GET ALL PERSON
+     *     security:
+     *       - BearerAuth: []
      *     responses:
      *       200:
      *         description: OK
@@ -78,7 +82,7 @@ var personController = {
         if (!id || id === undefined) query = {};
         else query = { '_id': { $eq: id } };
 
-        //console.log(query);
+        console.log(query);
 
         personModel.find(query, (err, objects) => {
 
@@ -118,6 +122,8 @@ var personController = {
      *     tags: 
      *       - Person
      *     summary: ADD NEW PERSON
+     *     security:
+     *       - BearerAuth: []
      *     requestBody:
      *       required: true
      *       content: 
@@ -190,6 +196,8 @@ var personController = {
      *     tags: 
      *       - Person
      *     summary: UPDATE ONE PERSON BY ID
+     *     security:
+     *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
@@ -269,6 +277,8 @@ var personController = {
      *     tags: 
      *       - Person
      *     summary: DELETE ONE PERSON BY ID
+     *     security:
+     *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
@@ -334,6 +344,8 @@ var personController = {
      *     tags: 
      *       - Person
      *     summary: UPLOAD PERSON PICTURE BY ID
+     *     security:
+     *       - BearerAuth: []
      *     requestBody:
      *       content:
      *         multipart/form-data:
@@ -434,7 +446,7 @@ var personController = {
                   var object = JSON.parse(JSON.stringify(doc._doc));
                   oldvalue = object[fieldname];
                   oldvalue = "/uploads/picture/" + oldvalue;
-                  //console.log(`Deleting: ${oldvalue}`);
+                  console.log(`Deleting: ${oldvalue}`);
                   fs.unlinkSync(oldvalue);
                  }});
          person.findOneAndUpdate(

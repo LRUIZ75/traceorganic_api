@@ -1,4 +1,4 @@
-﻿// Last Updated: 05/05/2021 04:07:40 a. m.
+﻿// Last Updated: 07/05/2021 04:55:00 p. m.
 // Updated By  : @YourName
 'use strict'
 
@@ -27,6 +27,8 @@ var vehicleController = {
      *     tags: 
      *       - Vehicle
      *     summary: GET ONE VEHICLE BY ID 
+     *     security:
+     *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
@@ -54,6 +56,8 @@ var vehicleController = {
      *     tags: 
      *       - Vehicle
      *     summary: GET ALL VEHICLE
+     *     security:
+     *       - BearerAuth: []
      *     responses:
      *       200:
      *         description: OK
@@ -78,7 +82,7 @@ var vehicleController = {
         if (!id || id === undefined) query = {};
         else query = { '_id': { $eq: id } };
 
-        //console.log(query);
+        console.log(query);
 
         vehicleModel.find(query, (err, objects) => {
 
@@ -118,6 +122,8 @@ var vehicleController = {
      *     tags: 
      *       - Vehicle
      *     summary: ADD NEW VEHICLE
+     *     security:
+     *       - BearerAuth: []
      *     requestBody:
      *       required: true
      *       content: 
@@ -190,6 +196,8 @@ var vehicleController = {
      *     tags: 
      *       - Vehicle
      *     summary: UPDATE ONE VEHICLE BY ID
+     *     security:
+     *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
@@ -269,6 +277,8 @@ var vehicleController = {
      *     tags: 
      *       - Vehicle
      *     summary: DELETE ONE VEHICLE BY ID
+     *     security:
+     *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
@@ -334,6 +344,8 @@ var vehicleController = {
      *     tags: 
      *       - Vehicle
      *     summary: UPLOAD VEHICLE PICTURE BY ID
+     *     security:
+     *       - BearerAuth: []
      *     requestBody:
      *       content:
      *         multipart/form-data:

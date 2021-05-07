@@ -1,80 +1,78 @@
-'use strict'
+"use strict";
 
-const mongoose = require('mongoose');
-const validator = require('validator');
+const mongoose = require("mongoose");
+const validator = require("validator");
+
 const bcrypt = require("bcryptjs");
 
+const SALT_WORK_FACTOR = 10;
 
 const Schema = mongoose.Schema;
 
-
-
 const UserSchema = Schema({
-
-	username: {
-        type: String,
-        required: [true, "ES REQUERIDO"],
-        unique: true,
-        index: true,
-        minLength: 4,
-        maxLength: 20,
-        lowercase: true,
-        trim: true
+  username: {
+    type: String,
+    required: [true, "ES REQUERIDO"],
+    index: { unique: true },
+    minLength: 5,
+    maxLength: 20,
+    lowercase: true,
+    trim: true,
+  },
+  password: {
+    type: String,
+    trim: true,
+    minLength: 8,
+    required: [true, "ES REQUERIDO"],
+    set: (v) => {
+      var salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
+      var hash = bcrypt.hashSync(v, salt);
+      return hash;
     },
-    password: {
-        type: String,
-        trim: true,
-        minLength: 8,
-        required: [true, "ES REQUERIDO"],
-        set: v=> {
-            var salt=bcrypt.genSaltSync(10);
-            var hash = bcrypt.hashSync(v, salt);
-            return hash;
-        }
+  },
+  person: {
+    type: Schema.Types.ObjectId,
+    index: { unique: true },
+    ref: "Person",
+    required: [true, "ES REQUERIDO"],
+  },
+  email: {
+    type: String,
+    trim: true,
+    lowercase: true,
+    index: { unique: true },
+    required: [true, "ES REQUERIDO"],
+    validate: {
+      validator: validator.isEmail,
+      message: "{VALUE} no es una dirección de correo válida",
+      isAsync: false,
     },
-	person: {
-        type: Schema.Types.ObjectId, 
-        ref: 'Person',
-        required: [true, "ES REQUERIDO"]
-    },
-	email: {
-        type: String, 
-        trim: true, 
-        lowercase: true, 
-        unique: true, 
-        index: true,
-        required: [true, "ES REQUERIDO"],
-        validate: {
-            validator: validator.isEmail,
-            message: '{VALUE} no es una dirección de correo válida',
-            isAsync: false
-        }
-    }, 
-	isVerifiedEmail: {
-        type: Boolean,
-        default: false
-    },
-	creationDate: {
-        type: Date,
-        default: Date.now()},
-	roles: {
-        type: Array(Schema.Types.ObjectId),
-        ref: 'role'
-    },
-	company: {  
-        type: Schema.Types.ObjectId,
-        ref: 'company',
-        required: [true, "ES REQUERIDO"]
-    },
-	refreshAccessToken: {
-        type: String,
-        default: null
-    },
-	isActive: {
-        type: Boolean,
-        default: false
-    },
-	
+  },
+  isVerifiedEmail: {
+    type: Boolean,
+    default: false,
+  },
+  creationDate: {
+    type: Date,
+    default: Date.now(),
+  },
+  roles: {
+    type: Array(Schema.Types.ObjectId),
+    ref: "role",
+  },
+  company: {
+    type: Schema.Types.ObjectId,
+    ref: "company",
+    required: [true, "ES REQUERIDO"],
+  },
+  refreshAccessToken: {
+    type: String,
+    default: null,
+  },
+  isActive: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 /**
@@ -82,13 +80,13 @@ const UserSchema = Schema({
  * components:
  *   schemas:
  *     User:
- *       properties: 
+ *       properties:
  *         username:
  *           type: "string"
  *         password:
  *           type: "string"
  *           format: "password"
- *         person: 
+ *         person:
  *           type: "string"
  *           format: "oid"
  *         email:
@@ -122,5 +120,5 @@ const UserSchema = Schema({
  *
  */
 
-module.exports = mongoose.model('User',UserSchema);
+module.exports = mongoose.model("User", UserSchema);
 // mongoDB creará la collección, con documentos de estructura del modelo.

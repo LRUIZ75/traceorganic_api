@@ -9,13 +9,14 @@ const VehicleSchema = Schema({
     plateNumber:
       { 
         type: String,
+        index: { unique: true},
         minLength: 6,
-        required: [true,'el campo es requerido']
+        required: [true,'ES REQUERIDO']
       },
     vehicleType:
       { type: String,
-        enum: ['Camión', 'Camioneta', 'Furgón', 'Rastra', 'Otro'],
-        required: [true,'el campo es requerido']
+        enum: ['TRUCK', 'PICKUP-TRUCK', "WAGGON", "OTHER"],
+        required: [true,'ES REQUERIDO']
       },
     picture:
       { type: String,
@@ -24,8 +25,11 @@ const VehicleSchema = Schema({
       { type: Number },
     presetTareKg:
       { type: Number },
-    defaultDriverId:
-      { type: mongoose.ObjectId}
+    owner:
+      { 
+        type: Schema.Types.ObjectId,
+        ref: "Person"
+      }
     
 });
 
@@ -40,14 +44,17 @@ const VehicleSchema = Schema({
  *           type: "string"
  *         vehicleType:
  *           type: "string"
+ *           enum: ["TRUCK", "PICKUP-TRUCK", "WAGGON", "OTHER"]
+ *           example: "TRUCK"
  *         picture:
  *           type: "string"
  *         maxCapacityKg:
  *           type: "number"
  *         presetTareKg:
  *           type: "number"
- *         defaultDriverId:
+ *         owner:
  *           type: "string"
+ *           format: "oid"
  *       required:
  *         - plateNumber
  *         - vehicleType
