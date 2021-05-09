@@ -36,18 +36,18 @@ const DriverSchema = Schema({
  *     Driver:
  *       properties:
  *         person:
- *           type: "string"
- *           format: "oid"
+ *           type: string
+ *           format: oid
  *         creationDate:
- *           type: "string"
- *           format: "date"
+ *           type: string
+ *           format: date
  *         licenseCard:
  *           type: string
  *         insuranceCard:
  *           type: string
  *           default: null
  *         isActive:
- *           type: "boolean"
+ *           type: boolean
  *           default: true
  *       required:
  *         - person

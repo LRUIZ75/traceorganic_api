@@ -8,7 +8,7 @@ exports.verify = function (options) {
     if (!accessToken) {
       //console.log(req.headers);
       return res.status(403).send({
-        message: "Token no encontrado",
+        message: "No autorizado",
       });
     }
 
@@ -29,24 +29,13 @@ exports.verify = function (options) {
         }
 
         if (verified) {
-          var payload = jwt.decode(accessToken, { json: true });
-
-          if (options) {
-            if (options.includes("hasRole")) {
-              if (!(options.requiredRole in payload.roles)) {
-                return res.status(401).send({
-                  status: "error",
-                  message: "Permisos insuficientes",
-                });
-              }
-            }
-          }
-
+          let payload = jwt.decode(accessToken, { json: true });
+          
+          //pasar el payload, para más verifaciones
           req.payload = payload;
         }
       }
     );
-
     next();
   };
 };

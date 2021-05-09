@@ -6,26 +6,30 @@ const validator = require("validator");
 const Schema = mongoose.Schema;
 
 //ToDo: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!//ToDo: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
-const RoleSchema = Schema({
-  name: {
+const RoleActionSchema = Schema({
+  role: {
+    type: Schema.Types.ObjectId,
+    ref: "Role",
+    required: [true, "ES REQUERIDO"],
+  },
+  actionName: {
     type: String,
     trim: true,
-    index: { unique: true },
     validate: {
       validator: function (v) {
-        return /^[A-Za-z]+$/.test(v);
+        return /^[A-Za-z ]+$/.test(v);
       },
       message: "NO VÁLIDO",
     },
     required: [true, "ES REQUERIDO"],
   },
+  filterByCompany: {
+    type: Boolean,
+    default: false,
+  },
   isActive: {
     type: Boolean,
     default: true,
-  },
-  description: {
-    type: String,
-    default: null,
   },
 });
 
@@ -34,20 +38,23 @@ const RoleSchema = Schema({
  * @swagger
  * components:
  *   schemas:
- *     Role:
+ *     RoleAction:
  *       properties:
- *         name:
- *           type: string
- *           example: "admin"
+ *         role:
+ *           type: "string"
+ *           format: "oid"
+ *         actionName:
+ *           type: "string"
+ *         filterByCompany:
+ *           type: boolean
+ *           default: false
  *         isActive:
  *           type: boolean
  *           default: true
- *         description:
- *           type: "string"
- *           default: null
  *       required:
- *         - name
+ *         - role
+ *         - actionName
  */
 
-module.exports = mongoose.model("Role", RoleSchema);
+module.exports = mongoose.model("RoleAction", RoleActionSchema);
 // mongoDB creará la collección, con documentos de estructura del modelo.
