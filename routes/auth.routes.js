@@ -2,7 +2,7 @@
 
 var express = require('express');
 
-const { verify } = require('../middelware/access.middleware');
+const { verify } = require('../middleware/access.middleware');
 
 const passport = require('passport');
 

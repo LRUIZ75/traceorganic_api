@@ -3,7 +3,7 @@
 'use strict'
 
 var express = require('express');
-const { verify } = require('../middelware/access.middleware');
+const { verify } = require('../middleware/access.middleware');
 
 var driverController = require('../controllers/driver.controller');
 
