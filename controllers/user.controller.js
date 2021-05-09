@@ -75,18 +75,21 @@ var userController = {
 
   getUser: (req, res) => {
     var id = req.params.id;
+
     var payload = req.payload;
     
-    if(!containsRole("admin",payload.roles)){
+/*     if(!containsRole("admin",payload.roles)){
       return res.status(401).send({
         status: "error",
         message: "ROL ADMINISTRADOR REQUERIDO"
       });
-    }
+    } */
 
     var query = { _id: { $eq: id } };
 
-    if (!id || id === undefined) query = {};
+    if (!id || id === undefined) {
+      query = {};
+    }
     else query = { _id: { $eq: id } };
 
     console.log(query);

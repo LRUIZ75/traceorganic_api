@@ -8,7 +8,7 @@ exports.verify = function (options) {
     if (!accessToken) {
       //console.log(req.headers);
       return res.status(403).send({
-        message: "No autorizado",
+        message: "TOKEN NO EXISTE",
       });
     }
 

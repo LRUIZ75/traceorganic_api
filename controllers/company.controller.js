@@ -76,6 +76,14 @@ var companyController = {
     getCompany: (req, res) => {
 
         var id = req.params.id;
+        var payload = req.payload;
+        
+/*         if(!containsRole("admin",payload.roles) && !containsRole("superadmin",payload.roles)){
+            return res.status(401).send({
+            status: "error",
+            message: "NO TIENE AUTORIZACIÓN"
+            });
+        } */
 
         var query = { '_id': { $eq: id } };
 
@@ -146,6 +154,14 @@ var companyController = {
 
 
         var data = req.body;
+        var payload = req.payload;
+        
+        /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
 
 
         //SIN PARAMETROS

@@ -68,7 +68,7 @@ var authController = {
     if (!userData) {
       return res.status(400).send({
         status: "error",
-        message: "Parámetros no son válidos",
+        message: "PARÁMETROS NO VÁLIDOS",
       });
     }
 
@@ -78,7 +78,7 @@ var authController = {
     if (!username || !password) {
       return res.status(400).send({
         status: "error",
-        message: "Parámetros no son válidos",
+        message: "PARÁMETROS NO VÁLIDOS",
       });
     }
 
@@ -94,24 +94,28 @@ var authController = {
       if (!user) {
         return res.status(401).send({
           status: "error",
-          message: "No autorizado",
+          message: "USUARIO NO ENCONTRADO",
         });
       }
 
       if(!user.isActive || !user.isVerifiedEmail) {
         return res.status(401).send({
           status: "error",
-          message: "No autorizado",
+          message: "INACTIVO | EMAIL NO VERIFICADO",
         });
       }
 
-      //console.log(password);
-      //console.log(user.password);      
+      if(user.roles.length < 1){
+        return res.status(401).send({
+          status: "error",
+          message: "ROL DE SEGURIDAD NO DEFINIDO",
+        });
+      }     
 
       if (!bcrypt.compareSync(password, user.password)) {
         return res.status(401).send({
           status: "error",
-          message: "No autorizado",
+          message: "NO AUTORIZADO",
         });
       }
 

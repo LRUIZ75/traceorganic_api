@@ -13,15 +13,11 @@ const roleModel = require("../models/role.model");
  */
 exports.containsRole = (rolename, roles) => {
 
-  for(var i=0; i< roles.length; i++)
-  {
-    if (mongoose.isValidObjectId(roles[i])) {
-      roleModel.findById(roles[i]).then((r) => {
-        if (r.name == rolename) {
-          return true;
-        }
-      });
-    }
-  }
+  roleModel.find({ name: { $eq: rolename } }).then((r)=>{
+    if(r._id in roles)
+      return true;
+  })
+
   return false;
 };
+
