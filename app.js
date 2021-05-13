@@ -5,18 +5,16 @@ const swaggerUI = require('swagger-ui-express');
 
 
 
-var bodyParser = require('body-parser');
 var express = require('express');
 const Cabin = require('cabin');
-const cabin = new Cabin();
+const logger = new Cabin();
 const jwt = require('jsonwebtoken');
 
 // Ejecutar expresss (htpp)
 var app = express();
 
-app.use(cabin.middleware);
+app.use(logger.middleware);
 
-global.baseURL = 'localhost';
 
 // Cargar ficheros rutas
 var authRoutes = require('./routes/auth.routes');
@@ -46,30 +44,24 @@ process.env.REFRESH_TOKEN_LIFE = '24h';
 
 // Middlewares
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));  //false vs true???
+app.use(express.json());
 
-
-/* <PASSPORT> */
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-app.use(passport.initialize());
-/* </PASSPORT> */
 
 
 // Activar CORS
 // Configurar cabeceras y cors
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, X-Access-Token, Content-Type, Accept, Access-Control-Allow-Request-Method');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE, PATCH');
+  /* res.header('Cross-Origin-Resource-Policy', "cross-origin"); */
+  res.header('Access-Control-Allow-Origin', process.env.ORIGIN);
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Headers', 'Authorization, Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
   res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE, PATCH');
-  global.baseURL = req.hostname + ":" + global.PORT;
-  //console.log('INFO: Servidor corriendo en: ' + global.baseURL );
   next();
 });
 
-console.debug('listening on port ' + global.PORT);
+console.debug('listening on port ' + process.env.PORT);
 
 app.disable('x-powered-by');
 

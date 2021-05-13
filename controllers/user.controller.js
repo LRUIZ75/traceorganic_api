@@ -112,7 +112,7 @@ var userController = {
             links: [
               {
                 "Agregar registro => curl -X POST ":
-                  global.baseURL + "/api/user",
+                process.env.API_URL + "/api/user",
               },
             ],
           });

@@ -47,6 +47,9 @@ const PersonSchema = Schema({
     enum: ["M", "F", "U"],
     required: [true, "ES REQUERIDO"],
   },
+  mobile: {
+    type: String
+  },
   birthDate: {
     type: Date,
   },
@@ -83,6 +86,9 @@ const PersonSchema = Schema({
  *           type: "string"
  *           enum: ["M", "F", "U"]
  *           example: "M"
+ *         mobile:
+ *           type: string
+ *           format: phone
  *         birthDate:
  *           type: "string"
  *           format: "date"

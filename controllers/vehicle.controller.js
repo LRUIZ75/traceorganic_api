@@ -99,7 +99,7 @@ var vehicleController = {
             links: [
               {
                 "Agregar registro => curl -X POST ":
-                  global.baseURL + "/api/vehicle",
+                process.env.API_URL + "/api/vehicle",
               },
             ],
           });

@@ -87,7 +87,7 @@ var authController = {
       if (err) {
         return res.status(500).send({
           status: "error",
-          error: err.message,
+          message: err.message,
         });
       }
 

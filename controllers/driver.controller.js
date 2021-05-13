@@ -99,7 +99,7 @@ var driverController = {
             links: [
               {
                 "Agregar registro => curl -X POST ":
-                  global.baseURL + "/api/driver",
+                process.env.API_URL + "/api/driver",
               },
             ],
           });

@@ -100,7 +100,7 @@ var personController = {
                 return (res.status(404).send({
                     status: "error",
                     message: "Registro(s) no encontrado(s)",
-                    links: [{ "Agregar registro => curl -X POST ": global.baseURL + "/api/person" }]
+                    links: [{ "Agregar registro => curl -X POST ": process.env.API_URL + "/api/person" }]
                 }
 
                 ));

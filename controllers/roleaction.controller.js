@@ -99,7 +99,7 @@ var roleactionController = {
             links: [
               {
                 "Agregar registro => curl -X POST ":
-                  global.baseURL + "/api/roleaction",
+                process.env.API_URL + "/api/roleaction",
               },
             ],
           });
