@@ -28,7 +28,7 @@ var authController = {
    *     summary: LOGIN AND AUTHENTICATE
    *     requestBody:
    *         name: userData
-   *         description: 'JSON -> username and password'
+   *         description: 'Credenciales: usuario y contraseña'
    *         required: true
    *         content:
    *           application/json:
@@ -50,7 +50,7 @@ var authController = {
    *                 status:
    *                   type: string
    *                   example: 'ok'
-   *                 user:
+   *                 data:
    *                   $ref: "#/components/schemas/User"
    *                 token:
    *                   type: string
@@ -110,7 +110,7 @@ var authController = {
       if (user.roles.length < 1) {
         return res.status(401).send({
           status: "error",
-          message: MSG["401"] + "ROLES",
+          message: MSG["401"] + "0 ROLES",
         });
       }
 
@@ -142,7 +142,7 @@ var authController = {
 
       return res.status(200).send({
         status: "ok",
-        user: user,
+        data: user,
         token: accessToken,
       });
     });

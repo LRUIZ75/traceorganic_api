@@ -388,6 +388,8 @@ var personController = {
    *         description: Bad Request
    *       404:
    *         description: Not Found
+   *       415:
+   *         description: Unsupported Media Type
    *       500:
    *         description: Internal Server Error
    */
@@ -500,7 +502,7 @@ var personController = {
 
       fs.unlinkSync(file_path);
 
-      return res.status(400).send({
+      return res.status(415).send({
         status: "error",
         message: MSG["FILE-TYPE"],
       });
