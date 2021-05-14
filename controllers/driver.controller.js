@@ -1,20 +1,20 @@
-﻿// Last Updated: 07/05/2021 04:57:12 p. m.
-// Updated By  : @YourName
+﻿// Last Updated: 14/05/2021 12:38:51 a. m.
+// Updated By  : LRUIZ
 "use strict";
 
-const os = require("os");
 const driverModel = require("../models/driver.model");
 const validator = require("validator");
 const fs = require("fs");
 const path = require("path");
 const { ObjectId } = require("mongodb");
 const { findOneAndDelete } = require("../models/driver.model");
+const MSG = require("../modules/message.module");
 
 /**
  * @swagger
  * tags:
  *   name: Driver
- *   description: Transportation Driver Data
+ *   description: Driver Data
  */
 
 var driverController = {
@@ -74,42 +74,45 @@ var driverController = {
   getDriver: (req, res) => {
     var id = req.params.id;
 
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
     var query = { _id: { $eq: id } };
 
     if (!id || id === undefined) query = {};
     else query = { _id: { $eq: id } };
 
-    //console.log(query);
+    console.log(query);
 
-    driverModel
-      .find(query)
-      .populate("person")
-      .exec((err, objects) => {
-        if (err) {
-          return res.status(500).send({
-            status: "error",
-            message: err.message,
-          });
-        }
+    driverModel.find(query)
+    .populate("person")
+    .exec((err, objects) => {
+      if (err) {
+        return res.status(500).send({
+          status: "error",
+          message: MSG["500"] + err.message,
+        });
+      }
 
-        if (!objects || objects.length == 0) {
-          return res.status(404).send({
-            status: "error",
-            message: "Registro(s) no encontrado(s)",
-            links: [
-              {
-                "Agregar registro => curl -X POST ":
-                process.env.API_URL + "/api/driver",
-              },
-            ],
-          });
-        } else {
-          return res.status(200).send({
-            status: "ok",
-            objects: objects,
-          });
-        }
-      });
+      if (!objects || objects.length == 0) {
+        return res.status(404).send({
+          status: "error",
+          message: MSG["NO-DATA"],
+          links: [process.env.API_URL + "doc/#/Driver/post_api_driver"],
+        });
+      } else {
+        return res.status(200).send({
+          status: "ok",
+          data: objects,
+        });
+      }
+    });
   },
 
   /**
@@ -142,11 +145,20 @@ var driverController = {
   addDriver: (req, res) => {
     var data = req.body;
 
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
     //SIN PARAMETROS
     if (!data) {
       return res.status(400).send({
         status: "error",
-        message: "Faltan parámetros de request en formato JSON",
+        message: MSG["NO-BODY"],
       });
     }
 
@@ -157,19 +169,19 @@ var driverController = {
       if (err) {
         return res.status(500).send({
           status: "error",
-          message: err.message,
+          message: MSG["500"] + err.message,
         });
       } else {
         if (!storedObject) {
           return res.status(500).send({
             status: "error",
-            message: "Error al intentar guardar un nuevo registro",
+            message: MSG["500"] + err.message,
           });
         }
 
         return res.status(201).send({
           status: "ok",
-          created: storedObject,
+          data: storedObject,
         });
       }
     });
@@ -214,16 +226,25 @@ var driverController = {
     var id = req.params.id;
     var data = req.body;
 
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
     if (!id || id == undefined) {
       return res.status(400).send({
         status: "error",
-        message: "falta parámetro requerido ID",
+        message: MSG["NO-PARAM"],
       });
     }
     if (!data || data == undefined) {
       return res.status(400).send({
         status: "error",
-        message: "falta parámetro requerido data JSON",
+        message: MSG["NO-BODY"],
       });
     }
 
@@ -238,20 +259,20 @@ var driverController = {
         if (err) {
           return res.status(500).send({
             status: "error",
-            message: err.message,
+            message: MSG["ERROR"] + err.message,
           });
         }
 
         if (!updatedObject) {
           return res.status(404).send({
             status: "error",
-            message: "No se encontró el registro a modificar",
+            message: MSG["NO-DATA"],
           });
         }
 
         return res.status(200).send({
           status: "ok",
-          updated: updatedObject,
+          data: updatedObject,
         });
       }
     );
@@ -287,11 +308,20 @@ var driverController = {
    *         description: Internal Server Error
    */
   deleteDriver: (req, res) => {
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
     var id = req.params.id;
     if (!id || id == undefined) {
       return res.status(400).send({
         status: "error",
-        message: "falta parámetro requerido ID",
+        message: MSG["NO-PARAM"],
       });
     }
 
@@ -301,20 +331,20 @@ var driverController = {
       if (err) {
         return res.status(500).send({
           status: "error",
-          message: err.message,
+          message: MSG["500"] + err.message,
         });
       }
 
       if (!deletedObject) {
         return res.status(404).send({
           status: "error",
-          message: "No se encontró el registro a eliminar",
+          message: MSG["NO-DATA"],
         });
       }
 
       return res.status(200).send({
         status: "ok",
-        deleted: deletedObject,
+        data: deletedObject,
       });
     });
   },
@@ -325,7 +355,7 @@ var driverController = {
    *   put:
    *     tags:
    *       - Driver
-   *     summary: UPLOAD DRIVER LICENSECARD OR INSURANCECARD BY ID
+   *     summary: UPLOAD DRIVER LICENSECARD | INSURANCECARD BY ID
    *     security:
    *       - BearerAuth: []
    *     requestBody:
@@ -334,15 +364,15 @@ var driverController = {
    *           schema:
    *             type: object
    *             properties:
-   *               licenseCard or insuranceCard:
+   *               picture:
    *                 type: string
    *                 format: base64
    *     parameters:
    *       - in: path
    *         name: field
-   *         description: "fieldname for picture"
+   *         description: "fieldname for image"
    *         type: string
-   *         default: "insuranceCard"
+   *         default: "licenseCard | insuranceCard"
    *         required: true
    *       - in: path
    *         name: id
@@ -366,6 +396,15 @@ var driverController = {
   setPicture: (req, res) => {
     //description: 'Archivo grafico: PNG JPEG GIF' ,
 
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
     //recojer fichero de petición
     var file_name = "Imagen no proporcionada...";
     var id = req.params.id;
@@ -376,25 +415,24 @@ var driverController = {
     if (!req.files.picture) {
       return res.status(400).send({
         status: "error",
-        message: "No hay parametro: logo",
-        file_name,
+        message: MSG["NO-PARAM"],
       });
     }
 
     if (!id || !fieldname) {
       return res.status(400).send({
         status: "error",
-        message: "Parámetros de ruta, son incorrectos",
+        message: MSG["NO-PARAM"],
       });
     }
 
     //TODO: Revisar y controlar los campos válidos para imagenes de la colección
-    var validFields = ["licenseCard or insuranceCard"];
+    var validFields = ["licenseCard", "insuranceCard"];
 
     if (!(fieldname in validFields)) {
       return res.status(400).send({
         status: "error",
-        message: "Parámetros de ruta, son incorrectos",
+        message: MSG["NO-DATA"],
       });
     }
 
@@ -411,7 +449,6 @@ var driverController = {
       //Archivo aceptable
 
       var query = { _id: { $eq: id } };
-      // licenseCard | insuranceCard
 
       var command = { $set: { [fieldname]: file_name } };
 
@@ -419,12 +456,12 @@ var driverController = {
         if (err)
           return res.status(500).send({
             status: "error",
-            message: err.message,
+            message: MSG["500"] + err.message,
           });
         if (doc) {
           var object = JSON.parse(JSON.stringify(doc._doc));
           oldvalue = object[fieldname];
-          oldvalue = "/uploads/picture/" + oldvalue;
+          oldvalue = "./uploads/pictures/" + oldvalue;
           console.log(`Deleting: ${oldvalue}`);
           fs.unlinkSync(oldvalue);
         }
@@ -439,7 +476,7 @@ var driverController = {
 
             return res.status(500).send({
               status: "error",
-              message: err.message,
+              message: MSG["500"] + err.message,
             });
           }
 
@@ -448,13 +485,13 @@ var driverController = {
 
             return res.status(404).send({
               status: "error",
-              message: "No se pudo encontrar el registro",
+              message: MSG["NO-DATA"],
             });
           }
 
           return res.status(200).send({
             status: "ok",
-            updated: updatedObject,
+            data: updatedObject,
           });
         }
       );
@@ -467,8 +504,7 @@ var driverController = {
 
       return res.status(400).send({
         status: "error",
-        message: "Tipo de archivo no es imagen",
-        file_name,
+        message: MSG["FILE-TYPE"],
       });
     }
   },
@@ -501,11 +537,20 @@ var driverController = {
    *         description: Internal Server Error
    */
   getPicture: (req, res) => {
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
     var file = req.params.filename;
     if (validator.isEmpty(file)) {
       return res.status(400).send({
         status: "error",
-        message: "falta el nombre del archivo",
+        message: MSG["NO-PARAM"],
       });
     }
 
@@ -515,8 +560,7 @@ var driverController = {
       if (err) {
         return res.status(404).send({
           status: "error",
-          message: "archivo no encontrado",
-          path: path_file,
+          message: MSG["404"] + ": " + path_file,
         });
       }
 

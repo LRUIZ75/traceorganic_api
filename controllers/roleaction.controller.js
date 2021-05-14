@@ -1,14 +1,14 @@
-﻿// Last Updated: 08/05/2021 08:51:01 p. m.
-// Updated By  : @YourName
+﻿// Last Updated: 14/05/2021 12:43:55 a. m.
+// Updated By  : LRUIZ
 "use strict";
 
-const os = require("os");
 const roleactionModel = require("../models/roleaction.model");
 const validator = require("validator");
 const fs = require("fs");
 const path = require("path");
 const { ObjectId } = require("mongodb");
 const { findOneAndDelete } = require("../models/roleaction.model");
+const MSG = require("../modules/message.module");
 
 /**
  * @swagger
@@ -74,42 +74,45 @@ var roleactionController = {
   getRoleAction: (req, res) => {
     var id = req.params.id;
 
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
     var query = { _id: { $eq: id } };
 
     if (!id || id === undefined) query = {};
     else query = { _id: { $eq: id } };
 
-    //console.log(query);
+    console.log(query);
 
-    roleactionModel
-      .find(query)
-      .populate("role")
-      .exec((err, objects) => {
-        if (err) {
-          return res.status(500).send({
-            status: "error",
-            message: err.message,
-          });
-        }
+    roleactionModel.find(query)
+    .populate("role")
+    .exec((err, objects) => {
+      if (err) {
+        return res.status(500).send({
+          status: "error",
+          message: MSG["500"] + err.message,
+        });
+      }
 
-        if (!objects || objects.length == 0) {
-          return res.status(404).send({
-            status: "error",
-            message: "Registro(s) no encontrado(s)",
-            links: [
-              {
-                "Agregar registro => curl -X POST ":
-                process.env.API_URL + "/api/roleaction",
-              },
-            ],
-          });
-        } else {
-          return res.status(200).send({
-            status: "ok",
-            objects: objects,
-          });
-        }
-      });
+      if (!objects || objects.length == 0) {
+        return res.status(404).send({
+          status: "error",
+          message: MSG["NO-DATA"],
+          links: [process.env.API_URL + "doc/#/RoleAction/post_api_roleaction"],
+        });
+      } else {
+        return res.status(200).send({
+          status: "ok",
+          data: objects,
+        });
+      }
+    });
   },
 
   /**
@@ -142,11 +145,20 @@ var roleactionController = {
   addRoleAction: (req, res) => {
     var data = req.body;
 
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
     //SIN PARAMETROS
     if (!data) {
       return res.status(400).send({
         status: "error",
-        message: "Faltan parámetros de request en formato JSON",
+        message: MSG["NO-BODY"],
       });
     }
 
@@ -157,19 +169,19 @@ var roleactionController = {
       if (err) {
         return res.status(500).send({
           status: "error",
-          message: err.message,
+          message: MSG["500"] + err.message,
         });
       } else {
         if (!storedObject) {
           return res.status(500).send({
             status: "error",
-            message: "Error al intentar guardar un nuevo registro",
+            message: MSG["500"] + err.message,
           });
         }
 
         return res.status(201).send({
           status: "ok",
-          created: storedObject,
+          data: storedObject,
         });
       }
     });
@@ -214,16 +226,25 @@ var roleactionController = {
     var id = req.params.id;
     var data = req.body;
 
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
     if (!id || id == undefined) {
       return res.status(400).send({
         status: "error",
-        message: "falta parámetro requerido ID",
+        message: MSG["NO-PARAM"],
       });
     }
     if (!data || data == undefined) {
       return res.status(400).send({
         status: "error",
-        message: "falta parámetro requerido data JSON",
+        message: MSG["NO-BODY"],
       });
     }
 
@@ -238,20 +259,20 @@ var roleactionController = {
         if (err) {
           return res.status(500).send({
             status: "error",
-            message: err.message,
+            message: MSG["ERROR"] + err.message,
           });
         }
 
         if (!updatedObject) {
           return res.status(404).send({
             status: "error",
-            message: "No se encontró el registro a modificar",
+            message: MSG["NO-DATA"],
           });
         }
 
         return res.status(200).send({
           status: "ok",
-          updated: updatedObject,
+          data: updatedObject,
         });
       }
     );
@@ -287,11 +308,20 @@ var roleactionController = {
    *         description: Internal Server Error
    */
   deleteRoleAction: (req, res) => {
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
     var id = req.params.id;
     if (!id || id == undefined) {
       return res.status(400).send({
         status: "error",
-        message: "falta parámetro requerido ID",
+        message: MSG["NO-PARAM"],
       });
     }
 
@@ -301,20 +331,20 @@ var roleactionController = {
       if (err) {
         return res.status(500).send({
           status: "error",
-          message: err.message,
+          message: MSG["500"] + err.message,
         });
       }
 
       if (!deletedObject) {
         return res.status(404).send({
           status: "error",
-          message: "No se encontró el registro a eliminar",
+          message: MSG["NO-DATA"],
         });
       }
 
       return res.status(200).send({
         status: "ok",
-        deleted: deletedObject,
+        data: deletedObject,
       });
     });
   },

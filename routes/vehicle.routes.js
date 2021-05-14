@@ -1,5 +1,5 @@
-﻿// Last Updated: 07/05/2021 04:55:00 p. m.
-// Updated By  : @YourName
+﻿// Last Updated: 14/05/2021 01:11:32 a. m.
+// Updated By  : LRUIZ
 'use strict'
 
 var express = require('express');
@@ -28,7 +28,7 @@ router.put('/vehicle/:field/:id', [ verify(), md_uploadpictures], vehicleControl
 router.put('/vehicle/:id',  verify(), vehicleController.editVehicle); //UPDATE
 
 router.get('/vehicle/:id?',  verify(),vehicleController.getVehicle); //RETRIEVE
-router.get('/vehicle',  verify(), vehicleController.getVehicle); //RETRIEVE
+//router.get('/vehicle',  verify(), vehicleController.getVehicle); //RETRIEVE
 router.get('/vehicle/picture/:filename', vehicleController.getPicture); //RETRIEVE IMAGE 
 
 router.delete('/vehicle/:id',  verify(), vehicleController.deleteVehicle); //DELETE

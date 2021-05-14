@@ -1,5 +1,5 @@
-﻿// Last Updated: 08/05/2021 08:51:01 p. m.
-// Updated By  : @YourName
+﻿// Last Updated: 14/05/2021 12:43:55 a. m.
+// Updated By  : LRUIZ
 'use strict'
 
 var express = require('express');
@@ -10,7 +10,7 @@ var roleactionController = require('../controllers/roleaction.controller');
 var router = express.Router();
 
 var multipart = require('connect-multiparty');
-var md_uploadpictures = multipart({uploadDir: './uploads/pictures/'});
+var md_uploadpictures = multipart({uploadDir: './uploads/logos/'});
 
 /* 
 C for Create: HTTP POST
@@ -28,7 +28,7 @@ router.post('/roleaction',  verify(), roleactionController.addRoleAction); //CRE
 router.put('/roleaction/:id',  verify(), roleactionController.editRoleAction); //UPDATE
 
 router.get('/roleaction/:id?',  verify(),roleactionController.getRoleAction); //RETRIEVE
-router.get('/roleaction',  verify(), roleactionController.getRoleAction); //RETRIEVE
+//router.get('/roleaction',  verify(), roleactionController.getRoleAction); //RETRIEVE
 
 
 router.delete('/roleaction/:id',  verify(), roleactionController.deleteRoleAction); //DELETE

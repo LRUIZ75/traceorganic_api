@@ -1,5 +1,5 @@
-﻿// Last Updated: 07/05/2021 04:57:12 p. m.
-// Updated By  : @YourName
+﻿// Last Updated: 14/05/2021 12:38:51 a. m.
+// Updated By  : LRUIZ
 'use strict'
 
 var express = require('express');
@@ -28,7 +28,7 @@ router.put('/driver/:field/:id', [ verify(), md_uploadpictures], driverControlle
 router.put('/driver/:id',  verify(), driverController.editDriver); //UPDATE
 
 router.get('/driver/:id?',  verify(),driverController.getDriver); //RETRIEVE
-router.get('/driver',  verify(), driverController.getDriver); //RETRIEVE
+//router.get('/driver',  verify(), driverController.getDriver); //RETRIEVE
 router.get('/driver/picture/:filename', driverController.getPicture); //RETRIEVE IMAGE 
 
 router.delete('/driver/:id',  verify(), driverController.deleteDriver); //DELETE

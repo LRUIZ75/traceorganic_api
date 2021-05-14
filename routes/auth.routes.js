@@ -1,19 +1,18 @@
-'use strict'
+"use strict";
 
-var express = require('express');
+var express = require("express");
 
-const { verify } = require('../middleware/access.middleware');
+const { verify } = require("../middleware/access.middleware");
 
-const passport = require('passport');
+const passport = require("passport");
 
-
-const authController = require('../controllers/auth.controller');
+const authController = require("../controllers/auth.controller");
 
 var router = express.Router();
 
-var multipart = require('connect-multiparty');
-var md_uploadlogos = multipart({uploadDir: './uploads/logos'});
-var md_uploadpictures = multipart({uploadDir: './uploads/pictures'});
+var multipart = require("connect-multiparty");
+var md_uploadlogos = multipart({ uploadDir: "./uploads/logos" });
+var md_uploadpictures = multipart({ uploadDir: "./uploads/pictures" });
 
 /* 
 C for Create: HTTP POST
@@ -24,8 +23,6 @@ D for Delete: HTTP DELETE
 
 //AUTHENTICATION
 
-router.post('/login',authController.login); //POST
-
-
+router.post("/login", authController.login); //POST
 
 module.exports = router;

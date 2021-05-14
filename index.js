@@ -57,12 +57,12 @@ mongoose.connect(process.env.URI_MONGODB, options).then(
     // string concatenation - template literals
 
     console.log("INFO: process.env.NODE_ENV = " + chalk.red.bold(process.env.NODE_ENV));
-    console.log("INFO: La base de datos es: " + chalk.green(process.env.URI_MONGOD));
+    console.log("INFO: La base de datos es: " + chalk.green(process.env.URI_MONGODB));
     console.log("INFO: La conexión a la base de datos es correcta!!!");
 
     //Crear servidor y ponerme a escuchar peticiones HTTP
     app.listen(process.env.PORT, () => {
-      console.log("INFO: Escuchando peticiones en: " + chalk.green( `API URL: ${process.env.APIURL}`));
+      console.log("INFO: Escuchando peticiones en: " + chalk.green( `API URL: ${process.env.API_URL}`));
       console.log("INFO: Aceptando peticiones desde: " + chalk.green(`ORIGIN: ${process.env.ORIGIN}`));
       //console.log(process.env);
     });

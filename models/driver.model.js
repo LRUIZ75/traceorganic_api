@@ -23,7 +23,7 @@ const DriverSchema = Schema({
   insuranceCard: {
     type: String,
     trim: true,
-    default: null
+    default: null,
   },
   isActive: { type: Boolean, default: true },
 });

@@ -1,6 +1,7 @@
-﻿"use strict";
+﻿// Last Updated: 14/05/2021 12:40:31 a. m.
+// Updated By  : LRUIZ
+"use strict";
 
-const os = require("os");
 const usersModel = require("../models/user.model");
 const validator = require("validator");
 const fs = require("fs");
@@ -9,6 +10,7 @@ const { ObjectId } = require("mongodb");
 const { findOneAndDelete } = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const MSG = require("../modules/message.module");
 
 /**
  * @openapi
@@ -68,7 +70,7 @@ var authController = {
     if (!userData) {
       return res.status(400).send({
         status: "error",
-        message: "PARÁMETROS NO VÁLIDOS",
+        message: MSG["NO-BODY"],
       });
     }
 
@@ -78,7 +80,7 @@ var authController = {
     if (!username || !password) {
       return res.status(400).send({
         status: "error",
-        message: "PARÁMETROS NO VÁLIDOS",
+        message: MSG["NO-PARAM"],
       });
     }
 
@@ -87,40 +89,44 @@ var authController = {
       if (err) {
         return res.status(500).send({
           status: "error",
-          message: err.message,
+          message: MSG["500"] + err.message,
         });
       }
 
       if (!user) {
         return res.status(401).send({
           status: "error",
-          message: "USUARIO NO ENCONTRADO",
+          message: MSG["401"] + MSG["NO-DATA"],
         });
       }
 
-      if(!user.isActive || !user.isVerifiedEmail) {
+      if (!user.isActive || !user.isVerifiedEmail) {
         return res.status(401).send({
           status: "error",
-          message: "INACTIVO | EMAIL NO VERIFICADO",
+          message: MSG["401"] + "CUENTA NO VERIFICADA / INACTIVA",
         });
       }
 
-      if(user.roles.length < 1){
+      if (user.roles.length < 1) {
         return res.status(401).send({
           status: "error",
-          message: "ROL DE SEGURIDAD NO DEFINIDO",
+          message: MSG["401"] + "ROLES",
         });
-      }     
+      }
 
       if (!bcrypt.compareSync(password, user.password)) {
         return res.status(401).send({
           status: "error",
-          message: "NO AUTORIZADO",
+          message: MSG["NO-DATA"],
         });
       }
 
       // Proceder con la autorización, crear el JWT y devolverlo con un codigo
-      let payload = { username: user.username, company: user.company, roles: user.roles };
+      let payload = {
+        username: user.username,
+        company: user.company,
+        roles: user.roles,
+      };
       let accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
         algorithm: "HS256",
         expiresIn: process.env.ACCESS_TOKEN_LIFE,

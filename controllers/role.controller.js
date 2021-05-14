@@ -1,15 +1,14 @@
-﻿// Last Updated: 07/05/2021 03:37:58 p. m.
-// Updated By  : @YourName
-'use strict'
+﻿// Last Updated: 14/05/2021 12:42:02 a. m.
+// Updated By  : LRUIZ
+"use strict";
 
-const os = require('os');
-const roleModel = require('../models/role.model');
-const validator = require('validator');
-const fs = require('fs');
-const path = require('path');
-const { ObjectId } = require('mongodb');
-const { findOneAndDelete } = require('../models/role.model');
-
+const roleModel = require("../models/role.model");
+const validator = require("validator");
+const fs = require("fs");
+const path = require("path");
+const { ObjectId } = require("mongodb");
+const { findOneAndDelete } = require("../models/role.model");
+const MSG = require("../modules/message.module");
 
 /**
  * @swagger
@@ -19,324 +18,334 @@ const { findOneAndDelete } = require('../models/role.model');
  */
 
 var roleController = {
+  /**
+   * @openapi
+   * /api/role/{id}:
+   *   get:
+   *     tags:
+   *       - Role
+   *     summary: GET ONE ROLE BY ID
+   *     security:
+   *       - BearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         description: Role Id
+   *         required: false
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: "#/components/schemas/Role"
+   *       404:
+   *         description: Not Found
+   *       500:
+   *         description: Internal Server Error
+   */
 
-    /**
-     * @openapi
-     * /api/role/{id}:
-     *   get:
-     *     tags: 
-     *       - Role
-     *     summary: GET ONE ROLE BY ID 
-     *     security:
-     *       - BearerAuth: []
-     *     parameters:
-     *       - in: path
-     *         name: id
-     *         description: Role Id
-     *         required: false
-     *         schema:
-     *           type: string
-     *     responses:
-     *       200:
-     *         description: OK
-     *         content:
-     *           application/json:
-     *             schema:
-     *               $ref: "#/components/schemas/Role"
-     *       404:
-     *         description: Not Found
-     *       500:
-     *         description: Internal Server Error
-     */
+  /**
+   * @openapi
+   * /api/role:
+   *   get:
+   *     tags:
+   *       - Role
+   *     summary: GET ALL ROLE
+   *     security:
+   *       - BearerAuth: []
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 $ref: "#/components/schemas/Role"
+   *       404:
+   *         description: Not Found
+   *       500:
+   *         description: Internal Server Error
+   */
 
-    /**
-     * @openapi
-     * /api/role:
-     *   get:
-     *     tags: 
-     *       - Role
-     *     summary: GET ALL ROLE
-     *     security:
-     *       - BearerAuth: []
-     *     responses:
-     *       200:
-     *         description: OK
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: array
-     *               items:
-     *                 $ref: "#/components/schemas/Role"
-     *       404:
-     *         description: Not Found
-     *       500:
-     *         description: Internal Server Error
-     */
+  getRole: (req, res) => {
+    var id = req.params.id;
 
-    getRole: (req, res) => {
+    var payload = req.payload;
 
-        var id = req.params.id;
-
-        var query = { '_id': { $eq: id } };
-
-        if (!id || id === undefined) query = {};
-        else query = { '_id': { $eq: id } };
-
-        console.log(query);
-
-        roleModel.find(query, (err, objects) => {
-
-
-            if (err) {
-                return (res.status(500).send({
-                    status: "error",
-                    message: err.message
-                })
-                );
-            }
-
-            if (!objects || objects.length == 0) {
- 
-                return (res.status(404).send({
-                    status: "error",
-                    message: "Registro(s) no encontrado(s)",
-                    links: [{ "Agregar registro => curl -X POST ": process.env.API_URL + "/api/role" }]
-                }
-
-                ));
-            } else {
-
-                return (res.status(200).send({
-                    status: "ok",
-                    objects: objects
-                }));
-            }
-        });
-    },
-
-
-    /**
-     * @openapi
-     * /api/role:
-     *   post:
-     *     tags: 
-     *       - Role
-     *     summary: ADD NEW ROLE
-     *     security:
-     *       - BearerAuth: []
-     *     requestBody:
-     *       required: true
-     *       content: 
-     *         application/json:
-     *           schema:
-     *             $ref: "#/components/schemas/Role"
-     *     responses:
-     *       201:
-     *         description: Created
-     *         content:
-     *           application/json:
-     *             schema:
-     *               $ref: "#/components/schemas/Role"
-     *       400:
-     *         description: Bad Request
-     *       500:
-     *         description: Internal Server Error
-     */
-    addRole: (req, res) => {
-
-
-        var data = req.body;
-
-
-        //SIN PARAMETROS
-        if (!data) {
-
-            return (res.status(400).send({
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
                 status: "error",
-                message: "Faltan parámetros de request en formato JSON"
-            })
-            );
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
+    var query = { _id: { $eq: id } };
+
+    if (!id || id === undefined) query = {};
+    else query = { _id: { $eq: id } };
+
+    console.log(query);
+
+    roleModel.find(query, (err, objects) => {
+      if (err) {
+        return res.status(500).send({
+          status: "error",
+          message: MSG["500"] + err.message,
+        });
+      }
+
+      if (!objects || objects.length == 0) {
+        return res.status(404).send({
+          status: "error",
+          message: MSG["NO-DATA"],
+          links: [process.env.API_URL + "doc/#/Role/post_api_role"],
+        });
+      } else {
+        return res.status(200).send({
+          status: "ok",
+          data: objects,
+        });
+      }
+    });
+  },
+
+  /**
+   * @openapi
+   * /api/role:
+   *   post:
+   *     tags:
+   *       - Role
+   *     summary: ADD NEW ROLE
+   *     security:
+   *       - BearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: "#/components/schemas/Role"
+   *     responses:
+   *       201:
+   *         description: Created
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: "#/components/schemas/Role"
+   *       400:
+   *         description: Bad Request
+   *       500:
+   *         description: Internal Server Error
+   */
+  addRole: (req, res) => {
+    var data = req.body;
+
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
+    //SIN PARAMETROS
+    if (!data) {
+      return res.status(400).send({
+        status: "error",
+        message: MSG["NO-BODY"],
+      });
+    }
+
+    var newRole = new roleModel(data);
+
+    //INTENTAR GUARDAR EL NUEVO OBJETO
+    newRole.save((err, storedObject) => {
+      if (err) {
+        return res.status(500).send({
+          status: "error",
+          message: MSG["500"] + err.message,
+        });
+      } else {
+        if (!storedObject) {
+          return res.status(500).send({
+            status: "error",
+            message: MSG["500"] + err.message,
+          });
         }
 
-
-        var newRole = new roleModel(data);
-
-
-
-        //INTENTAR GUARDAR EL NUEVO OBJETO
-        newRole.save((err, storedObject) => {
-            if (err) {
-                return (res.status(500).send({
-                    status: "error",
-                    message: err.message
-                }));
-
-            } else {
-                if (!storedObject) {
-                    return (res.status(500).send({
-                        status: "error",
-                        message: "Error al intentar guardar un nuevo registro"
-                    }));
-                }
-
-                return (res.status(201).send({
-                    status: "ok",
-                    created: storedObject
-                }));
-            }
-
+        return res.status(201).send({
+          status: "ok",
+          data: storedObject,
         });
-    },
+      }
+    });
+  },
 
+  /**
+   * @openapi
+   * /api/role/{id}:
+   *   put:
+   *     tags:
+   *       - Role
+   *     summary: UPDATE ONE ROLE BY ID
+   *     security:
+   *       - BearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         description: "Role Id"
+   *         type: string
+   *         required: true
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: "#/components/schemas/Role"
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: "#/components/schemas/Role"
+   *       400:
+   *         description: Bad Request
+   *       404:
+   *         description: Not Found
+   *       500:
+   *         description: Internal Server Error
+   */
+  editRole: (req, res) => {
+    var id = req.params.id;
+    var data = req.body;
 
-    /**
-     * @openapi
-     * /api/role/{id}:
-     *   put:
-     *     tags: 
-     *       - Role
-     *     summary: UPDATE ONE ROLE BY ID
-     *     security:
-     *       - BearerAuth: []
-     *     parameters:
-     *       - in: path
-     *         name: id
-     *         description: "Role Id"
-     *         type: string
-     *         required: true
-     *     requestBody:
-     *       required: true
-     *       content: 
-     *         application/json:
-     *           schema:
-     *             $ref: "#/components/schemas/Role"
-     *     responses:
-     *       200:
-     *         description: OK
-     *         content:
-     *           application/json:
-     *             schema:
-     *               $ref: "#/components/schemas/Role"
-     *       400:
-     *         description: Bad Request
-     *       404:
-     *         description: Not Found
-     *       500:
-     *         description: Internal Server Error
-     */
-    editRole: (req, res) => {
+    var payload = req.payload;
 
-        var id = req.params.id;
-        var data = req.body;
-
-        if (!id || id == undefined) {
-            return (res.status(400).send({
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
                 status: "error",
-                message: "falta parámetro requerido ID"
-            }));
-        }
-        if (!data || data == undefined) {
-            return (res.status(400).send({
-                status: "error",
-                message: "falta parámetro requerido data JSON"
-            }));
-        }
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
 
-        var query = { '_id': { $eq: id } };
-        var command = { $set: data };
+    if (!id || id == undefined) {
+      return res.status(400).send({
+        status: "error",
+        message: MSG["NO-PARAM"],
+      });
+    }
+    if (!data || data == undefined) {
+      return res.status(400).send({
+        status: "error",
+        message: MSG["NO-BODY"],
+      });
+    }
 
-        roleModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
-            if (err) {
-                return (res.status(500).send({
-                    status: "error",
-                    message: err.message
-                }));
-            }
+    var query = { _id: { $eq: id } };
+    var command = { $set: data };
 
-            if (!updatedObject) {
-
-                return (res.status(404).send({
-                    status: "error",
-                    message: "No se encontró el registro a modificar"
-                }));
-            }
-
-            return (res.status(200).send({
-                status: "ok",
-                updated: updatedObject
-            }));
-
-        });
-
-    },
-
-    /**
-     * @openapi
-     * /api/role/{id}:
-     *   delete:
-     *     tags: 
-     *       - Role
-     *     summary: DELETE ONE ROLE BY ID
-     *     security:
-     *       - BearerAuth: []
-     *     parameters:
-     *       - in: path
-     *         name: id
-     *         description: "Role Id"
-     *         type: string
-     *         required: true
-     *     responses:
-     *       200:
-     *         description: OK
-     *         content:
-     *           application/json:
-     *             schema:
-     *               $ref: "#/components/schemas/Role"
-     *       400:
-     *         description: Bad Request
-     *       404:
-     *         description: Not Found
-     *       500:
-     *         description: Internal Server Error
-     */
-    deleteRole: (req, res) => {
-
-
-        var id = req.params.id;
-        if (!id || id == undefined) {
-            return (res.status(400).send({
-                status: "error",
-                message: "falta parámetro requerido ID"
-            }));
+    roleModel.findOneAndUpdate(
+      query,
+      command,
+      { new: true },
+      (err, updatedObject) => {
+        if (err) {
+          return res.status(500).send({
+            status: "error",
+            message: MSG["ERROR"] + err.message,
+          });
         }
 
-        var query = { '_id': { $eq: id } };
+        if (!updatedObject) {
+          return res.status(404).send({
+            status: "error",
+            message: MSG["NO-DATA"],
+          });
+        }
 
-        role.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
-            if (err) {
-                return (res.status(500).send({
-                    status: "error",
-                    message: err.message
-                }));
-            }
-
-            if (!deletedObject) {
-
-                return (res.status(404).send({
-                    status: "error",
-                    message: "No se encontró el registro a eliminar"
-                }));
-            }
-
-            return (res.status(200).send({
-                status: "ok",
-                deleted: deletedObject
-            }));
-
+        return res.status(200).send({
+          status: "ok",
+          data: updatedObject,
         });
-    },
-    
+      }
+    );
+  },
 
-}
+  /**
+   * @openapi
+   * /api/role/{id}:
+   *   delete:
+   *     tags:
+   *       - Role
+   *     summary: DELETE ONE ROLE BY ID
+   *     security:
+   *       - BearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         description: "Role Id"
+   *         type: string
+   *         required: true
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: "#/components/schemas/Role"
+   *       400:
+   *         description: Bad Request
+   *       404:
+   *         description: Not Found
+   *       500:
+   *         description: Internal Server Error
+   */
+  deleteRole: (req, res) => {
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
+    var id = req.params.id;
+    if (!id || id == undefined) {
+      return res.status(400).send({
+        status: "error",
+        message: MSG["NO-PARAM"],
+      });
+    }
+
+    var query = { _id: { $eq: id } };
+
+    role.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
+      if (err) {
+        return res.status(500).send({
+          status: "error",
+          message: MSG["500"] + err.message,
+        });
+      }
+
+      if (!deletedObject) {
+        return res.status(404).send({
+          status: "error",
+          message: MSG["NO-DATA"],
+        });
+      }
+
+      return res.status(200).send({
+        status: "ok",
+        data: deletedObject,
+      });
+    });
+  },
+};
 
 module.exports = roleController;

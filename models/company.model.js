@@ -93,7 +93,6 @@ CompanySchema.pre("findOneAndUpdate", updateValidation); // incluye findByIdAndU
 
 //ToDo: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
 
-
 //ToDo: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
 /**
  * @swagger

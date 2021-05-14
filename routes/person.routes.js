@@ -1,5 +1,5 @@
-﻿// Last Updated: 07/05/2021 04:58:40 p. m.
-// Updated By  : @YourName
+﻿// Last Updated: 14/05/2021 12:30:29 a. m.
+// Updated By  : LRUIZ
 'use strict'
 
 var express = require('express');
@@ -28,7 +28,7 @@ router.put('/person/:field/:id', [ verify(), md_uploadpictures], personControlle
 router.put('/person/:id',  verify(), personController.editPerson); //UPDATE
 
 router.get('/person/:id?',  verify(),personController.getPerson); //RETRIEVE
-router.get('/person',  verify(), personController.getPerson); //RETRIEVE
+//router.get('/person',  verify(), personController.getPerson); //RETRIEVE
 router.get('/person/picture/:filename', personController.getPicture); //RETRIEVE IMAGE 
 
 router.delete('/person/:id',  verify(), personController.deletePerson); //DELETE

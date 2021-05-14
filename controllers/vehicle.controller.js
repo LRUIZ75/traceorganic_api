@@ -1,14 +1,14 @@
-﻿// Last Updated: 07/05/2021 04:55:00 p. m.
-// Updated By  : @YourName
+﻿// Last Updated: 14/05/2021 01:11:32 a. m.
+// Updated By  : LRUIZ
 "use strict";
 
-const os = require("os");
 const vehicleModel = require("../models/vehicle.model");
 const validator = require("validator");
 const fs = require("fs");
 const path = require("path");
 const { ObjectId } = require("mongodb");
 const { findOneAndDelete } = require("../models/vehicle.model");
+const MSG = require("../modules/message.module");
 
 /**
  * @swagger
@@ -74,12 +74,21 @@ var vehicleController = {
   getVehicle: (req, res) => {
     var id = req.params.id;
 
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
     var query = { _id: { $eq: id } };
 
     if (!id || id === undefined) query = {};
     else query = { _id: { $eq: id } };
 
-    //console.log(query);
+    console.log(query);
 
     vehicleModel
       .find(query)
@@ -88,25 +97,20 @@ var vehicleController = {
         if (err) {
           return res.status(500).send({
             status: "error",
-            message: err.message,
+            message: MSG["500"] + err.message,
           });
         }
 
         if (!objects || objects.length == 0) {
           return res.status(404).send({
             status: "error",
-            message: "Registro(s) no encontrado(s)",
-            links: [
-              {
-                "Agregar registro => curl -X POST ":
-                process.env.API_URL + "/api/vehicle",
-              },
-            ],
+            message: MSG["NO-DATA"],
+            links: [process.env.API_URL + "doc/#/Vehicle/post_api_vehicle"]
           });
         } else {
           return res.status(200).send({
             status: "ok",
-            objects: objects,
+            data: objects
           });
         }
       });
@@ -142,11 +146,20 @@ var vehicleController = {
   addVehicle: (req, res) => {
     var data = req.body;
 
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
     //SIN PARAMETROS
     if (!data) {
       return res.status(400).send({
         status: "error",
-        message: "Faltan parámetros de request en formato JSON",
+        message: MSG["NO-BODY"],
       });
     }
 
@@ -157,19 +170,19 @@ var vehicleController = {
       if (err) {
         return res.status(500).send({
           status: "error",
-          message: err.message,
+          message: MSG["500"] + err.message,
         });
       } else {
         if (!storedObject) {
           return res.status(500).send({
             status: "error",
-            message: "Error al intentar guardar un nuevo registro",
+            message: MSG["500"] + err.message,
           });
         }
 
         return res.status(201).send({
           status: "ok",
-          created: storedObject,
+          data: storedObject,
         });
       }
     });
@@ -214,16 +227,25 @@ var vehicleController = {
     var id = req.params.id;
     var data = req.body;
 
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
     if (!id || id == undefined) {
       return res.status(400).send({
         status: "error",
-        message: "falta parámetro requerido ID",
+        message: MSG["NO-PARAM"],
       });
     }
     if (!data || data == undefined) {
       return res.status(400).send({
         status: "error",
-        message: "falta parámetro requerido data JSON",
+        message: MSG["NO-BODY"],
       });
     }
 
@@ -238,20 +260,20 @@ var vehicleController = {
         if (err) {
           return res.status(500).send({
             status: "error",
-            message: err.message,
+            message: MSG["ERROR"] + err.message,
           });
         }
 
         if (!updatedObject) {
           return res.status(404).send({
             status: "error",
-            message: "No se encontró el registro a modificar",
+            message: MSG["NO-DATA"],
           });
         }
 
         return res.status(200).send({
           status: "ok",
-          updated: updatedObject,
+          data: updatedObject,
         });
       }
     );
@@ -287,11 +309,20 @@ var vehicleController = {
    *         description: Internal Server Error
    */
   deleteVehicle: (req, res) => {
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
     var id = req.params.id;
     if (!id || id == undefined) {
       return res.status(400).send({
         status: "error",
-        message: "falta parámetro requerido ID",
+        message: MSG["NO-PARAM"],
       });
     }
 
@@ -301,20 +332,20 @@ var vehicleController = {
       if (err) {
         return res.status(500).send({
           status: "error",
-          message: err.message,
+          message: MSG["500"] + err.message,
         });
       }
 
       if (!deletedObject) {
         return res.status(404).send({
           status: "error",
-          message: "No se encontró el registro a eliminar",
+          message: MSG["NO-DATA"],
         });
       }
 
       return res.status(200).send({
         status: "ok",
-        deleted: deletedObject,
+        data: deletedObject,
       });
     });
   },
@@ -340,9 +371,9 @@ var vehicleController = {
    *     parameters:
    *       - in: path
    *         name: field
-   *         description: "fieldname for picture"
+   *         description: "fieldname for image"
    *         type: string
-   *         default: "insuranceCard"
+   *         default: "picture"
    *         required: true
    *       - in: path
    *         name: id
@@ -366,6 +397,15 @@ var vehicleController = {
   setPicture: (req, res) => {
     //description: 'Archivo grafico: PNG JPEG GIF' ,
 
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
     //recojer fichero de petición
     var file_name = "Imagen no proporcionada...";
     var id = req.params.id;
@@ -376,15 +416,14 @@ var vehicleController = {
     if (!req.files.picture) {
       return res.status(400).send({
         status: "error",
-        message: "No hay parametro: logo",
-        file_name,
+        message: MSG["NO-PARAM"],
       });
     }
 
     if (!id || !fieldname) {
       return res.status(400).send({
         status: "error",
-        message: "Parámetros de ruta, son incorrectos",
+        message: MSG["NO-PARAM"],
       });
     }
 
@@ -394,7 +433,7 @@ var vehicleController = {
     if (!(fieldname in validFields)) {
       return res.status(400).send({
         status: "error",
-        message: "Parámetros de ruta, son incorrectos",
+        message: MSG["NO-DATA"],
       });
     }
 
@@ -411,7 +450,6 @@ var vehicleController = {
       //Archivo aceptable
 
       var query = { _id: { $eq: id } };
-      // licenseCard | insuranceCard
 
       var command = { $set: { [fieldname]: file_name } };
 
@@ -419,12 +457,12 @@ var vehicleController = {
         if (err)
           return res.status(500).send({
             status: "error",
-            message: err.message,
+            message: MSG["500"] + err.message,
           });
         if (doc) {
           var object = JSON.parse(JSON.stringify(doc._doc));
           oldvalue = object[fieldname];
-          oldvalue = "/uploads/picture/" + oldvalue;
+          oldvalue = "./uploads/pictures/" + oldvalue;
           console.log(`Deleting: ${oldvalue}`);
           fs.unlinkSync(oldvalue);
         }
@@ -439,7 +477,7 @@ var vehicleController = {
 
             return res.status(500).send({
               status: "error",
-              message: err.message,
+              message: MSG["500"] + err.message,
             });
           }
 
@@ -448,13 +486,13 @@ var vehicleController = {
 
             return res.status(404).send({
               status: "error",
-              message: "No se pudo encontrar el registro",
+              message: MSG["NO-DATA"],
             });
           }
 
           return res.status(200).send({
             status: "ok",
-            updated: updatedObject,
+            data: updatedObject,
           });
         }
       );
@@ -467,8 +505,7 @@ var vehicleController = {
 
       return res.status(400).send({
         status: "error",
-        message: "Tipo de archivo no es imagen",
-        file_name,
+        message: MSG["FILE-TYPE"],
       });
     }
   },
@@ -501,11 +538,20 @@ var vehicleController = {
    *         description: Internal Server Error
    */
   getPicture: (req, res) => {
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
     var file = req.params.filename;
     if (validator.isEmpty(file)) {
       return res.status(400).send({
         status: "error",
-        message: "falta el nombre del archivo",
+        message: MSG["NO-PARAM"],
       });
     }
 
@@ -515,8 +561,7 @@ var vehicleController = {
       if (err) {
         return res.status(404).send({
           status: "error",
-          message: "archivo no encontrado",
-          path: path_file,
+          message: MSG["404"] + ": " + path_file,
         });
       }
 

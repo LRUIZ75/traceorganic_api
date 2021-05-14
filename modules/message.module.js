@@ -1,0 +1,13 @@
+"use strict";
+
+const MESSAGES = {
+  "NO-DATA"  : "NO HAY DATOS COINCIDENTES",
+  "NO-BODY"  : "NO SE RECIBIERON DATOS EN BODY",
+  "NO-PARAM" : "PARÁMETROS INSUFICIENTES",
+  "500"      : "ERROR EN EL SERVIDOR: ",
+  "404"      : "NO ENCONTRADO",
+  "401"      : "NO AUTORIZADO: ",
+  "FILE-TYPE": "TIPO DE ARCHIVO INCORRECTO",
+};
+
+module.exports = MESSAGES;

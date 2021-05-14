@@ -58,11 +58,11 @@ const UserSchema = Schema({
   },
   roles: {
     type: Array(Schema.Types.ObjectId),
-    ref: "role",
+    ref: "Role",
   },
   company: {
     type: Schema.Types.ObjectId,
-    ref: "company",
+    ref: "Company",
     required: [true, "ES REQUERIDO"],
   },
   refreshAccessToken: {

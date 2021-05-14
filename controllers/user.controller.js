@@ -1,16 +1,14 @@
-﻿// Last Updated: 07/05/2021 05:00:22 p. m.
-// Updated By  : @YourName
+﻿// Last Updated: 14/05/2021 12:49:58 a. m.
+// Updated By  : LRUIZ
 "use strict";
 
-const os = require("os");
 const userModel = require("../models/user.model");
-const personModel = require("../models/person.model");
 const validator = require("validator");
 const fs = require("fs");
 const path = require("path");
 const { ObjectId } = require("mongodb");
 const { findOneAndDelete } = require("../models/user.model");
-const { containsRole } = require("../modules/security.module");
+const MSG = require("../modules/message.module");
 
 /**
  * @swagger
@@ -77,52 +75,46 @@ var userController = {
     var id = req.params.id;
 
     var payload = req.payload;
-    
-/*     if(!containsRole("admin",payload.roles)){
-      return res.status(401).send({
-        status: "error",
-        message: "ROL ADMINISTRADOR REQUERIDO"
-      });
-    } */
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
 
     var query = { _id: { $eq: id } };
 
-    if (!id || id === undefined) {
-      query = {};
-    }
+    if (!id || id === undefined) query = {};
     else query = { _id: { $eq: id } };
 
     console.log(query);
 
-    userModel
-      .find(query)
-      .populate("person")
-      .exec((err, objects) => {
-        if (err) {
-          return res.status(500).send({
-            status: "error",
-            message: err.message,
-          });
-        }
+    userModel.find(query)
+    .populate("person")
+    .populate("roles")
+    .populate("company")
+    .exec((err, objects) => {
+      if (err) {
+        return res.status(500).send({
+          status: "error",
+          message: MSG["500"] + err.message,
+        });
+      }
 
-        if (!objects || objects.length == 0) {
-          return res.status(404).send({
-            status: "error",
-            message: "Registro(s) no encontrado(s)",
-            links: [
-              {
-                "Agregar registro => curl -X POST ":
-                process.env.API_URL + "/api/user",
-              },
-            ],
-          });
-        } else {
-          return res.status(200).send({
-            status: "ok",
-            objects: objects,
-          });
-        }
-      });
+      if (!objects || objects.length == 0) {
+        return res.status(404).send({
+          status: "error",
+          message: MSG["NO-DATA"],
+          links: [process.env.API_URL + "doc/#/User/post_api_user"],
+        });
+      } else {
+        return res.status(200).send({
+          status: "ok",
+          data: objects,
+        });
+      }
+    });
   },
 
   /**
@@ -155,11 +147,20 @@ var userController = {
   addUser: (req, res) => {
     var data = req.body;
 
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
     //SIN PARAMETROS
     if (!data) {
       return res.status(400).send({
         status: "error",
-        message: "Faltan parámetros de request en formato JSON",
+        message: MSG["NO-BODY"],
       });
     }
 
@@ -170,21 +171,19 @@ var userController = {
       if (err) {
         return res.status(500).send({
           status: "error",
-          message: err.message,
+          message: MSG["500"] + err.message,
         });
       } else {
         if (!storedObject) {
           return res.status(500).send({
             status: "error",
-            message: "Error al intentar guardar un nuevo registro",
+            message: MSG["500"] + err.message,
           });
         }
-
         personModel.findByIdAndUpdate(storedObject.person, { isUser: true });
-
         return res.status(201).send({
           status: "ok",
-          created: storedObject,
+          data: storedObject,
         });
       }
     });
@@ -229,16 +228,25 @@ var userController = {
     var id = req.params.id;
     var data = req.body;
 
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
     if (!id || id == undefined) {
       return res.status(400).send({
         status: "error",
-        message: "falta parámetro requerido ID",
+        message: MSG["NO-PARAM"],
       });
     }
     if (!data || data == undefined) {
       return res.status(400).send({
         status: "error",
-        message: "falta parámetro requerido data JSON",
+        message: MSG["NO-BODY"],
       });
     }
 
@@ -253,22 +261,20 @@ var userController = {
         if (err) {
           return res.status(500).send({
             status: "error",
-            message: err.message,
+            message: MSG["ERROR"] + err.message,
           });
         }
 
         if (!updatedObject) {
           return res.status(404).send({
             status: "error",
-            message: "No se encontró el registro a modificar",
+            message: MSG["NO-DATA"],
           });
         }
-
         personModel.findByIdAndUpdate(updatedObject.person, { isUser: true });
-
         return res.status(200).send({
           status: "ok",
-          updated: updatedObject,
+          data: updatedObject,
         });
       }
     );
@@ -304,11 +310,20 @@ var userController = {
    *         description: Internal Server Error
    */
   deleteUser: (req, res) => {
+    var payload = req.payload;
+
+    /*     if(!containsRole("admin",payload.roles)){
+              return res.status(401).send({
+                status: "error",
+                message: "ROL ADMINISTRADOR REQUERIDO"
+              });
+            } */
+
     var id = req.params.id;
     if (!id || id == undefined) {
       return res.status(400).send({
         status: "error",
-        message: "falta parámetro requerido ID",
+        message: MSG["NO-PARAM"],
       });
     }
 
@@ -318,21 +333,20 @@ var userController = {
       if (err) {
         return res.status(500).send({
           status: "error",
-          message: err.message,
+          message: MSG["500"] + err.message,
         });
       }
 
       if (!deletedObject) {
         return res.status(404).send({
           status: "error",
-          message: "No se encontró el registro a eliminar",
+          message: MSG["NO-DATA"],
         });
       }
       personModel.findByIdAndUpdate(deletedObject.person, { isUser: false });
-
       return res.status(200).send({
         status: "ok",
-        deleted: deletedObject,
+        data: deletedObject,
       });
     });
   },

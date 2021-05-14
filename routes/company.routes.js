@@ -1,5 +1,5 @@
-﻿// Last Updated: 07/05/2021 03:38:42 p. m.
-// Updated By  : @YourName
+﻿// Last Updated: 14/05/2021 12:40:31 a. m.
+// Updated By  : LRUIZ
 'use strict'
 
 var express = require('express');
@@ -28,7 +28,7 @@ router.put('/company/:field/:id', [ verify(), md_uploadpictures], companyControl
 router.put('/company/:id',  verify(), companyController.editCompany); //UPDATE
 
 router.get('/company/:id?',  verify(),companyController.getCompany); //RETRIEVE
-router.get('/company',  verify(), companyController.getCompany); //RETRIEVE
+//router.get('/company',  verify(), companyController.getCompany); //RETRIEVE
 router.get('/company/picture/:filename', companyController.getPicture); //RETRIEVE IMAGE 
 
 router.delete('/company/:id',  verify(), companyController.deleteCompany); //DELETE
