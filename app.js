@@ -20,6 +20,7 @@ app.use(logger.middleware);
 var authRoutes = require('./routes/auth.routes');
 var personRoutes = require('./routes/person.routes');
 var companyRoutes = require('./routes/company.routes');
+var countryRoutes = require('./routes/country.routes');
 var driverRoutes = require('./routes/driver.routes');
 var vehicleRoutes = require('./routes/vehicle.routes');
 var userRoutes = require('./routes/user.routes');
@@ -30,6 +31,7 @@ var apiRoutes = [
   userRoutes,
   roleRoutes,
   companyRoutes,
+  countryRoutes,
   personRoutes,
   driverRoutes,
   vehicleRoutes,

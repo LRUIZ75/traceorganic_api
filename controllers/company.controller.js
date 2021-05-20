@@ -65,6 +65,8 @@ var companyController = {
    *               type: array
    *               items:
    *                 $ref: "#/components/schemas/Company"
+   *       204:
+   *         description: No Content
    *       404:
    *         description: Not Found
    *       500:
@@ -99,9 +101,11 @@ var companyController = {
       }
 
       if (!objects || objects.length == 0) {
-        return res.status(404).send({
-          status: "error",
-          message: MSG["NO-DATA"],
+        var retStatus = (!id)?204:404; //NO CONTENT | NOT FOUND
+        return res.status(retStatus).send({
+          status: (!id)?"ok":"error",
+          message: (!id)?MSG["NO-DATA"]:MSG["404"],
+          data: [],
           links: [process.env.API_URL + "doc/#/Company/post_api_company"],
         });
       } else {

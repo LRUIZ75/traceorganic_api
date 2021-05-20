@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const MSG = require("../modules/message.module");
 
 exports.verify = function (options) {
   return function (req, res, next) {
