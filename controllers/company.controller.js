@@ -1,5 +1,5 @@
-﻿// Last Updated: 14/05/2021 12:40:31 a. m.
-// Updated By  : LRUIZ
+﻿// Last Updated: 20/05/2021 07:53:36 a. m.
+// Updated By  : @YourName
 "use strict";
 
 const companyModel = require("../models/company.model");
@@ -9,6 +9,7 @@ const path = require("path");
 const { ObjectId } = require("mongodb");
 const { findOneAndDelete } = require("../models/company.model");
 const MSG = require("../modules/message.module");
+const { ok } = require("assert");
 
 /**
  * @swagger
@@ -30,7 +31,7 @@ var companyController = {
    *     parameters:
    *       - in: path
    *         name: id
-   *         description: Company Id
+   *         description: Company ID
    *         required: false
    *         schema:
    *           type: string
@@ -65,8 +66,6 @@ var companyController = {
    *               type: array
    *               items:
    *                 $ref: "#/components/schemas/Company"
-   *       204:
-   *         description: No Content
    *       404:
    *         description: Not Found
    *       500:
@@ -101,11 +100,9 @@ var companyController = {
       }
 
       if (!objects || objects.length == 0) {
-        var retStatus = (!id)?204:404; //NO CONTENT | NOT FOUND
-        return res.status(retStatus).send({
-          status: (!id)?"ok":"error",
-          message: (!id)?MSG["NO-DATA"]:MSG["404"],
-          data: [],
+        return res.status(404).send({
+          status: "error",
+          message: MSG["NO-DATA"],
           links: [process.env.API_URL + "doc/#/Company/post_api_company"],
         });
       } else {
@@ -201,7 +198,7 @@ var companyController = {
    *     parameters:
    *       - in: path
    *         name: id
-   *         description: "Company Id"
+   *         description: "Company ID"
    *         type: string
    *         required: true
    *     requestBody:
@@ -292,7 +289,7 @@ var companyController = {
    *     parameters:
    *       - in: path
    *         name: id
-   *         description: "Company Id"
+   *         description: "Company ID"
    *         type: string
    *         required: true
    *     responses:
@@ -329,26 +326,30 @@ var companyController = {
 
     var query = { _id: { $eq: id } };
 
-    company.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
-      if (err) {
-        return res.status(500).send({
-          status: "error",
-          message: MSG["500"] + err.message,
+    companyModel.findOneAndDelete(
+      query,
+      { new: false },
+      (err, deletedObject) => {
+        if (err) {
+          return res.status(500).send({
+            status: "error",
+            message: MSG["500"] + err.message,
+          });
+        }
+
+        if (!deletedObject) {
+          return res.status(404).send({
+            status: "error",
+            message: MSG["NO-DATA"],
+          });
+        }
+
+        return res.status(200).send({
+          status: "ok",
+          data: deletedObject,
         });
       }
-
-      if (!deletedObject) {
-        return res.status(404).send({
-          status: "error",
-          message: MSG["NO-DATA"],
-        });
-      }
-
-      return res.status(200).send({
-        status: "ok",
-        data: deletedObject,
-      });
-    });
+    );
   },
 
   /**
@@ -433,7 +434,7 @@ var companyController = {
     //TODO: Revisar y controlar los campos válidos para imagenes de la colección
     var validFields = ["logo"];
 
-    if (!(fieldname in validFields)) {
+    if (!validFields.includes(fieldname)) {
       return res.status(400).send({
         status: "error",
         message: MSG["NO-DATA"],
@@ -446,7 +447,6 @@ var companyController = {
     var file_name = path.basename(file_path);
 
     var file_ext = path.extname(file_name).toLowerCase();
-    var oldValue = "";
 
     const validExtensions = [".png", ".jpg", ".jpeg", ".webp", ".gif"];
     if (validExtensions.includes(file_ext)) {
@@ -456,7 +456,7 @@ var companyController = {
 
       var command = { $set: { [fieldname]: file_name } };
 
-      company.findOne(query, (err, doc) => {
+      companyModel.findOne(query, (err, doc) => {
         if (err)
           return res.status(500).send({
             status: "error",
@@ -464,13 +464,14 @@ var companyController = {
           });
         if (doc) {
           var object = JSON.parse(JSON.stringify(doc._doc));
-          oldvalue = object[fieldname];
+          var oldvalue = object[fieldname];
           oldvalue = "./uploads/logos/" + oldvalue;
           console.log(`Deleting: ${oldvalue}`);
-          fs.unlinkSync(oldvalue);
+          if (fs.existsSync(oldvalue)) fs.unlinkSync(oldvalue);
         }
       });
-      company.findOneAndUpdate(
+
+      companyModel.findOneAndUpdate(
         query,
         command,
         { new: true },
@@ -558,10 +559,11 @@ var companyController = {
       });
     }
 
-    var path_file = "./uploads/logos/" + file;
+    let path_file = "./uploads/logos/" + file;
 
     fs.stat(path_file, (err) => {
       if (err) {
+        console.log("404: " + path_file);
         return res.status(404).send({
           status: "error",
           message: MSG["404"] + ": " + path_file,

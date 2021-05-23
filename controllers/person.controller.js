@@ -1,5 +1,5 @@
-﻿// Last Updated: 14/05/2021 12:30:29 a. m.
-// Updated By  : LRUIZ
+﻿// Last Updated: 20/05/2021 07:49:53 a. m.
+// Updated By  : Luis Ruiz
 "use strict";
 
 const personModel = require("../models/person.model");
@@ -30,7 +30,7 @@ var personController = {
    *     parameters:
    *       - in: path
    *         name: id
-   *         description: Person Id
+   *         description: Person ID
    *         required: false
    *         schema:
    *           type: string
@@ -74,7 +74,6 @@ var personController = {
   getPerson: (req, res) => {
     var id = req.params.id;
 
-    var payload = req.payload;
 
     /*     if(!containsRole("admin",payload.roles)){
               return res.status(401).send({
@@ -143,7 +142,6 @@ var personController = {
   addPerson: (req, res) => {
     var data = req.body;
 
-    var payload = req.payload;
 
     /*     if(!containsRole("admin",payload.roles)){
               return res.status(401).send({
@@ -197,7 +195,7 @@ var personController = {
    *     parameters:
    *       - in: path
    *         name: id
-   *         description: "Person Id"
+   *         description: "Person ID"
    *         type: string
    *         required: true
    *     requestBody:
@@ -224,7 +222,6 @@ var personController = {
     var id = req.params.id;
     var data = req.body;
 
-    var payload = req.payload;
 
     /*     if(!containsRole("admin",payload.roles)){
               return res.status(401).send({
@@ -288,7 +285,7 @@ var personController = {
    *     parameters:
    *       - in: path
    *         name: id
-   *         description: "Person Id"
+   *         description: "Person ID"
    *         type: string
    *         required: true
    *     responses:
@@ -306,7 +303,6 @@ var personController = {
    *         description: Internal Server Error
    */
   deletePerson: (req, res) => {
-    var payload = req.payload;
 
     /*     if(!containsRole("admin",payload.roles)){
               return res.status(401).send({
@@ -325,26 +321,30 @@ var personController = {
 
     var query = { _id: { $eq: id } };
 
-    person.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
-      if (err) {
-        return res.status(500).send({
-          status: "error",
-          message: MSG["500"] + err.message,
+    personModel.findOneAndDelete(
+      query,
+      { new: false },
+      (err, deletedObject) => {
+        if (err) {
+          return res.status(500).send({
+            status: "error",
+            message: MSG["500"] + err.message,
+          });
+        }
+
+        if (!deletedObject) {
+          return res.status(404).send({
+            status: "error",
+            message: MSG["NO-DATA"],
+          });
+        }
+
+        return res.status(200).send({
+          status: "ok",
+          data: deletedObject,
         });
       }
-
-      if (!deletedObject) {
-        return res.status(404).send({
-          status: "error",
-          message: MSG["NO-DATA"],
-        });
-      }
-
-      return res.status(200).send({
-        status: "ok",
-        data: deletedObject,
-      });
-    });
+    );
   },
 
   /**
@@ -396,7 +396,6 @@ var personController = {
   setPicture: (req, res) => {
     //description: 'Archivo grafico: PNG JPEG GIF' ,
 
-    var payload = req.payload;
 
     /*     if(!containsRole("admin",payload.roles)){
               return res.status(401).send({
@@ -429,7 +428,7 @@ var personController = {
     //TODO: Revisar y controlar los campos válidos para imagenes de la colección
     var validFields = ["picture"];
 
-    if (!(fieldname in validFields)) {
+    if (!validFields.includes(fieldname)) {
       return res.status(400).send({
         status: "error",
         message: MSG["NO-DATA"],
@@ -442,7 +441,6 @@ var personController = {
     var file_name = path.basename(file_path);
 
     var file_ext = path.extname(file_name).toLowerCase();
-    var oldValue = "";
 
     const validExtensions = [".png", ".jpg", ".jpeg", ".webp", ".gif"];
     if (validExtensions.includes(file_ext)) {
@@ -452,7 +450,7 @@ var personController = {
 
       var command = { $set: { [fieldname]: file_name } };
 
-      person.findOne(query, (err, doc) => {
+      personModel.findOne(query, (err, doc) => {
         if (err)
           return res.status(500).send({
             status: "error",
@@ -466,7 +464,8 @@ var personController = {
           fs.unlinkSync(oldvalue);
         }
       });
-      person.findOneAndUpdate(
+
+      personModel.findOneAndUpdate(
         query,
         command,
         { new: true },
@@ -537,7 +536,6 @@ var personController = {
    *         description: Internal Server Error
    */
   getPicture: (req, res) => {
-    var payload = req.payload;
 
     /*     if(!containsRole("admin",payload.roles)){
               return res.status(401).send({

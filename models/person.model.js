@@ -30,7 +30,7 @@ const PersonSchema = Schema({
       "DRIVER",
     ],
     required: [true, "ES REQUERIDO"],
-    description: "Citinzenship ID Type"
+    description: "Tipo de Identificación de Ciudadano"
   },
   idNumber: {
     type: String,
@@ -38,7 +38,7 @@ const PersonSchema = Schema({
     minlength: 5,
     trim: true,
     required: [true, "ES REQUERIDO"],
-    description: "Citinzenship ID Number"
+    description: "Identificación de Ciudadano"
   },
   genre: {
     type: String,
