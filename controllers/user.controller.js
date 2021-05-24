@@ -3,6 +3,7 @@
 "use strict";
 
 const userModel = require("../models/user.model");
+const personModel = require("../models/person.model")
 const validator = require("validator");
 const fs = require("fs");
 const path = require("path");
