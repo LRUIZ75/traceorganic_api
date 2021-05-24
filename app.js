@@ -50,12 +50,19 @@ app.use(express.urlencoded({ extended: true }));  //false vs true???
 app.use(express.json());
 
 
-
 // Activar CORS
 // Configurar cabeceras y cors
 app.use((req, res, next) => {
   /* res.header('Cross-Origin-Resource-Policy', "cross-origin"); */
-  res.header('Access-Control-Allow-Origin', process.env.ORIGIN);
+  const corsWhitelist = [
+    'http://localhost:5000',
+    'http://localhost:4200',
+    'https://traceorganic-api.herokuapp.com',
+    'https://traceorganic.herokupp.com'
+];
+if (corsWhitelist.indexOf(req.headers.origin) !== -1) {
+    res.header('Access-Control-Allow-Origin', req.headers.origin);
+}
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Headers', 'Authorization, Origin, X-Requested-With, Content-Type, Accept');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
