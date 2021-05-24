@@ -58,7 +58,7 @@ app.use((req, res, next) => {
     'http://localhost:5000',
     'http://localhost:4200',
     'https://traceorganic-api.herokuapp.com',
-    'https://traceorganic.herokupp.com'
+    'https://traceorganic.herokuapp.com'
 ];
 if (corsWhitelist.indexOf(req.headers.origin) !== -1) {
     res.header('Access-Control-Allow-Origin', req.headers.origin);
