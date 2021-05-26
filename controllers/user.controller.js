@@ -1,5 +1,5 @@
 ﻿// Last Updated: 14/05/2021 12:49:58 a. m.
-// Updated By  : LRUIZ
+// Updated By  : Luis Danilo Ruiz Tórrez
 "use strict";
 
 const userModel = require("../models/user.model");

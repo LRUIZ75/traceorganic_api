@@ -1,5 +1,5 @@
-﻿// Last Updated: 14/05/2021 01:11:32 a. m.
-// Updated By  : LRUIZ
+﻿// Last Updated: 26/05/2021 03:19:32 p. m.
+// Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
 var express = require('express');
@@ -10,7 +10,7 @@ var vehicleController = require('../controllers/vehicle.controller');
 var router = express.Router();
 
 var multipart = require('connect-multiparty');
-var md_uploadpictures = multipart({uploadDir: './uploads/pictures/'});
+var md_uploadpictures = multipart({uploadDir: './uploads/picture/'});
 
 /* 
 C for Create: HTTP POST
@@ -20,18 +20,16 @@ D for Delete: HTTP DELETE
 */
 
 
-
 // VEHICLE
-router.post('/vehicle',  verify(), vehicleController.addVehicle); //CREATE
+router.post('/vehicle',  verify(), vehicleController.addVehicle); //CREATE VEHICLE
 
-router.put('/vehicle/:field/:id', [ verify(), md_uploadpictures], vehicleController.setPicture); //UPDATE IMAGE 
-router.put('/vehicle/:id',  verify(), vehicleController.editVehicle); //UPDATE
+router.put('/vehicle/:field/:id', [ verify(), md_uploadpictures], vehicleController.setPicture); //UPDATE VEHICLE IMAGE 
+router.put('/vehicle/:id',  verify(), vehicleController.editVehicle); //UPDATE VEHICLE
 
-router.get('/vehicle/:id?',  verify(),vehicleController.getVehicle); //RETRIEVE
-//router.get('/vehicle',  verify(), vehicleController.getVehicle); //RETRIEVE
-router.get('/vehicle/picture/:filename', vehicleController.getPicture); //RETRIEVE IMAGE 
+router.get('/vehicle/:id?',  verify(),vehicleController.getVehicle); //RETRIEVE VEHICLE
+router.get('/vehicle/images/:filename', vehicleController.getPicture); //RETRIEVE VEHICLE IMAGE 
 
-router.delete('/vehicle/:id',  verify(), vehicleController.deleteVehicle); //DELETE
+router.delete('/vehicle/:id',  verify(), vehicleController.deleteVehicle); //DELETE VEHICLE
 
 
 module.exports = router;

@@ -1,4 +1,4 @@
-﻿// Last Updated: 26/05/2021 02:18:32 p. m.
+﻿// Last Updated: 26/05/2021 03:00:23 p. m.
 // Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
@@ -10,7 +10,7 @@ var personController = require('../controllers/person.controller');
 var router = express.Router();
 
 var multipart = require('connect-multiparty');
-var md_uploadpictures = multipart({uploadDir: './uploads/pictures/'});
+var md_uploadpictures = multipart({uploadDir: './uploads/picture/'});
 
 /* 
 C for Create: HTTP POST

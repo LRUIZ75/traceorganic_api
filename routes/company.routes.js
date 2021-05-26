@@ -1,5 +1,5 @@
-﻿// Last Updated: 20/05/2021 07:53:36 a. m.
-// Updated By  : @YourName
+﻿// Last Updated: 26/05/2021 02:23:33 p. m.
+// Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
 var express = require('express');
@@ -10,7 +10,7 @@ var companyController = require('../controllers/company.controller');
 var router = express.Router();
 
 var multipart = require('connect-multiparty');
-var md_uploadpictures = multipart({uploadDir: './uploads/logos/'});
+var md_uploadpictures = multipart({uploadDir: './uploads/logo/'});
 
 /* 
 C for Create: HTTP POST
@@ -20,18 +20,16 @@ D for Delete: HTTP DELETE
 */
 
 
-
 // COMPANY
-router.post('/company',  verify(), companyController.addCompany); //CREATE
+router.post('/company',  verify(), companyController.addCompany); //CREATE COMPANY
 
-router.put('/company/:field/:id', [ verify(), md_uploadpictures], companyController.setPicture); //UPDATE IMAGE 
-router.put('/company/:id',  verify(), companyController.editCompany); //UPDATE
+router.put('/company/:field/:id', [ verify(), md_uploadpictures], companyController.setPicture); //UPDATE COMPANY IMAGE 
+router.put('/company/:id',  verify(), companyController.editCompany); //UPDATE COMPANY
 
-router.get('/company/:id?',  verify(),companyController.getCompany); //RETRIEVE
-//router.get('/company',  verify(), companyController.getCompany); //RETRIEVE
-router.get('/company/picture/:filename', companyController.getPicture); //RETRIEVE IMAGE 
+router.get('/company/:id?',  verify(),companyController.getCompany); //RETRIEVE COMPANY
+router.get('/company/images/:filename', companyController.getPicture); //RETRIEVE COMPANY IMAGE 
 
-router.delete('/company/:id',  verify(), companyController.deleteCompany); //DELETE
+router.delete('/company/:id',  verify(), companyController.deleteCompany); //DELETE COMPANY
 
 
 module.exports = router;

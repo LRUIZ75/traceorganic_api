@@ -1,5 +1,5 @@
-﻿// Last Updated: 14/05/2021 12:43:55 a. m.
-// Updated By  : LRUIZ
+﻿// Last Updated: 26/05/2021 03:14:24 p. m.
+// Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
 var express = require('express');
@@ -10,7 +10,7 @@ var roleactionController = require('../controllers/roleaction.controller');
 var router = express.Router();
 
 var multipart = require('connect-multiparty');
-var md_uploadpictures = multipart({uploadDir: './uploads/logos/'});
+var md_uploadpictures = multipart({uploadDir: './uploads/picture/'});
 
 /* 
 C for Create: HTTP POST
@@ -20,18 +20,16 @@ D for Delete: HTTP DELETE
 */
 
 
-
 // ROLEACTION
-router.post('/roleaction',  verify(), roleactionController.addRoleAction); //CREATE
+router.post('/roleaction',  verify(), roleactionController.addRoleAction); //CREATE ROLEACTION
 
 
-router.put('/roleaction/:id',  verify(), roleactionController.editRoleAction); //UPDATE
+router.put('/roleaction/:id',  verify(), roleactionController.editRoleAction); //UPDATE ROLEACTION
 
-router.get('/roleaction/:id?',  verify(),roleactionController.getRoleAction); //RETRIEVE
-//router.get('/roleaction',  verify(), roleactionController.getRoleAction); //RETRIEVE
+router.get('/roleaction/:id?',  verify(),roleactionController.getRoleAction); //RETRIEVE ROLEACTION
 
 
-router.delete('/roleaction/:id',  verify(), roleactionController.deleteRoleAction); //DELETE
+router.delete('/roleaction/:id',  verify(), roleactionController.deleteRoleAction); //DELETE ROLEACTION
 
 
 module.exports = router;
