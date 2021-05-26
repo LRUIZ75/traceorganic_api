@@ -1,19 +1,25 @@
 {
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
     "configurations": [
         {
-            "type": "firefox",
+            "type": "chrome",
             "request": "launch",
-            "reAttach": true,
-            "name": "Launch localhost",
+            "name": "Launch Chrome",
             "url": "http://localhost:5000",
             "webRoot": "${workspaceFolder}"
         },
         {
-            "type": "node-terminal",
-            "name": "NODEMON DEBUG",
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/index.js",
             "request": "launch",
-            "command": "npm run nodemon",
-            "cwd": "${workspaceFolder}"
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
         }
+
     ]
 }

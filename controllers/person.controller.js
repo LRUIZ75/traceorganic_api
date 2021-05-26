@@ -9,6 +9,7 @@ const path = require("path");
 const { ObjectId } = require("mongodb");
 const { findOneAndDelete } = require("../models/person.model");
 const MSG = require("../modules/message.module");
+const Log = require("cabin");
 
 /**
  * @swagger
@@ -73,7 +74,6 @@ var personController = {
 
   getPerson: (req, res) => {
     var id = req.params.id;
-
 
     /*     if(!containsRole("admin",payload.roles)){
               return res.status(401).send({
@@ -141,7 +141,6 @@ var personController = {
    */
   addPerson: (req, res) => {
     var data = req.body;
-
 
     /*     if(!containsRole("admin",payload.roles)){
               return res.status(401).send({
@@ -221,7 +220,6 @@ var personController = {
   editPerson: (req, res) => {
     var id = req.params.id;
     var data = req.body;
-
 
     /*     if(!containsRole("admin",payload.roles)){
               return res.status(401).send({
@@ -303,7 +301,6 @@ var personController = {
    *         description: Internal Server Error
    */
   deletePerson: (req, res) => {
-
     /*     if(!containsRole("admin",payload.roles)){
               return res.status(401).send({
                 status: "error",
@@ -349,7 +346,7 @@ var personController = {
 
   /**
    * @openapi
-   * /api/person/{field}/{id}:
+   * /api/person/{id}/{field}:
    *   put:
    *     tags:
    *       - Person
@@ -396,6 +393,7 @@ var personController = {
   setPicture: (req, res) => {
     //description: 'Archivo grafico: PNG JPEG GIF' ,
 
+    var payload = req.payload;
 
     /*     if(!containsRole("admin",payload.roles)){
               return res.status(401).send({
@@ -438,7 +436,7 @@ var personController = {
     //conseguir nombre y extensión del archivo
     var file_path = req.files.picture.path;
 
-    var file_name = path.basename(file_path);
+    file_name = path.basename(file_path);
 
     var file_ext = path.extname(file_name).toLowerCase();
 
@@ -458,10 +456,10 @@ var personController = {
           });
         if (doc) {
           var object = JSON.parse(JSON.stringify(doc._doc));
-          oldvalue = object[fieldname];
-          oldvalue = "./uploads/pictures/" + oldvalue;
+          let oldvalue = "./uploads/pictures/" + object[fieldname];
+
           console.log(`Deleting: ${oldvalue}`);
-          fs.unlinkSync(oldvalue);
+          if (fs.existsSync(oldvalue)) fs.unlinkSync(oldvalue);
         }
       });
 
@@ -471,7 +469,7 @@ var personController = {
         { new: true },
         (err, updatedObject) => {
           if (err) {
-            fs.unlinkSync(file_path);
+            if (fs.existsSync(file_path)) fs.unlinkSync(file_path);
 
             return res.status(500).send({
               status: "error",
@@ -480,26 +478,25 @@ var personController = {
           }
 
           if (!updatedObject) {
-            fs.unlinkSync(file_path);
+            if (fs.existsSync(file_path)) fs.unlinkSync(file_path);
 
             return res.status(404).send({
               status: "error",
               message: MSG["NO-DATA"],
             });
+          } else {
+            return res.status(200).send({
+              status: "ok",
+              data: updatedObject,
+            });
           }
-
-          return res.status(200).send({
-            status: "ok",
-            data: updatedObject,
-          });
         }
       );
     } else {
       //Archivo no aceptado
 
       //Borrar el archivo
-
-      fs.unlinkSync(file_path);
+      if (fs.existsSync(file_path)) fs.unlinkSync(file_path);
 
       return res.status(415).send({
         status: "error",
@@ -536,7 +533,6 @@ var personController = {
    *         description: Internal Server Error
    */
   getPicture: (req, res) => {
-
     /*     if(!containsRole("admin",payload.roles)){
               return res.status(401).send({
                 status: "error",

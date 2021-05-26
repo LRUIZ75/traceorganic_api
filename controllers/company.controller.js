@@ -444,7 +444,7 @@ var companyController = {
     //conseguir nombre y extensión del archivo
     var file_path = req.files.picture.path;
 
-    var file_name = path.basename(file_path);
+    file_name = path.basename(file_path);
 
     var file_ext = path.extname(file_name).toLowerCase();
 
