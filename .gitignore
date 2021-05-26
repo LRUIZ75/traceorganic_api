@@ -104,7 +104,9 @@ dist
 .tern-port
 
 # Developer Defined
-/uploads/logos/*.jpg
-/uploads/pictures/*.jpg
-/backups
+uploads/logos/
+!uploads/logos/*.md
+uploads/pictures/
+!upload/pictures/*.md
+backups/
 
