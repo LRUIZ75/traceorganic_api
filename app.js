@@ -15,6 +15,8 @@ var app = express();
 
 app.use(logger.middleware);
 
+const {SyncIndexes} = require('./models/sync-indexes');
+SyncIndexes();
 
 // Cargar ficheros rutas
 var authRoutes = require('./routes/auth.routes');
@@ -40,7 +42,7 @@ var apiRoutes = [
 var rootRoutes = require('./routes/root.routes');
 
 process.env.ACCESS_TOKEN_SECRET = "xv2pXfdXV&aDs91P";
-process.env.ACCESS_TOKEN_LIFE = '4h';
+process.env.ACCESS_TOKEN_LIFE = '8h';
 process.env.REFRESH_TOKEN_SECRET = "hw782wujnd99ahmmakhanjkajikhi&aDs91P";
 process.env.REFRESH_TOKEN_LIFE = '24h';
 

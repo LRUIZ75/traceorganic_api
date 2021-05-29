@@ -26,7 +26,7 @@ const VehicleSchema = Schema({
   },
 });
 
-//ToDo: Modify this!!!
+//TODO: Modify this!!!
 /**
  * @swagger
  * components:

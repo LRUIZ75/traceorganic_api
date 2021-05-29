@@ -28,7 +28,7 @@ const DriverSchema = Schema({
   isActive: { type: Boolean, default: true },
 });
 
-//ToDo: Modify this!!!
+//TODO: Modify this!!!
 /**
  * @swagger
  * components:

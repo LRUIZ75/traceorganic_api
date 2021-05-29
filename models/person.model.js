@@ -7,7 +7,7 @@ const validator = require("validator");
 
 const Schema = mongoose.Schema;
 
-//ToDo: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!//ToDo: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
+//TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!//TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
 const PersonSchema = Schema({
   names: {
     type: String,
@@ -35,6 +35,7 @@ const PersonSchema = Schema({
   idNumber: {
     type: String,
     unique: true,
+    uppercase: true,
     minlength: 5,
     trim: true,
     required: [true, "ES REQUERIDO"],
@@ -65,7 +66,7 @@ const PersonSchema = Schema({
 
 });
 
-//ToDo: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
+//TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
 /**
  * @swagger
  * components:
@@ -109,6 +110,7 @@ const PersonSchema = Schema({
  *         - genre
  * 
  */
+
 
 module.exports = mongoose.model("Person", PersonSchema);
 // mongoDB creará la collección, con documentos de estructura del modelo.

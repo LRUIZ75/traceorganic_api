@@ -93,6 +93,8 @@ var personController = {
         else query = { '_id': { $eq: id } };
 
         console.log(query);
+        
+        
 
         personModel.find(query, (err, objects) => {
 

@@ -6,7 +6,7 @@ const validator = require("validator");
 
 const Schema = mongoose.Schema;
 
-//ToDo: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!//ToDo: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
+//TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!//TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
 const CompanySchema = Schema({
   fullName: {
     type: String,
@@ -91,9 +91,9 @@ CompanySchema.pre("update", updateValidation);
 CompanySchema.pre("updateOne", updateValidation);
 CompanySchema.pre("findOneAndUpdate", updateValidation); // incluye findByIdAndUpdate
 
-//ToDo: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
+//TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
 
-//ToDo: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
+//TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
 /**
  * @swagger
  * components:
