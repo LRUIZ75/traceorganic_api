@@ -7,20 +7,25 @@ if(process.env.NODE_ENV !== "production")
 
 
 if (!process.env.NODE_ENV ) { //undefined
-  console.log("ERROR: Ambiente de procesos desconocido");
-  return 1;
+  process.env.NODE_ENV  = "development"
 }
 
 
 
-/* if(process.env.NODE_ENV == "production"){
+if(process.env.NODE_ENV == "production"){
   //SET CONFIG VARS IN DEPLOYING (ie: HEROKU APP SETTINGS)
-  NODE_ENV=production
-  API_URL=http://server:port/
-  ORIGIN=http://server:port/
-
+  process.env.NODE_ENV="production";
+  process.env.API_URL="http://server:port/";
+  process.env.ORIGIN="http://server:port/";
+  process.env.URI_MONGODB =
+  "mongodb+srv://admin:anunaki75@traceorganic.jjrrf.mongodb.net/traceorganic?retryWrites=true&w=majority";
   //DON'T CONFIGURE PORT AND URI_MONGODB IN PRODUCTION
-} */
+}
+else {
+  /* process.env.URI_MONGODB = "mongodb://localhost:27017/traceorganic"; */
+
+
+}
 
 
 process.env.PORT = process.env.PORT || 5000;
@@ -40,12 +45,6 @@ const options = {
   family: 4, // Use IPv4, skip trying IPv6
 };
 
-/* process.env.URI_MONGODB = "mongodb://localhost:27017/traceorganic"; */
-
-if (process.env.NODE_ENV == "production") {
-  process.env.URI_MONGODB =
-    "mongodb+srv://admin:anunaki75@traceorganic.jjrrf.mongodb.net/traceorganic?retryWrites=true&w=majority";
-}
 
 
 
