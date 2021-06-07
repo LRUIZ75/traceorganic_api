@@ -1,4 +1,4 @@
-﻿// Last Updated: 07/06/2021 02:02:27 a. m.
+﻿// Last Updated: 07/06/2021 03:06:31 a. m.
 // Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
@@ -8,7 +8,7 @@ const validator = require('validator');
 const Schema = mongoose.Schema;
 
 //TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
-const VehiclesSchema = Schema({
+const VehicleSchema = Schema({
   "plateNumber": {
     "type": "String",
     index: { unique: true },
@@ -67,7 +67,7 @@ const VehiclesSchema = Schema({
  * @swagger
  * components:
  *   schemas:
- *     Vehicles:
+ *     Vehicle:
  *       required: 
  *         - "plateNumber"
  *         - "company"
@@ -119,9 +119,9 @@ const VehiclesSchema = Schema({
  *         isActive: 
  *           type: "boolean"
  *           example: true
-
  */
 
-module.exports = mongoose.model('Vehicles',VehiclesSchema);
+
+module.exports = mongoose.model('Vehicle',VehicleSchema);
 // mongoDB creará la collección, con documentos de estructura del modelo.
 

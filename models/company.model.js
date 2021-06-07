@@ -18,10 +18,6 @@ const CompanySchema = Schema({
     type: String,
     required: [true, "ES REQUERIDO"],
   },
-  isActive: {
-    type: Boolean,
-    default: true,
-  },
   location: {
     lat: {
       type: Number,
@@ -50,6 +46,32 @@ const CompanySchema = Schema({
     default: "NIC",
   },
   logo: { type: String },
+  picture: { type: String },
+  googlemap: { type: String },
+  packageTare: {
+    type: "Number",
+    required: [true, "ES REQUERIDO"],
+  },
+  bigBagTare: {
+    type: "Number",
+    required: [true, "ES REQUERIDO"],
+  },
+  processingUM: {
+    type: "String",
+    required: [true, "ES REQUERIDO"],
+  },
+  salesUM: {
+    type: "String",
+    required: [true, "ES REQUERIDO"],
+  },
+  processBatchSize: {
+    type: "Number",
+    required: [true, "ES REQUERIDO"],
+  },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 // La función de validación para actualizacion:
@@ -91,7 +113,6 @@ CompanySchema.pre("update", updateValidation);
 CompanySchema.pre("updateOne", updateValidation);
 CompanySchema.pre("findOneAndUpdate", updateValidation); // incluye findByIdAndUpdate
 
-
 //TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
 /**
  * @swagger
@@ -102,23 +123,55 @@ CompanySchema.pre("findOneAndUpdate", updateValidation); // incluye findByIdAndU
  *         fullName:
  *           type: "string"
  *           minLength: 2
+ *           example: "Cooperativa XYZ"
  *         shortName:
  *           type: "string"
- *         isActive:
- *           type: "boolean"
- *           default: true
+ *           example: "COOPRXYZ"
  *         location:
  *           $ref: "#/components/schemas/Location"
  *         taxPayerCode:
  *           type: "string"
+ *           example: "23423423"
  *         countryISOCode:
  *           type: "string"
  *           example: "NIC"
  *         logo:
  *           type: "string"
+ *           example: "logcCoop.png"
+ *         picture:
+ *           type: "string"
+ *           example: "building.jpg"
+ *         googlemap:
+ *           type: "string"
+ *           example: "url to google map"
+ *         packageTare:
+ *           type: "number"
+ *           example: 0.05
+ *         bigBagTare:
+ *           type: "number"
+ *           example: 2.2
+ *         processingUM:
+ *           type: "string"
+ *           example: "QQ"
+ *         salesUM:
+ *           type: "string"
+ *           example: "KG"
+ *         processBatchSize:
+ *           type: "number"
+ *           example: 650
+ *         isActive:
+ *           type: "boolean"
+ *           example: true
  *       required:
  *         - fullName
  *         - shortName
+ *         - "packageTare"
+ *         - "bigBagTare"
+ *         - "processingUM"
+ *         - "salesUM"
+ *         - "processBatchSize"
+ *         - "isActive"
+ *         - location
  */
 
 module.exports = mongoose.model("Company", CompanySchema);

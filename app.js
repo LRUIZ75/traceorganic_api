@@ -24,10 +24,9 @@ var personRoutes = require('./routes/person.routes');
 var companyRoutes = require('./routes/company.routes');
 var countryRoutes = require('./routes/country.routes');
 var driverRoutes = require('./routes/driver.routes');
-var vehiclesRoutes = require('./routes/vehicles.routes');
+var vehicleRoutes = require('./routes/vehicle.routes');
 var userRoutes = require('./routes/user.routes');
 var roleRoutes = require('./routes/role.routes');
-var settingsRoutes = require('./routes/settings.routes');
 var processincenterRoutes = require('./routes/processingcenter.routes');
 var warehouseRoutes = require('./routes/warehouse.routes');
 
@@ -36,11 +35,10 @@ var apiRoutes = [
   userRoutes,
   roleRoutes,
   companyRoutes,
-  settingsRoutes,
   countryRoutes,
   personRoutes,
   driverRoutes,
-  vehiclesRoutes,
+  vehicleRoutes,
   processincenterRoutes,
   warehouseRoutes,
 ];
