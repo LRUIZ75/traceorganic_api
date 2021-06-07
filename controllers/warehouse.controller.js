@@ -1,13 +1,13 @@
-﻿// Last Updated: 07/06/2021 01:41:33 a. m.
+﻿// Last Updated: 07/06/2021 02:32:59 a. m.
 // Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
-const warehousesModel = require('../models/warehouses.model');
+const warehouseModel = require('../models/warehouse.model');
 const validator = require('validator');
 const fs = require('fs');
 const path = require('path');
 const { ObjectId } = require('mongodb');
-const { findOneAndDelete } = require('../models/warehouses.model');
+const { findOneAndDelete } = require('../models/warehouse.model');
 const  MSG  = require("../modules/message.module");
 const Log = require("cabin");
 
@@ -15,25 +15,25 @@ const Log = require("cabin");
 /**
  * @swagger
  * tags:
- *   name: Warehouses
- *   description: Warehouses Data
+ *   name: Warehouse
+ *   description: Warehouse Data
  */
 
-var warehousesController = {
+var warehouseController = {
 
     /**
      * @openapi
-     * /api/warehouses/{id}:
+     * /api/warehouse/{id}:
      *   get:
      *     tags: 
-     *       - Warehouses
-     *     summary: GET ONE WAREHOUSES BY ID 
+     *       - Warehouse
+     *     summary: GET ONE WAREHOUSE BY ID 
      *     security:
      *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: Warehouses ID
+     *         description: Warehouse ID
      *         required: false
      *         schema:
      *           type: string
@@ -43,7 +43,7 @@ var warehousesController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Warehouses"
+     *               $ref: "#/components/schemas/Warehouse"
      *       404:
      *         description: Not Found
      *       500:
@@ -52,11 +52,11 @@ var warehousesController = {
 
     /**
      * @openapi
-     * /api/warehouses:
+     * /api/warehouse:
      *   get:
      *     tags: 
-     *       - Warehouses
-     *     summary: GET ALL WAREHOUSES
+     *       - Warehouse
+     *     summary: GET ALL WAREHOUSE
      *     security:
      *       - BearerAuth: []
      *     responses:
@@ -67,14 +67,14 @@ var warehousesController = {
      *             schema:
      *               type: array
      *               items:
-     *                 $ref: "#/components/schemas/Warehouses"
+     *                 $ref: "#/components/schemas/Warehouse"
      *       404:
      *         description: Not Found
      *       500:
      *         description: Internal Server Error
      */
 
-    getWarehouses: (req, res) => {
+    getWarehouse: (req, res) => {
 
         var id = req.params.id;
         
@@ -94,7 +94,7 @@ var warehousesController = {
 
         console.log(query);
 
-        warehousesModel.find(query, (err, objects) => {
+        warehouseModel.find(query, (err, objects) => {
 
 
             if (err) {
@@ -110,7 +110,7 @@ var warehousesController = {
                 return (res.status(404).send({
                     status: "error",
                     message: MSG["NO-DATA"],
-                    links: [ process.env.API_URL + "doc/#/Warehouses/post_api_warehouses" ]    
+                    links: [ process.env.API_URL + "doc/#/Warehouse/post_api_warehouse" ]    
                 }
 
                 ));
@@ -127,11 +127,11 @@ var warehousesController = {
 
     /**
      * @openapi
-     * /api/warehouses:
+     * /api/warehouse:
      *   post:
      *     tags: 
-     *       - Warehouses
-     *     summary: ADD NEW WAREHOUSES
+     *       - Warehouse
+     *     summary: ADD NEW WAREHOUSE
      *     security:
      *       - BearerAuth: []
      *     requestBody:
@@ -139,20 +139,20 @@ var warehousesController = {
      *       content: 
      *         application/json:
      *           schema:
-     *             $ref: "#/components/schemas/Warehouses"
+     *             $ref: "#/components/schemas/Warehouse"
      *     responses:
      *       201:
      *         description: Created
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Warehouses"
+     *               $ref: "#/components/schemas/Warehouse"
      *       400:
      *         description: Bad Request
      *       500:
      *         description: Internal Server Error
      */
-    addWarehouses: (req, res) => {
+    addWarehouse: (req, res) => {
 
 
         var data = req.body;
@@ -177,12 +177,12 @@ var warehousesController = {
         }
 
 
-        var newWarehouses = new warehousesModel(data);
+        var newWarehouse = new warehouseModel(data);
 
 
 
         //INTENTAR GUARDAR EL NUEVO OBJETO
-        newWarehouses.save((err, storedObject) => {
+        newWarehouse.save((err, storedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -209,17 +209,17 @@ var warehousesController = {
 
     /**
      * @openapi
-     * /api/warehouses/{id}:
+     * /api/warehouse/{id}:
      *   put:
      *     tags: 
-     *       - Warehouses
-     *     summary: UPDATE ONE WAREHOUSES BY ID
+     *       - Warehouse
+     *     summary: UPDATE ONE WAREHOUSE BY ID
      *     security:
      *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "Warehouses ID"
+     *         description: "Warehouse ID"
      *         type: string
      *         required: true
      *     requestBody:
@@ -227,14 +227,14 @@ var warehousesController = {
      *       content: 
      *         application/json:
      *           schema:
-     *             $ref: "#/components/schemas/Warehouses"
+     *             $ref: "#/components/schemas/Warehouse"
      *     responses:
      *       200:
      *         description: OK
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Warehouses"
+     *               $ref: "#/components/schemas/Warehouse"
      *       400:
      *         description: Bad Request
      *       404:
@@ -242,7 +242,7 @@ var warehousesController = {
      *       500:
      *         description: Internal Server Error
      */
-    editWarehouses: (req, res) => {
+    editWarehouse: (req, res) => {
 
         var id = req.params.id;
         var data = req.body;
@@ -272,7 +272,7 @@ var warehousesController = {
         var query = { '_id': { $eq: id } };
         var command = { $set: data };
 
-        warehousesModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
+        warehouseModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -299,17 +299,17 @@ var warehousesController = {
 
     /**
      * @openapi
-     * /api/warehouses/{id}:
+     * /api/warehouse/{id}:
      *   delete:
      *     tags: 
-     *       - Warehouses
-     *     summary: DELETE ONE WAREHOUSES BY ID
+     *       - Warehouse
+     *     summary: DELETE ONE WAREHOUSE BY ID
      *     security:
      *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "Warehouses ID"
+     *         description: "Warehouse ID"
      *         type: string
      *         required: true
      *     responses:
@@ -318,7 +318,7 @@ var warehousesController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Warehouses"
+     *               $ref: "#/components/schemas/Warehouse"
      *       400:
      *         description: Bad Request
      *       404:
@@ -326,7 +326,7 @@ var warehousesController = {
      *       500:
      *         description: Internal Server Error
      */
-    deleteWarehouses: (req, res) => {
+    deleteWarehouse: (req, res) => {
 
         var payload = req.payload;
         
@@ -347,7 +347,7 @@ var warehousesController = {
 
         var query = { '_id': { $eq: id } };
 
-        warehousesModel.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
+        warehouseModel.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -374,11 +374,11 @@ var warehousesController = {
 
     /**
      * @openapi
-     * /api/warehouses/{field}/{id}:
+     * /api/warehouse/{field}/{id}:
      *   put:
      *     tags: 
-     *       - Warehouses
-     *     summary: UPLOAD WAREHOUSES IMAGE BY FIELDNAME AND ID
+     *       - Warehouse
+     *     summary: UPLOAD WAREHOUSE IMAGE BY FIELDNAME AND ID
      *     security:
      *       - BearerAuth: []
      *     requestBody:
@@ -399,7 +399,7 @@ var warehousesController = {
      *         required: true
      *       - in: path
      *         name: id
-     *         description: "Warehouses Id"
+     *         description: "Warehouse Id"
      *         type: string
      *         required: true
      *     responses:
@@ -408,7 +408,7 @@ var warehousesController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Warehouses"
+     *               $ref: "#/components/schemas/Warehouse"
      *       400:
      *         description: Bad Request
      *       404:
@@ -476,7 +476,7 @@ var warehousesController = {
 
             var command = { $set: { [fieldname]: file_name } };
 
-            warehousesModel.findOne(query, (err, doc) => {
+            warehouseModel.findOne(query, (err, doc) => {
                 if (err)
                   return res.status(500).send({
                     status: "error",
@@ -490,7 +490,7 @@ var warehousesController = {
                       if (fs.existsSync(oldvalue)) fs.unlinkSync(oldvalue);              
                  }});
                  
-         warehousesModel.findOneAndUpdate(
+         warehouseModel.findOneAndUpdate(
             query,
             command,
             { new: true },
@@ -534,11 +534,11 @@ var warehousesController = {
 
     /**
      * @openapi
-     * /api/warehouses/images/{filename}:
+     * /api/warehouse/images/{filename}:
      *   get:
      *     tags: 
-     *       - Warehouses
-     *     summary: GET WAREHOUSES IMAGE BY FILENAME
+     *       - Warehouse
+     *     summary: GET WAREHOUSE IMAGE BY FILENAME
      *     parameters:
      *       - in: path
      *         name: filename
@@ -599,4 +599,4 @@ var warehousesController = {
 
 }
 
-module.exports = warehousesController;
+module.exports = warehouseController;

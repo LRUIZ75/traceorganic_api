@@ -1,38 +1,38 @@
-﻿// Last Updated: 07/06/2021 01:41:33 a. m.
+﻿// Last Updated: 07/06/2021 02:32:59 a. m.
 // Updated By  : Luis Danilo Ruiz Tórrez
-'use strict'
+"use strict";
 
-const mongoose = require('mongoose');
-const validator = require('validator');
+const mongoose = require("mongoose");
+const validator = require("validator");
 
 const Schema = mongoose.Schema;
 
 //TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
-const WarehousesSchema = Schema({
-  "name": {
-    "type": "String",
+const WarehouseSchema = Schema({
+  name: {
+    type: "String",
     trim: true,
     required: [true, "ES REQUERIDO"],
   },
-  "company": {
-    "type": Schema.Types.ObjectId,
+  company: {
+    type: Schema.Types.ObjectId,
     ref: "Company",
     required: [true, "ES REQUERIDO"],
   },
-  "processingCenter": {
-    "type": Schema.Types.ObjectId,
+  processingCenter: {
+    type: Schema.Types.ObjectId,
     ref: "ProcessingCenter",
     required: [true, "ES REQUERIDO"],
   },
-  "description": {
-    "type": "String"
+  description: {
+    type: "String",
   },
-  "storageCapacity": {
-    "type": "Number",
+  storageCapacity: {
+    type: "Number",
     required: [true, "ES REQUERIDO"],
   },
-  "isVirtual": {
-    "type": "Boolean"
+  isVirtual: {
+    type: "Boolean",
   },
   location: {
     lat: {
@@ -56,12 +56,12 @@ const WarehousesSchema = Schema({
       },
     },
   },
-  "picture": {
-    "type": "String"
+  picture: {
+    type: "String",
   },
-  "isActive": {
-    "type": "Boolean"
-  }
+  isActive: {
+    type: "Boolean",
+  },
 });
 
 // La función de validación para actualizacion:
@@ -99,18 +99,16 @@ const updateValidation = function (next) {
 };
 
 // la declaración de middleware:
-WarehousesSchema.pre("update", updateValidation);
-WarehousesSchema.pre("updateOne", updateValidation);
-WarehousesSchema.pre("findOneAndUpdate", updateValidation); // incluye findByIdAndUpdate
-
-
+WarehouseSchema.pre("update", updateValidation);
+WarehouseSchema.pre("updateOne", updateValidation);
+WarehouseSchema.pre("findOneAndUpdate", updateValidation); // incluye findByIdAndUpdate
 
 //TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
 /**
  * @swagger
  * components:
  *   schemas:
- *     Warehouses:
+ *     Warehouse:
  *       required: 
  *         - "name"
  *         - "company"
@@ -155,9 +153,7 @@ WarehousesSchema.pre("findOneAndUpdate", updateValidation); // incluye findByIdA
  *         isActive: 
  *           type: "boolean"
  *           example: true
-
  */
 
-module.exports = mongoose.model('Warehouses',WarehousesSchema);
+module.exports = mongoose.model("Warehouse", WarehouseSchema);
 // mongoDB creará la collección, con documentos de estructura del modelo.
-

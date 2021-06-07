@@ -28,8 +28,8 @@ var vehiclesRoutes = require('./routes/vehicles.routes');
 var userRoutes = require('./routes/user.routes');
 var roleRoutes = require('./routes/role.routes');
 var settingsRoutes = require('./routes/settings.routes');
-var processincentersRoutes = require('./models/processingcenters.model');
-var warehousesRoutes = require('./models/warehouses.model');
+var processincentersRoutes = require('./routes/processingcenters.routes');
+var warehouseRoutes = require('./routes/warehouse.routes');
 
 var apiRoutes = [
   authRoutes, 
@@ -42,7 +42,7 @@ var apiRoutes = [
   driverRoutes,
   vehiclesRoutes,
   processincentersRoutes,
-  warehousesRoutes,
+  warehouseRoutes,
 ];
 
 var rootRoutes = require('./routes/root.routes');
