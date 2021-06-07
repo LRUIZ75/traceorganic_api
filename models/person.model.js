@@ -75,14 +75,17 @@ const PersonSchema = Schema({
  *       properties:
  *         names:
  *           type: "string"
+ *           example: "Juan"
  *         lastNames:
  *           type: "string"
+ *           example: "Pérez"
  *         idType:
  *           type: "string"
  *           enum: ["ID-CARD", "PASSPORT", "RESIDENCE", "DRIVER"]
  *           example: "ID-CARD"
  *         idNumber:
  *           type: "string"
+ *           example: "001-220377-0020S"
  *         genre:
  *           type: "string"
  *           enum: ["M", "F", "U"]
@@ -90,25 +93,28 @@ const PersonSchema = Schema({
  *         mobile:
  *           type: string
  *           format: phone
+ *           example: "77485574"
  *         birthDate:
  *           type: "string"
  *           format: "date"
+ *           example: "19770322"
  *         picture:
  *           type: "string"
- *           example: ""
+ *           example: "handsome.jpeg"
  *         isUser: 
  *           type: "boolean"
- *           default: "false"
+ *           example: "false"
  *         isDriver: 
  *           type: "boolean"
- *           default: "false" 
+ *           example: "false" 
  *       required:
  *         - names
  *         - lastNames
  *         - idType
  *         - idNumber
  *         - genre
- * 
+ *         - mobile
+ *         - birthDate
  */
 
 
