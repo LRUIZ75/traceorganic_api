@@ -27,16 +27,22 @@ var driverRoutes = require('./routes/driver.routes');
 var vehicleRoutes = require('./routes/vehicle.routes');
 var userRoutes = require('./routes/user.routes');
 var roleRoutes = require('./routes/role.routes');
+var settingsRoutes = require('./routes/settings.routes');
+var processincentersRoutes = require('./models/processingcenters.model');
+var warehousesRoutes = require('./models/warehouses.model');
 
 var apiRoutes = [
   authRoutes, 
   userRoutes,
   roleRoutes,
   companyRoutes,
+  settingsRoutes,
   countryRoutes,
   personRoutes,
   driverRoutes,
   vehicleRoutes,
+  processincentersRoutes,
+  warehousesRoutes,
 ];
 
 var rootRoutes = require('./routes/root.routes');

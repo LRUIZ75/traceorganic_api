@@ -1,26 +1,19 @@
-"use strict";
+﻿// Last Updated: 07/06/2021 01:24:29 a. m.
+// Updated By  : Luis Danilo Ruiz Tórrez
+'use strict'
 
-const mongoose = require("mongoose");
-const validator = require("validator");
-//const location = require('./location.model');
+const mongoose = require('mongoose');
+const validator = require('validator');
 
 const Schema = mongoose.Schema;
 
-//TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!//TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
-const CompanySchema = Schema({
-  fullName: {
-    type: String,
+//TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
+const ProcessingCentersSchema = Schema({
+  "name": {
+    "type": "String",
     index: { unique: true },
     trim: true,
     required: [true, "ES REQUERIDO"],
-  },
-  shortName: {
-    type: String,
-    required: [true, "ES REQUERIDO"],
-  },
-  isActive: {
-    type: Boolean,
-    default: true,
   },
   location: {
     lat: {
@@ -44,12 +37,17 @@ const CompanySchema = Schema({
       },
     },
   },
-  taxPayerCode: { type: String },
-  countryISOCode: {
-    type: String,
-    default: "NIC",
+  "company": {
+    "type": Schema.Types.ObjectId,
+    ref: "Company",
+    required: [true, "ES REQUERIDO"],
   },
-  logo: { type: String },
+  "picture": {
+    "type": "String"
+  },
+  "googlemap": {
+    "type": "String"
+  }
 });
 
 // La función de validación para actualizacion:
@@ -87,39 +85,39 @@ const updateValidation = function (next) {
 };
 
 // la declaración de middleware:
-CompanySchema.pre("update", updateValidation);
-CompanySchema.pre("updateOne", updateValidation);
-CompanySchema.pre("findOneAndUpdate", updateValidation); // incluye findByIdAndUpdate
-
+ProcessingCentersSchema.pre("update", updateValidation);
+ProcessingCentersSchema.pre("updateOne", updateValidation);
+ProcessingCentersSchema.pre("findOneAndUpdate", updateValidation); // incluye findByIdAndUpdate
 
 //TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
 /**
  * @swagger
  * components:
  *   schemas:
- *     Company:
- *       properties:
- *         fullName:
+ *     ProcessingCenters:
+ *       required: 
+ *         - "name"
+ *         - "location"
+ *         - "company"
+ *       properties: 
+ *         name: 
  *           type: "string"
- *           minLength: 2
- *         shortName:
- *           type: "string"
- *         isActive:
- *           type: "boolean"
- *           default: true
- *         location:
+ *           example: "Processing Center"
+ *         location: 
  *           $ref: "#/components/schemas/Location"
- *         taxPayerCode:
+ *         company: 
  *           type: "string"
- *         countryISOCode:
+ *           format:  "oid"
+ *           example: "123456123456123456123456"
+ *         picture: 
  *           type: "string"
- *           example: "NIC"
- *         logo:
+ *           example: "some.png"
+ *         googlemap: 
  *           type: "string"
- *       required:
- *         - fullName
- *         - shortName
+ *           example: "http://map.google.com/xyz"
+
  */
 
-module.exports = mongoose.model("Company", CompanySchema);
+module.exports = mongoose.model('ProcessingCenters',ProcessingCentersSchema);
 // mongoDB creará la collección, con documentos de estructura del modelo.
+

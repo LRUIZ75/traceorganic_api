@@ -1,9 +1,8 @@
 @ECHO OFF
 
-REM ECHO Iniciando el servicio de MongoDB
-REM PUSHD "\Program Files\MongoDB\Server\4.4\bin"
-REM START "MongoDB Service" mongod.exe
-REM POPD
+ECHO Iniciando el servicio de MongoDB
+START "MongoDB Service" mongod.exe
+POPD
 
 ECHO Iniciando API
 PUSHD "\Users\lruiz\Documents\CONSULTORIAS\TRACEORGANIC API"
