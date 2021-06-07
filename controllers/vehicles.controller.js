@@ -1,13 +1,13 @@
-﻿// Last Updated: 26/05/2021 03:19:32 p. m.
+﻿// Last Updated: 07/06/2021 02:02:27 a. m.
 // Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
-const vehicleModel = require('../models/vehicle.model');
+const vehiclesModel = require('../models/vehicles.model');
 const validator = require('validator');
 const fs = require('fs');
 const path = require('path');
 const { ObjectId } = require('mongodb');
-const { findOneAndDelete } = require('../models/vehicle.model');
+const { findOneAndDelete } = require('../models/vehicles.model');
 const  MSG  = require("../modules/message.module");
 const Log = require("cabin");
 
@@ -15,25 +15,25 @@ const Log = require("cabin");
 /**
  * @swagger
  * tags:
- *   name: Vehicle
- *   description: Vehicle Data
+ *   name: Vehicles
+ *   description: Vehicles Data
  */
 
-var vehicleController = {
+var vehiclesController = {
 
     /**
      * @openapi
-     * /api/vehicle/{id}:
+     * /api/vehicles/{id}:
      *   get:
      *     tags: 
-     *       - Vehicle
-     *     summary: GET ONE VEHICLE BY ID 
+     *       - Vehicles
+     *     summary: GET ONE VEHICLES BY ID 
      *     security:
      *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: Vehicle ID
+     *         description: Vehicles ID
      *         required: false
      *         schema:
      *           type: string
@@ -43,7 +43,7 @@ var vehicleController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Vehicle"
+     *               $ref: "#/components/schemas/Vehicles"
      *       404:
      *         description: Not Found
      *       500:
@@ -52,11 +52,11 @@ var vehicleController = {
 
     /**
      * @openapi
-     * /api/vehicle:
+     * /api/vehicles:
      *   get:
      *     tags: 
-     *       - Vehicle
-     *     summary: GET ALL VEHICLE
+     *       - Vehicles
+     *     summary: GET ALL VEHICLES
      *     security:
      *       - BearerAuth: []
      *     responses:
@@ -67,14 +67,14 @@ var vehicleController = {
      *             schema:
      *               type: array
      *               items:
-     *                 $ref: "#/components/schemas/Vehicle"
+     *                 $ref: "#/components/schemas/Vehicles"
      *       404:
      *         description: Not Found
      *       500:
      *         description: Internal Server Error
      */
 
-    getVehicle: (req, res) => {
+    getVehicles: (req, res) => {
 
         var id = req.params.id;
         
@@ -94,9 +94,7 @@ var vehicleController = {
 
         console.log(query);
 
-        vehicleModel.find(query)
-        .populate("owner")
-        .exec( (err, objects) => {
+        vehiclesModel.find(query, (err, objects) => {
 
 
             if (err) {
@@ -112,7 +110,7 @@ var vehicleController = {
                 return (res.status(404).send({
                     status: "error",
                     message: MSG["NO-DATA"],
-                    links: [ process.env.API_URL + "doc/#/Vehicle/post_api_vehicle" ]    
+                    links: [ process.env.API_URL + "doc/#/Vehicles/post_api_vehicles" ]    
                 }
 
                 ));
@@ -129,11 +127,11 @@ var vehicleController = {
 
     /**
      * @openapi
-     * /api/vehicle:
+     * /api/vehicles:
      *   post:
      *     tags: 
-     *       - Vehicle
-     *     summary: ADD NEW VEHICLE
+     *       - Vehicles
+     *     summary: ADD NEW VEHICLES
      *     security:
      *       - BearerAuth: []
      *     requestBody:
@@ -141,20 +139,20 @@ var vehicleController = {
      *       content: 
      *         application/json:
      *           schema:
-     *             $ref: "#/components/schemas/Vehicle"
+     *             $ref: "#/components/schemas/Vehicles"
      *     responses:
      *       201:
      *         description: Created
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Vehicle"
+     *               $ref: "#/components/schemas/Vehicles"
      *       400:
      *         description: Bad Request
      *       500:
      *         description: Internal Server Error
      */
-    addVehicle: (req, res) => {
+    addVehicles: (req, res) => {
 
 
         var data = req.body;
@@ -179,12 +177,12 @@ var vehicleController = {
         }
 
 
-        var newVehicle = new vehicleModel(data);
+        var newVehicles = new vehiclesModel(data);
 
 
 
         //INTENTAR GUARDAR EL NUEVO OBJETO
-        newVehicle.save((err, storedObject) => {
+        newVehicles.save((err, storedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -211,17 +209,17 @@ var vehicleController = {
 
     /**
      * @openapi
-     * /api/vehicle/{id}:
+     * /api/vehicles/{id}:
      *   put:
      *     tags: 
-     *       - Vehicle
-     *     summary: UPDATE ONE VEHICLE BY ID
+     *       - Vehicles
+     *     summary: UPDATE ONE VEHICLES BY ID
      *     security:
      *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "Vehicle ID"
+     *         description: "Vehicles ID"
      *         type: string
      *         required: true
      *     requestBody:
@@ -229,14 +227,14 @@ var vehicleController = {
      *       content: 
      *         application/json:
      *           schema:
-     *             $ref: "#/components/schemas/Vehicle"
+     *             $ref: "#/components/schemas/Vehicles"
      *     responses:
      *       200:
      *         description: OK
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Vehicle"
+     *               $ref: "#/components/schemas/Vehicles"
      *       400:
      *         description: Bad Request
      *       404:
@@ -244,7 +242,7 @@ var vehicleController = {
      *       500:
      *         description: Internal Server Error
      */
-    editVehicle: (req, res) => {
+    editVehicles: (req, res) => {
 
         var id = req.params.id;
         var data = req.body;
@@ -274,7 +272,7 @@ var vehicleController = {
         var query = { '_id': { $eq: id } };
         var command = { $set: data };
 
-        vehicleModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
+        vehiclesModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -301,17 +299,17 @@ var vehicleController = {
 
     /**
      * @openapi
-     * /api/vehicle/{id}:
+     * /api/vehicles/{id}:
      *   delete:
      *     tags: 
-     *       - Vehicle
-     *     summary: DELETE ONE VEHICLE BY ID
+     *       - Vehicles
+     *     summary: DELETE ONE VEHICLES BY ID
      *     security:
      *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "Vehicle ID"
+     *         description: "Vehicles ID"
      *         type: string
      *         required: true
      *     responses:
@@ -320,7 +318,7 @@ var vehicleController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Vehicle"
+     *               $ref: "#/components/schemas/Vehicles"
      *       400:
      *         description: Bad Request
      *       404:
@@ -328,7 +326,7 @@ var vehicleController = {
      *       500:
      *         description: Internal Server Error
      */
-    deleteVehicle: (req, res) => {
+    deleteVehicles: (req, res) => {
 
         var payload = req.payload;
         
@@ -349,7 +347,7 @@ var vehicleController = {
 
         var query = { '_id': { $eq: id } };
 
-        vehicleModel.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
+        vehiclesModel.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -376,11 +374,11 @@ var vehicleController = {
 
     /**
      * @openapi
-     * /api/vehicle/{field}/{id}:
+     * /api/vehicles/{field}/{id}:
      *   put:
      *     tags: 
-     *       - Vehicle
-     *     summary: UPLOAD VEHICLE IMAGE BY FIELDNAME AND ID
+     *       - Vehicles
+     *     summary: UPLOAD VEHICLES IMAGE BY FIELDNAME AND ID
      *     security:
      *       - BearerAuth: []
      *     requestBody:
@@ -397,11 +395,11 @@ var vehicleController = {
      *         name: field
      *         description: "fieldname for image"
      *         type: string
-     *         default: "picture"
+     *         default: "picture | registration | insurance"
      *         required: true
      *       - in: path
      *         name: id
-     *         description: "Vehicle Id"
+     *         description: "Vehicles Id"
      *         type: string
      *         required: true
      *     responses:
@@ -410,7 +408,7 @@ var vehicleController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/Vehicle"
+     *               $ref: "#/components/schemas/Vehicles"
      *       400:
      *         description: Bad Request
      *       404:
@@ -455,7 +453,7 @@ var vehicleController = {
 
 
         //TODO: Revisar y controlar los campos válidos para imagenes de la colección
-        var validFields = ["picture"];
+        var validFields = ["picture","registration","insurance"];
 
         if (!(validFields.includes(fieldname))) {
           return res.status(400).send({
@@ -478,7 +476,7 @@ var vehicleController = {
 
             var command = { $set: { [fieldname]: file_name } };
 
-            vehicleModel.findOne(query, (err, doc) => {
+            vehiclesModel.findOne(query, (err, doc) => {
                 if (err)
                   return res.status(500).send({
                     status: "error",
@@ -486,13 +484,13 @@ var vehicleController = {
                   });
                 if (doc) {
                       var object = JSON.parse(JSON.stringify(doc._doc));
-                      let oldvalue = "./uploads/picture/" + object[fieldname];
+                      let oldvalue = "./uploads/pictures/" + object[fieldname];
 
                       console.log(`Deleting: ${oldvalue}`);
                       if (fs.existsSync(oldvalue)) fs.unlinkSync(oldvalue);              
                  }});
                  
-         vehicleModel.findOneAndUpdate(
+         vehiclesModel.findOneAndUpdate(
             query,
             command,
             { new: true },
@@ -536,11 +534,11 @@ var vehicleController = {
 
     /**
      * @openapi
-     * /api/vehicle/images/{filename}:
+     * /api/vehicles/images/{filename}:
      *   get:
      *     tags: 
-     *       - Vehicle
-     *     summary: GET VEHICLE IMAGE BY FILENAME
+     *       - Vehicles
+     *     summary: GET VEHICLES IMAGE BY FILENAME
      *     parameters:
      *       - in: path
      *         name: filename
@@ -580,7 +578,7 @@ var vehicleController = {
            }));
        }
 
-       var path_file = './uploads/picture/' + file;
+       var path_file = './uploads/pictures/' + file;
 
        fs.stat(path_file, (err) => {
 
@@ -601,4 +599,4 @@ var vehicleController = {
 
 }
 
-module.exports = vehicleController;
+module.exports = vehiclesController;

@@ -24,7 +24,7 @@ var personRoutes = require('./routes/person.routes');
 var companyRoutes = require('./routes/company.routes');
 var countryRoutes = require('./routes/country.routes');
 var driverRoutes = require('./routes/driver.routes');
-var vehicleRoutes = require('./routes/vehicle.routes');
+var vehiclesRoutes = require('./routes/vehicles.routes');
 var userRoutes = require('./routes/user.routes');
 var roleRoutes = require('./routes/role.routes');
 var settingsRoutes = require('./routes/settings.routes');
@@ -40,7 +40,7 @@ var apiRoutes = [
   countryRoutes,
   personRoutes,
   driverRoutes,
-  vehicleRoutes,
+  vehiclesRoutes,
   processincentersRoutes,
   warehousesRoutes,
 ];
