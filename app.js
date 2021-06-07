@@ -28,7 +28,7 @@ var vehiclesRoutes = require('./routes/vehicles.routes');
 var userRoutes = require('./routes/user.routes');
 var roleRoutes = require('./routes/role.routes');
 var settingsRoutes = require('./routes/settings.routes');
-var processincentersRoutes = require('./routes/processingcenters.routes');
+var processincenterRoutes = require('./routes/processingcenter.routes');
 var warehouseRoutes = require('./routes/warehouse.routes');
 
 var apiRoutes = [
@@ -41,7 +41,7 @@ var apiRoutes = [
   personRoutes,
   driverRoutes,
   vehiclesRoutes,
-  processincentersRoutes,
+  processincenterRoutes,
   warehouseRoutes,
 ];
 

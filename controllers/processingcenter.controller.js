@@ -1,13 +1,13 @@
-﻿// Last Updated: 07/06/2021 01:24:28 a. m.
+﻿// Last Updated: 07/06/2021 02:42:00 a. m.
 // Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
-const processingcentersModel = require('../models/processingcenters.model');
+const processingcenterModel = require('../models/processingcenter.model');
 const validator = require('validator');
 const fs = require('fs');
 const path = require('path');
 const { ObjectId } = require('mongodb');
-const { findOneAndDelete } = require('../models/processingcenters.model');
+const { findOneAndDelete } = require('../models/processingcenter.model');
 const  MSG  = require("../modules/message.module");
 const Log = require("cabin");
 
@@ -15,25 +15,25 @@ const Log = require("cabin");
 /**
  * @swagger
  * tags:
- *   name: ProcessingCenters
- *   description: Processing Centers Data
+ *   name: ProcessingCenter
+ *   description: Processing Center Data
  */
 
-var processingcentersController = {
+var processingcenterController = {
 
     /**
      * @openapi
-     * /api/processingcenters/{id}:
+     * /api/processingcenter/{id}:
      *   get:
      *     tags: 
-     *       - ProcessingCenters
-     *     summary: GET ONE PROCESSINGCENTERS BY ID 
+     *       - ProcessingCenter
+     *     summary: GET ONE PROCESSINGCENTER BY ID 
      *     security:
      *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: ProcessingCenters ID
+     *         description: ProcessingCenter ID
      *         required: false
      *         schema:
      *           type: string
@@ -43,7 +43,7 @@ var processingcentersController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/ProcessingCenters"
+     *               $ref: "#/components/schemas/ProcessingCenter"
      *       404:
      *         description: Not Found
      *       500:
@@ -52,11 +52,11 @@ var processingcentersController = {
 
     /**
      * @openapi
-     * /api/processingcenters:
+     * /api/processingcenter:
      *   get:
      *     tags: 
-     *       - ProcessingCenters
-     *     summary: GET ALL PROCESSINGCENTERS
+     *       - ProcessingCenter
+     *     summary: GET ALL PROCESSINGCENTER
      *     security:
      *       - BearerAuth: []
      *     responses:
@@ -67,14 +67,14 @@ var processingcentersController = {
      *             schema:
      *               type: array
      *               items:
-     *                 $ref: "#/components/schemas/ProcessingCenters"
+     *                 $ref: "#/components/schemas/ProcessingCenter"
      *       404:
      *         description: Not Found
      *       500:
      *         description: Internal Server Error
      */
 
-    getProcessingCenters: (req, res) => {
+    getProcessingCenter: (req, res) => {
 
         var id = req.params.id;
         
@@ -94,7 +94,7 @@ var processingcentersController = {
 
         console.log(query);
 
-        processingcentersModel.find(query, (err, objects) => {
+        processingcenterModel.find(query, (err, objects) => {
 
 
             if (err) {
@@ -110,7 +110,7 @@ var processingcentersController = {
                 return (res.status(404).send({
                     status: "error",
                     message: MSG["NO-DATA"],
-                    links: [ process.env.API_URL + "doc/#/ProcessingCenters/post_api_processingcenters" ]    
+                    links: [ process.env.API_URL + "doc/#/ProcessingCenter/post_api_processingcenter" ]    
                 }
 
                 ));
@@ -127,11 +127,11 @@ var processingcentersController = {
 
     /**
      * @openapi
-     * /api/processingcenters:
+     * /api/processingcenter:
      *   post:
      *     tags: 
-     *       - ProcessingCenters
-     *     summary: ADD NEW PROCESSINGCENTERS
+     *       - ProcessingCenter
+     *     summary: ADD NEW PROCESSINGCENTER
      *     security:
      *       - BearerAuth: []
      *     requestBody:
@@ -139,20 +139,20 @@ var processingcentersController = {
      *       content: 
      *         application/json:
      *           schema:
-     *             $ref: "#/components/schemas/ProcessingCenters"
+     *             $ref: "#/components/schemas/ProcessingCenter"
      *     responses:
      *       201:
      *         description: Created
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/ProcessingCenters"
+     *               $ref: "#/components/schemas/ProcessingCenter"
      *       400:
      *         description: Bad Request
      *       500:
      *         description: Internal Server Error
      */
-    addProcessingCenters: (req, res) => {
+    addProcessingCenter: (req, res) => {
 
 
         var data = req.body;
@@ -177,12 +177,12 @@ var processingcentersController = {
         }
 
 
-        var newProcessingCenters = new processingcentersModel(data);
+        var newProcessingCenter = new processingcenterModel(data);
 
 
 
         //INTENTAR GUARDAR EL NUEVO OBJETO
-        newProcessingCenters.save((err, storedObject) => {
+        newProcessingCenter.save((err, storedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -209,17 +209,17 @@ var processingcentersController = {
 
     /**
      * @openapi
-     * /api/processingcenters/{id}:
+     * /api/processingcenter/{id}:
      *   put:
      *     tags: 
-     *       - ProcessingCenters
-     *     summary: UPDATE ONE PROCESSINGCENTERS BY ID
+     *       - ProcessingCenter
+     *     summary: UPDATE ONE PROCESSINGCENTER BY ID
      *     security:
      *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "ProcessingCenters ID"
+     *         description: "ProcessingCenter ID"
      *         type: string
      *         required: true
      *     requestBody:
@@ -227,14 +227,14 @@ var processingcentersController = {
      *       content: 
      *         application/json:
      *           schema:
-     *             $ref: "#/components/schemas/ProcessingCenters"
+     *             $ref: "#/components/schemas/ProcessingCenter"
      *     responses:
      *       200:
      *         description: OK
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/ProcessingCenters"
+     *               $ref: "#/components/schemas/ProcessingCenter"
      *       400:
      *         description: Bad Request
      *       404:
@@ -242,7 +242,7 @@ var processingcentersController = {
      *       500:
      *         description: Internal Server Error
      */
-    editProcessingCenters: (req, res) => {
+    editProcessingCenter: (req, res) => {
 
         var id = req.params.id;
         var data = req.body;
@@ -272,7 +272,7 @@ var processingcentersController = {
         var query = { '_id': { $eq: id } };
         var command = { $set: data };
 
-        processingcentersModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
+        processingcenterModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -299,17 +299,17 @@ var processingcentersController = {
 
     /**
      * @openapi
-     * /api/processingcenters/{id}:
+     * /api/processingcenter/{id}:
      *   delete:
      *     tags: 
-     *       - ProcessingCenters
-     *     summary: DELETE ONE PROCESSINGCENTERS BY ID
+     *       - ProcessingCenter
+     *     summary: DELETE ONE PROCESSINGCENTER BY ID
      *     security:
      *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "ProcessingCenters ID"
+     *         description: "ProcessingCenter ID"
      *         type: string
      *         required: true
      *     responses:
@@ -318,7 +318,7 @@ var processingcentersController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/ProcessingCenters"
+     *               $ref: "#/components/schemas/ProcessingCenter"
      *       400:
      *         description: Bad Request
      *       404:
@@ -326,7 +326,7 @@ var processingcentersController = {
      *       500:
      *         description: Internal Server Error
      */
-    deleteProcessingCenters: (req, res) => {
+    deleteProcessingCenter: (req, res) => {
 
         var payload = req.payload;
         
@@ -347,7 +347,7 @@ var processingcentersController = {
 
         var query = { '_id': { $eq: id } };
 
-        processingcentersModel.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
+        processingcenterModel.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -374,11 +374,11 @@ var processingcentersController = {
 
     /**
      * @openapi
-     * /api/processingcenters/{field}/{id}:
+     * /api/processingcenter/{field}/{id}:
      *   put:
      *     tags: 
-     *       - ProcessingCenters
-     *     summary: UPLOAD PROCESSINGCENTERS IMAGE BY FIELDNAME AND ID
+     *       - ProcessingCenter
+     *     summary: UPLOAD PROCESSINGCENTER IMAGE BY FIELDNAME AND ID
      *     security:
      *       - BearerAuth: []
      *     requestBody:
@@ -399,7 +399,7 @@ var processingcentersController = {
      *         required: true
      *       - in: path
      *         name: id
-     *         description: "ProcessingCenters Id"
+     *         description: "ProcessingCenter Id"
      *         type: string
      *         required: true
      *     responses:
@@ -408,7 +408,7 @@ var processingcentersController = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/ProcessingCenters"
+     *               $ref: "#/components/schemas/ProcessingCenter"
      *       400:
      *         description: Bad Request
      *       404:
@@ -476,7 +476,7 @@ var processingcentersController = {
 
             var command = { $set: { [fieldname]: file_name } };
 
-            processingcentersModel.findOne(query, (err, doc) => {
+            processingcenterModel.findOne(query, (err, doc) => {
                 if (err)
                   return res.status(500).send({
                     status: "error",
@@ -490,7 +490,7 @@ var processingcentersController = {
                       if (fs.existsSync(oldvalue)) fs.unlinkSync(oldvalue);              
                  }});
                  
-         processingcentersModel.findOneAndUpdate(
+         processingcenterModel.findOneAndUpdate(
             query,
             command,
             { new: true },
@@ -534,11 +534,11 @@ var processingcentersController = {
 
     /**
      * @openapi
-     * /api/processingcenters/images/{filename}:
+     * /api/processingcenter/images/{filename}:
      *   get:
      *     tags: 
-     *       - ProcessingCenters
-     *     summary: GET PROCESSINGCENTERS IMAGE BY FILENAME
+     *       - ProcessingCenter
+     *     summary: GET PROCESSINGCENTER IMAGE BY FILENAME
      *     parameters:
      *       - in: path
      *         name: filename
@@ -599,4 +599,4 @@ var processingcentersController = {
 
 }
 
-module.exports = processingcentersController;
+module.exports = processingcenterController;

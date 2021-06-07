@@ -1,4 +1,4 @@
-﻿// Last Updated: 07/06/2021 01:24:29 a. m.
+﻿// Last Updated: 07/06/2021 02:42:00 a. m.
 // Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
@@ -8,7 +8,7 @@ const validator = require('validator');
 const Schema = mongoose.Schema;
 
 //TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
-const ProcessingCentersSchema = Schema({
+const ProcessingCenterSchema = Schema({
   "name": {
     "type": "String",
     index: { unique: true },
@@ -85,16 +85,16 @@ const updateValidation = function (next) {
 };
 
 // la declaración de middleware:
-ProcessingCentersSchema.pre("update", updateValidation);
-ProcessingCentersSchema.pre("updateOne", updateValidation);
-ProcessingCentersSchema.pre("findOneAndUpdate", updateValidation); // incluye findByIdAndUpdate
+ProcessingCenterSchema.pre("update", updateValidation);
+ProcessingCenterSchema.pre("updateOne", updateValidation);
+ProcessingCenterSchema.pre("findOneAndUpdate", updateValidation); // incluye findByIdAndUpdate
 
 //TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
 /**
  * @swagger
  * components:
  *   schemas:
- *     ProcessingCenters:
+ *     ProcessingCenter:
  *       required: 
  *         - "name"
  *         - "location"
@@ -118,6 +118,6 @@ ProcessingCentersSchema.pre("findOneAndUpdate", updateValidation); // incluye fi
 
  */
 
-module.exports = mongoose.model('ProcessingCenters',ProcessingCentersSchema);
+module.exports = mongoose.model('ProcessingCenter',ProcessingCenterSchema);
 // mongoDB creará la collección, con documentos de estructura del modelo.
 
