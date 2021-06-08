@@ -11,6 +11,8 @@ var processincenterRoutes = require('./processingcenter.routes');
 var warehouseRoutes = require('./warehouse.routes');
 var providerRoutes = require('./provider.routes');
 var farmerRoutes = require('./farmer.routes');
+var productRoutes = require('./product.routes');
+var certifierRoutes = require('./certifier.routes');
 
 const apiRoutes = [
   authRoutes, 
@@ -25,6 +27,8 @@ const apiRoutes = [
   warehouseRoutes,
   providerRoutes,
   farmerRoutes,
+  productRoutes,
+  certifierRoutes,
 ];
 
 module.exports = apiRoutes;

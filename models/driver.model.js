@@ -44,10 +44,10 @@ const DriverSchema = Schema({
  *           type: string
  *           format: "oid"
  *           example: "123456123456123456123456"
- *         licenseCard:
+ *         license:
  *           type: string
  *           default: null
- *         insuranceCard:
+ *         insurance:
  *           type: string
  *           default: null
  *         isActive:

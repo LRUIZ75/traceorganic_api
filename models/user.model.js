@@ -59,6 +59,7 @@ const UserSchema = Schema({
   roles: {
     type: Array(Schema.Types.ObjectId),
     ref: "Role",
+    required: [true, "ES REQUERIDO"],
   },
   company: {
     type: Schema.Types.ObjectId,
@@ -83,18 +84,22 @@ const UserSchema = Schema({
  *       properties:
  *         username:
  *           type: "string"
+ *           example: "admin"
  *         password:
  *           type: "string"
  *           format: "password"
+ *           example: "P@55w0rd"
  *         person:
  *           type: "string"
  *           format: "oid"
+ *           example: "123456123456123456123456"
  *         email:
  *           type: "string"
  *           format: "email"
+ *           example: "no-one@nowhere.com"
  *         isVerifiedEmail:
  *           type: "boolean"
- *           default: "false"
+ *           example: "false"
  *         creationDate:
  *           type: "string"
  *           format: "date"
@@ -114,7 +119,7 @@ const UserSchema = Schema({
  *       required:
  *         - username
  *         - password
- *         - personId
+ *         - person
  *         - email
  *         - company
  *
