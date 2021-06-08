@@ -31,5 +31,6 @@ router.get('/company/images/:filename', companyController.getPicture); //RETRIEV
 
 router.delete('/company/:id',  verify(), companyController.deleteCompany); //DELETE COMPANY
 
+router.get('/csv/company',  verify(),companyController.getCompanyCSV); //RETRIEVE COMPANY CSV DATA
 
 module.exports = router;
