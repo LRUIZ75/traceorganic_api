@@ -12,13 +12,13 @@ const PersonSchema = Schema({
   names: {
     type: String,
     trim: true,
-    minlength: 2,
+    minlength: 1,
     required: [true, "ES REQUERIDO"],
   },
   lastNames: {
     type: String,
     trim: true,
-    minlength: 2,
+    minlength: 1,
     required: [true, "ES REQUERIDO"],
   },
   idType: {

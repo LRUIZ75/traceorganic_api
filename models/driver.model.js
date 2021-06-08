@@ -11,18 +11,19 @@ const DriverSchema = Schema({
     ref: "Person",
     required: [true, "ES REQUERIDO"],
   },
-  creationDate: { type: Date, default: Date.now },
-  licenseCard: {
-    type: String,
-    trim: true,
-    minlength: 5,
-    unique: true,
-    index: true,
+  company: {
+    type: Schema.Types.ObjectId,
+    ref: "Company",
     required: [true, "ES REQUERIDO"],
   },
-  insuranceCard: {
+  license: {
     type: String,
-    trim: true,
+    index: {unique: true},
+    default: null
+ 
+  },
+  insurance: {
+    type: String,
     default: null,
   },
   isActive: { type: Boolean, default: true },
@@ -38,20 +39,24 @@ const DriverSchema = Schema({
  *         person:
  *           type: string
  *           format: oid
- *         creationDate:
+ *           example: "123456123456123456123456"
+ *         company:
  *           type: string
- *           format: date
+ *           format: "oid"
+ *           example: "123456123456123456123456"
  *         licenseCard:
  *           type: string
+ *           default: null
  *         insuranceCard:
  *           type: string
  *           default: null
  *         isActive:
  *           type: boolean
- *           default: true
+ *           example: true
  *       required:
  *         - person
- *         - licenseCard
+ *         - company
+ *         - isActive
  *
  */
 

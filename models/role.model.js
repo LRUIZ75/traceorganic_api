@@ -41,7 +41,7 @@ const RoleSchema = Schema({
  *           example: "admin"
  *         isActive:
  *           type: boolean
- *           default: true
+ *           example: true
  *         description:
  *           type: "string"
  *           default: null

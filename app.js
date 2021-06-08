@@ -18,32 +18,10 @@ app.use(logger.middleware);
 const {SyncIndexes} = require('./models/sync-indexes');
 SyncIndexes();
 
-// Cargar ficheros rutas
-var authRoutes = require('./routes/auth.routes');
-var personRoutes = require('./routes/person.routes');
-var companyRoutes = require('./routes/company.routes');
-var countryRoutes = require('./routes/country.routes');
-var driverRoutes = require('./routes/driver.routes');
-var vehicleRoutes = require('./routes/vehicle.routes');
-var userRoutes = require('./routes/user.routes');
-var roleRoutes = require('./routes/role.routes');
-var processincenterRoutes = require('./routes/processingcenter.routes');
-var warehouseRoutes = require('./routes/warehouse.routes');
 
-var apiRoutes = [
-  authRoutes, 
-  userRoutes,
-  roleRoutes,
-  companyRoutes,
-  countryRoutes,
-  personRoutes,
-  driverRoutes,
-  vehicleRoutes,
-  processincenterRoutes,
-  warehouseRoutes,
-];
 
-var rootRoutes = require('./routes/root.routes');
+const endpointRoutes = require('./routes');
+const rootRoutes = require('./routes/root.routes');
 
 process.env.ACCESS_TOKEN_SECRET = "xv2pXfdXV&aDs91P";
 process.env.ACCESS_TOKEN_LIFE = '8h';
@@ -84,6 +62,7 @@ app.disable('x-powered-by');
 /* <SWAGGER> */
 const swaggerJsdoc = require('swagger-jsdoc');
 var json_data = require('./swagger.json');
+const { apiRoutes } = require('./routes');
 const swaggerOptions = JSON.parse(JSON.stringify(json_data));
 const openapiSpecification = swaggerJsdoc(swaggerOptions);
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(openapiSpecification, { explorer: true }));
@@ -92,7 +71,7 @@ app.use('/doc', swaggerUI.serve, swaggerUI.setup(openapiSpecification, { explore
 
 // Añadir prefijos a las rutas / Cargar rutas
 // Añadir manualmente las rutas parciales en el arreglo
-app.use('/api', apiRoutes);
+app.use('/api', endpointRoutes);
 app.use('/', rootRoutes);
 
 

@@ -7,25 +7,16 @@ const Schema = mongoose.Schema;
 
 //TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!//TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
 const RoleActionSchema = Schema({
+
+  actionName: {
+    type: String,
+    trim: true,
+    required: [true, "ES REQUERIDO"],
+  },
   role: {
     type: Schema.Types.ObjectId,
     ref: "Role",
     required: [true, "ES REQUERIDO"],
-  },
-  actionName: {
-    type: String,
-    trim: true,
-    validate: {
-      validator: function (v) {
-        return /^[A-Za-z ]+$/.test(v);
-      },
-      message: "NO VÁLIDO",
-    },
-    required: [true, "ES REQUERIDO"],
-  },
-  filterByCompany: {
-    type: Boolean,
-    default: false,
   },
   isActive: {
     type: Boolean,
@@ -40,17 +31,16 @@ const RoleActionSchema = Schema({
  *   schemas:
  *     RoleAction:
  *       properties:
+ *         actionName:
+ *           type: "string"
+ *           example: "READALL_COMPANY"
  *         role:
  *           type: "string"
  *           format: "oid"
- *         actionName:
- *           type: "string"
- *         filterByCompany:
- *           type: boolean
- *           default: false
+ *           example: "123456123456123456123456"
  *         isActive:
  *           type: boolean
- *           default: true
+ *           example: true
  *       required:
  *         - role
  *         - actionName
