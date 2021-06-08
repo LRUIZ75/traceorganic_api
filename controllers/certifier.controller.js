@@ -1,4 +1,4 @@
-﻿// Last Updated: 08/06/2021 12:15:44 a. m.
+﻿// Last Updated: 08/06/2021 04:48:21 p. m.
 // Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
@@ -10,6 +10,8 @@ const { ObjectId } = require('mongodb');
 const { findOneAndDelete } = require('../models/certifier.model');
 const  MSG  = require("../modules/message.module");
 const Log = require("cabin");
+const jsonexport = require("jsonexport");
+const securable = require("../modules/security.module");
 
 
 /**
@@ -74,18 +76,27 @@ var certifierController = {
      *         description: Internal Server Error
      */
 
-    getCertifier: (req, res) => {
+    getCertifier: async (req, res) => {
 
         var id = req.params.id;
         
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+        var isSuper = await securable.hasRole("superadmin", payload.roles);
+        /*var isData =  await securable.hasRole("dataretriever", payload.roles);
+        
+        if (!(isSuper || isData)) {
+          return res.status(401).send({
+            status: "error",
+            message: MSG["NO-PERM"],
+          });
+        }*/
+
+        var filterByCompany = {};
+        if(!isSuper){ //TODO: Usar el campo correspondiente de compañía
+          filterByCompany = { company: { $eq: payload.company} };}
+
+        console.log(filterByCompany);
 
         var query = { '_id': { $eq: id } };
 
@@ -94,7 +105,10 @@ var certifierController = {
 
         console.log(query);
 
-        certifierModel.find(query, (err, objects) => {
+        certifierModel.find()
+        .where(filterByCompany)
+        .where(query)
+        .exec((err, objects) => {
 
 
             if (err) {
@@ -123,6 +137,86 @@ var certifierController = {
             }
         });
     },
+
+
+    /**
+     * @openapi
+     * /api/csv/certifier:
+     *   get:
+     *     tags:
+     *       - Certifier
+     *     summary: GET ALL CERTIFIER AS CSV 
+     *     security:
+     *       - BearerAuth: [] 
+     *     responses:
+     *       200:
+     *         description: OK
+     *         content:
+     *           application/text:
+     *             schema:
+     *               type: array
+     *               items:
+     *                 $ref: "#/components/schemas/Certifier"
+     *       401:
+     *         description: Not Authorized
+     *       404:
+     *         description: Not Found
+     *       500:
+     *         description: Internal Server Error
+     */
+
+   getCertifierCSV: async (req, res) => {
+
+    var payload = req.payload;
+    
+    var isSuper = await securable.hasRole("superadmin", payload.roles);
+    var isData =  await securable.hasRole("dataretriever", payload.roles);
+    
+    if (!(isSuper || isData)) {
+      return res.status(401).send({
+        status: "error",
+        message: MSG["NO-PERM"],
+      });
+    }
+
+    var filterByCompany = {};
+    if(isData){ //TODO: Usar el campo correspondiente de compañía
+      filterByCompany = { company: { $eq: payload.company} };}
+
+    console.log(filterByCompany);
+
+    
+    certifierModel.find()
+    .where(filterByCompany)
+    .exec((err, objects) => {
+      if (err) {
+        return res.status(500).send({
+          status: "error",
+          message: MSG["500"] + err.message,
+        });
+      }
+
+      if (!objects || objects.length == 0) {
+        return res.status(404).send({
+          status: "error",
+          message: MSG["NO-DATA"],
+          links: [ process.env.API_URL + "doc/#/Certifier/post_api_certifier" ]   
+        });
+      } else {
+        let json = JSON.parse(JSON.stringify(objects));
+        res.setHeader("content-type", "text/plain");
+        jsonexport(json, function (err, csv) {
+          if (err) {
+            return res.status(500).send({
+              status: "error",
+              message: MSG["500"] + err.message,
+            });
+          }
+          if (csv) return res.status(200).send(csv);
+        });
+      }
+    });
+  },
 
 
     /**
@@ -159,12 +253,7 @@ var certifierController = {
 
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
 
         //SIN PARAMETROS
         if (!data) {
@@ -249,12 +338,7 @@ var certifierController = {
         
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
 
         if (!id || id == undefined) {
             return (res.status(400).send({
@@ -330,12 +414,7 @@ var certifierController = {
 
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
 
         var id = req.params.id;
         if (!id || id == undefined) {
@@ -424,12 +503,7 @@ var certifierController = {
 
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
             
         //recojer fichero de petición
         var id = req.params.id;
@@ -484,7 +558,7 @@ var certifierController = {
                   });
                 if (doc) {
                       var object = JSON.parse(JSON.stringify(doc._doc));
-                      let oldvalue = "./uploads/logo/" + object[fieldname];
+                      let oldvalue = "./uploads/logos/" + object[fieldname];
 
                       console.log(`Deleting: ${oldvalue}`);
                       if (fs.existsSync(oldvalue)) fs.unlinkSync(oldvalue);              
@@ -563,12 +637,7 @@ var certifierController = {
 
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
 
        var file = req.params.filename;
        if (validator.isEmpty(file)) {
@@ -578,7 +647,7 @@ var certifierController = {
            }));
        }
 
-       var path_file = './uploads/logo/' + file;
+       var path_file = './uploads/logos/' + file;
 
        fs.stat(path_file, (err) => {
 

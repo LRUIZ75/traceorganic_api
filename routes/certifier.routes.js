@@ -1,4 +1,4 @@
-﻿// Last Updated: 08/06/2021 12:15:44 a. m.
+﻿// Last Updated: 08/06/2021 04:48:21 p. m.
 // Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
@@ -10,7 +10,7 @@ var certifierController = require('../controllers/certifier.controller');
 var router = express.Router();
 
 var multipart = require('connect-multiparty');
-var md_uploadpictures = multipart({uploadDir: './uploads/logo/'});
+var md_uploadpictures = multipart({uploadDir: './uploads/logos/'});
 
 /* 
 C for Create: HTTP POST
@@ -28,6 +28,7 @@ router.put('/certifier/:id',  verify(), certifierController.editCertifier); //UP
 
 router.get('/certifier/:id?',  verify(),certifierController.getCertifier); //RETRIEVE CERTIFIER
 router.get('/certifier/images/:filename', certifierController.getPicture); //RETRIEVE CERTIFIER IMAGE 
+router.get('/csv/certifier',  verify(),certifierController.getCertifierCSV); //RETRIEVE CERTIFIER CSV DATA
 
 router.delete('/certifier/:id',  verify(), certifierController.deleteCertifier); //DELETE CERTIFIER
 
