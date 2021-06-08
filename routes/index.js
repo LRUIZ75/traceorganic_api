@@ -10,6 +10,7 @@ var roleRoutes = require('./role.routes');
 var processincenterRoutes = require('./processingcenter.routes');
 var warehouseRoutes = require('./warehouse.routes');
 var providerRoutes = require('./provider.routes');
+var farmerRoutes = require('./farmer.routes');
 
 const apiRoutes = [
   authRoutes, 
@@ -23,6 +24,7 @@ const apiRoutes = [
   processincenterRoutes,
   warehouseRoutes,
   providerRoutes,
+  farmerRoutes,
 ];
 
 module.exports = apiRoutes;
