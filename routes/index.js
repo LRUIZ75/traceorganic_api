@@ -13,6 +13,7 @@ var providerRoutes = require('./provider.routes');
 var farmerRoutes = require('./farmer.routes');
 var productRoutes = require('./product.routes');
 var certifierRoutes = require('./certifier.routes');
+var certificateRoutes = require('./certificate.routes');
 
 const apiRoutes = [
   authRoutes, 
@@ -29,6 +30,7 @@ const apiRoutes = [
   farmerRoutes,
   productRoutes,
   certifierRoutes,
+  certificateRoutes,
 ];
 
 module.exports = apiRoutes;
