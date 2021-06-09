@@ -1,4 +1,4 @@
-﻿// Last Updated: 07/06/2021 10:36:26 p. m.
+﻿// Last Updated: 08/06/2021 10:16:20 p. m.
 // Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
@@ -28,6 +28,7 @@ router.put('/farmer/:id',  verify(), farmerController.editFarmer); //UPDATE FARM
 
 router.get('/farmer/:id?',  verify(),farmerController.getFarmer); //RETRIEVE FARMER
 
+router.get('/csv/farmer',  verify(),farmerController.getFarmerCSV); //RETRIEVE FARMER CSV DATA 
 
 router.delete('/farmer/:id',  verify(), farmerController.deleteFarmer); //DELETE FARMER
 

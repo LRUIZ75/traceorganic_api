@@ -1,4 +1,4 @@
-﻿// Last Updated: 07/06/2021 10:36:26 p. m.
+﻿// Last Updated: 08/06/2021 10:16:20 p. m.
 // Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
@@ -10,6 +10,8 @@ const { ObjectId } = require('mongodb');
 const { findOneAndDelete } = require('../models/farmer.model');
 const  MSG  = require("../modules/message.module");
 const Log = require("cabin");
+const jsonexport = require("jsonexport");
+const securable = require("../modules/security.module");
 
 
 /**
@@ -74,18 +76,27 @@ var farmerController = {
      *         description: Internal Server Error
      */
 
-    getFarmer: (req, res) => {
+    getFarmer: async (req, res) => {
 
         var id = req.params.id;
         
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+        var isSuper = await securable.hasRole("superadmin", payload.roles);
+        /*var isData =  await securable.hasRole("dataretriever", payload.roles);
+        
+        if (!(isSuper || isData)) {
+          return res.status(401).send({
+            status: "error",
+            message: MSG["NO-PERM"],
+          });
+        }*/
+
+        var filterByCompany = {};
+        if(!isSuper){ //TODO: Usar el campo correspondiente de compañía
+          filterByCompany = { company: { $eq: payload.company} };}
+
+        console.log(filterByCompany);
 
         var query = { '_id': { $eq: id } };
 
@@ -94,7 +105,12 @@ var farmerController = {
 
         console.log(query);
 
-        farmerModel.find(query, (err, objects) => {
+        farmerModel.find()
+        .where(filterByCompany)
+        .where(query)
+        .populate("company")
+        .populate("owner")
+        .exec((err, objects) => {
 
 
             if (err) {
@@ -123,6 +139,87 @@ var farmerController = {
             }
         });
     },
+
+
+
+    /**
+     * @openapi
+     * /api/csv/farmer:
+     *   get:
+     *     tags:
+     *       - Farmer
+     *     summary: GET ALL FARMER AS CSV 
+     *     security:
+     *       - BearerAuth: [] 
+     *     responses:
+     *       200:
+     *         description: OK
+     *         content:
+     *           application/text:
+     *             schema:
+     *               type: array
+     *               items:
+     *                 $ref: "#/components/schemas/Farmer"
+     *       401:
+     *         description: Not Authorized
+     *       404:
+     *         description: Not Found
+     *       500:
+     *         description: Internal Server Error
+     */
+
+   getFarmerCSV: async (req, res) => {
+
+    var payload = req.payload;
+    
+    var isSuper = await securable.hasRole("superadmin", payload.roles);
+    var isData =  await securable.hasRole("dataretriever", payload.roles);
+    
+    if (!(isSuper || isData)) {
+      return res.status(401).send({
+        status: "error",
+        message: MSG["NO-PERM"],
+      });
+    }
+
+    var filterByCompany = {};
+    if(isData){ //TODO: Usar el campo correspondiente de compañía
+      filterByCompany = { company: { $eq: payload.company} };}
+
+    console.log(filterByCompany);
+
+    
+    farmerModel.find()
+    .where(filterByCompany)
+    .exec((err, objects) => {
+      if (err) {
+        return res.status(500).send({
+          status: "error",
+          message: MSG["500"] + err.message,
+        });
+      }
+
+      if (!objects || objects.length == 0) {
+        return res.status(404).send({
+          status: "error",
+          message: MSG["NO-DATA"],
+          links: [ process.env.API_URL + "doc/#/Farmer/post_api_farmer" ]   
+        });
+      } else {
+        let json = JSON.parse(JSON.stringify(objects));
+        res.setHeader("content-type", "text/plain");
+        jsonexport(json, function (err, csv) {
+          if (err) {
+            return res.status(500).send({
+              status: "error",
+              message: MSG["500"] + err.message,
+            });
+          }
+          if (csv) return res.status(200).send(csv);
+        });
+      }
+    });
+  },
 
 
     /**
@@ -159,12 +256,7 @@ var farmerController = {
 
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
 
         //SIN PARAMETROS
         if (!data) {
@@ -249,12 +341,7 @@ var farmerController = {
         
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
 
         if (!id || id == undefined) {
             return (res.status(400).send({
@@ -330,12 +417,7 @@ var farmerController = {
 
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
 
         var id = req.params.id;
         if (!id || id == undefined) {

@@ -1,4 +1,4 @@
-﻿// Last Updated: 26/05/2021 03:06:42 p. m.
+﻿// Last Updated: 08/06/2021 10:09:38 p. m.
 // Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
@@ -10,6 +10,8 @@ const { ObjectId } = require('mongodb');
 const { findOneAndDelete } = require('../models/driver.model');
 const  MSG  = require("../modules/message.module");
 const Log = require("cabin");
+const jsonexport = require("jsonexport");
+const securable = require("../modules/security.module");
 
 
 /**
@@ -74,18 +76,27 @@ var driverController = {
      *         description: Internal Server Error
      */
 
-    getDriver: (req, res) => {
+    getDriver: async (req, res) => {
 
         var id = req.params.id;
         
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+        var isSuper = await securable.hasRole("superadmin", payload.roles);
+        /*var isData =  await securable.hasRole("dataretriever", payload.roles);
+        
+        if (!(isSuper || isData)) {
+          return res.status(401).send({
+            status: "error",
+            message: MSG["NO-PERM"],
+          });
+        }*/
+
+        var filterByCompany = {};
+        if(!isSuper){ //TODO: Usar el campo correspondiente de compañía
+          filterByCompany = { company: { $eq: payload.company} };}
+
+        console.log(filterByCompany);
 
         var query = { '_id': { $eq: id } };
 
@@ -94,8 +105,10 @@ var driverController = {
 
         console.log(query);
 
-        driverModel.find(query)
-        .populate("person")
+        driverModel.find()
+        .where(filterByCompany)
+        .where(query)
+        .populate("company")
         .exec((err, objects) => {
 
 
@@ -125,6 +138,87 @@ var driverController = {
             }
         });
     },
+
+
+
+    /**
+     * @openapi
+     * /api/csv/driver:
+     *   get:
+     *     tags:
+     *       - Driver
+     *     summary: GET ALL DRIVER AS CSV 
+     *     security:
+     *       - BearerAuth: [] 
+     *     responses:
+     *       200:
+     *         description: OK
+     *         content:
+     *           application/text:
+     *             schema:
+     *               type: array
+     *               items:
+     *                 $ref: "#/components/schemas/Driver"
+     *       401:
+     *         description: Not Authorized
+     *       404:
+     *         description: Not Found
+     *       500:
+     *         description: Internal Server Error
+     */
+
+   getDriverCSV: async (req, res) => {
+
+    var payload = req.payload;
+    
+    var isSuper = await securable.hasRole("superadmin", payload.roles);
+    var isData =  await securable.hasRole("dataretriever", payload.roles);
+    
+    if (!(isSuper || isData)) {
+      return res.status(401).send({
+        status: "error",
+        message: MSG["NO-PERM"],
+      });
+    }
+
+    var filterByCompany = {};
+    if(isData){ //TODO: Usar el campo correspondiente de compañía
+      filterByCompany = { company: { $eq: payload.company} };}
+
+    console.log(filterByCompany);
+
+    
+    driverModel.find()
+    .where(filterByCompany)
+    .exec((err, objects) => {
+      if (err) {
+        return res.status(500).send({
+          status: "error",
+          message: MSG["500"] + err.message,
+        });
+      }
+
+      if (!objects || objects.length == 0) {
+        return res.status(404).send({
+          status: "error",
+          message: MSG["NO-DATA"],
+          links: [ process.env.API_URL + "doc/#/Driver/post_api_driver" ]   
+        });
+      } else {
+        let json = JSON.parse(JSON.stringify(objects));
+        res.setHeader("content-type", "text/plain");
+        jsonexport(json, function (err, csv) {
+          if (err) {
+            return res.status(500).send({
+              status: "error",
+              message: MSG["500"] + err.message,
+            });
+          }
+          if (csv) return res.status(200).send(csv);
+        });
+      }
+    });
+  },
 
 
     /**
@@ -161,12 +255,7 @@ var driverController = {
 
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
 
         //SIN PARAMETROS
         if (!data) {
@@ -251,12 +340,7 @@ var driverController = {
         
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
 
         if (!id || id == undefined) {
             return (res.status(400).send({
@@ -332,12 +416,7 @@ var driverController = {
 
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
 
         var id = req.params.id;
         if (!id || id == undefined) {
@@ -397,7 +476,7 @@ var driverController = {
      *         name: field
      *         description: "fieldname for image"
      *         type: string
-     *         default: "licenseCard | insuranceCard"
+     *         default: "license"
      *         required: true
      *       - in: path
      *         name: id
@@ -426,12 +505,7 @@ var driverController = {
 
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
             
         //recojer fichero de petición
         var id = req.params.id;
@@ -455,7 +529,7 @@ var driverController = {
 
 
         //TODO: Revisar y controlar los campos válidos para imagenes de la colección
-        var validFields = ["licenseCard","insuranceCard"];
+        var validFields = ["license"];
 
         if (!(validFields.includes(fieldname))) {
           return res.status(400).send({
@@ -486,7 +560,7 @@ var driverController = {
                   });
                 if (doc) {
                       var object = JSON.parse(JSON.stringify(doc._doc));
-                      let oldvalue = "./uploads/picture/" + object[fieldname];
+                      let oldvalue = "./uploads/pictures/" + object[fieldname];
 
                       console.log(`Deleting: ${oldvalue}`);
                       if (fs.existsSync(oldvalue)) fs.unlinkSync(oldvalue);              
@@ -565,12 +639,7 @@ var driverController = {
 
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
 
        var file = req.params.filename;
        if (validator.isEmpty(file)) {
@@ -580,7 +649,7 @@ var driverController = {
            }));
        }
 
-       var path_file = './uploads/picture/' + file;
+       var path_file = './uploads/pictures/' + file;
 
        fs.stat(path_file, (err) => {
 

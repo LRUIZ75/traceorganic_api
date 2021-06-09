@@ -20,6 +20,11 @@ const FarmerSchema = Schema({
     trim: true,
     required: [true, "ES REQUERIDO"],
   },
+  company: {
+    type: Schema.Types.ObjectId,
+    ref: "Company",
+    required: [true, "ES REQUERIDO"],
+  },
   "owner": {
     "type": Schema.Types.ObjectId,
     ref: "Person"
@@ -102,6 +107,7 @@ FarmerSchema.pre("findOneAndUpdate", updateValidation); // incluye findByIdAndUp
  *       required: 
  *         - "name"
  *         - "description"
+ *         - "company"
  *       properties: 
  *         name: 
  *           type: "string"
@@ -109,6 +115,10 @@ FarmerSchema.pre("findOneAndUpdate", updateValidation); // incluye findByIdAndUp
  *         description: 
  *           type: "string"
  *           example: "Finca Jhon Farmer"
+ *         company: 
+ *           type: "string"
+ *           format: "oid"
+ *           example: "213456213456213456213456"
  *         owner: 
  *           $ref: "#/components/schemas/Location"
  *         googlemap: 

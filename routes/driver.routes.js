@@ -1,4 +1,4 @@
-﻿// Last Updated: 26/05/2021 03:06:42 p. m.
+﻿// Last Updated: 08/06/2021 10:09:38 p. m.
 // Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
@@ -10,7 +10,7 @@ var driverController = require('../controllers/driver.controller');
 var router = express.Router();
 
 var multipart = require('connect-multiparty');
-var md_uploadpictures = multipart({uploadDir: './uploads/picture/'});
+var md_uploadpictures = multipart({uploadDir: './uploads/pictures/'});
 
 /* 
 C for Create: HTTP POST
@@ -28,6 +28,7 @@ router.put('/driver/:id',  verify(), driverController.editDriver); //UPDATE DRIV
 
 router.get('/driver/:id?',  verify(),driverController.getDriver); //RETRIEVE DRIVER
 router.get('/driver/images/:filename', driverController.getPicture); //RETRIEVE DRIVER IMAGE 
+router.get('/csv/driver',  verify(),driverController.getDriverCSV); //RETRIEVE DRIVER CSV DATA 
 
 router.delete('/driver/:id',  verify(), driverController.deleteDriver); //DELETE DRIVER
 
