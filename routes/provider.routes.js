@@ -1,4 +1,4 @@
-﻿// Last Updated: 07/06/2021 08:53:39 p. m.
+﻿// Last Updated: 08/06/2021 10:43:06 p. m.
 // Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
@@ -28,6 +28,7 @@ router.put('/provider/:id',  verify(), providerController.editProvider); //UPDAT
 
 router.get('/provider/:id?',  verify(),providerController.getProvider); //RETRIEVE PROVIDER
 router.get('/provider/images/:filename', providerController.getPicture); //RETRIEVE PROVIDER IMAGE 
+router.get('/csv/provider',  verify(),providerController.getProviderCSV); //RETRIEVE PROVIDER CSV DATA 
 
 router.delete('/provider/:id',  verify(), providerController.deleteProvider); //DELETE PROVIDER
 

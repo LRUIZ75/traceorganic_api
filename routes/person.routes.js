@@ -1,4 +1,4 @@
-﻿// Last Updated: 26/05/2021 02:18:32 p. m.
+﻿// Last Updated: 08/06/2021 11:00:32 p. m.
 // Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
@@ -28,6 +28,7 @@ router.put('/person/:id',  verify(), personController.editPerson); //UPDATE PERS
 
 router.get('/person/:id?',  verify(),personController.getPerson); //RETRIEVE PERSON
 router.get('/person/images/:filename', personController.getPicture); //RETRIEVE PERSON IMAGE 
+router.get('/csv/person',  verify(),personController.getPersonCSV); //RETRIEVE PERSON CSV DATA 
 
 router.delete('/person/:id',  verify(), personController.deletePerson); //DELETE PERSON
 

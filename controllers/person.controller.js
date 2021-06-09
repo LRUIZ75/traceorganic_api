@@ -1,4 +1,4 @@
-﻿// Last Updated: 26/05/2021 02:18:32 p. m.
+﻿// Last Updated: 08/06/2021 11:00:32 p. m.
 // Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
@@ -10,6 +10,8 @@ const { ObjectId } = require('mongodb');
 const { findOneAndDelete } = require('../models/person.model');
 const  MSG  = require("../modules/message.module");
 const Log = require("cabin");
+const jsonexport = require("jsonexport");
+const securable = require("../modules/security.module");
 
 
 /**
@@ -74,18 +76,27 @@ var personController = {
      *         description: Internal Server Error
      */
 
-    getPerson: (req, res) => {
+    getPerson: async (req, res) => {
 
         var id = req.params.id;
         
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+/*         var isSuper = await securable.hasRole("superadmin", payload.roles);
+        var isAdmin =  await securable.hasRole("admin", payload.roles);
+        
+        if (!(isSuper || isAdmin)) {
+          return res.status(401).send({
+            status: "error",
+            message: MSG["NO-PERM"],
+          });
+        } */
+
+/*         var filterByCompany = {};
+        if(!isSuper){ //TODO: Usar el campo correspondiente de compañía
+          filterByCompany = { company: { $eq: payload.company} };}
+
+        console.log(filterByCompany); */
 
         var query = { '_id': { $eq: id } };
 
@@ -93,10 +104,11 @@ var personController = {
         else query = { '_id': { $eq: id } };
 
         console.log(query);
-        
-        
 
-        personModel.find(query, (err, objects) => {
+        personModel.find()
+/*         .where(filterByCompany) */
+        .where(query)
+        .exec((err, objects) => {
 
 
             if (err) {
@@ -125,6 +137,87 @@ var personController = {
             }
         });
     },
+
+
+
+    /**
+     * @openapi
+     * /api/csv/person:
+     *   get:
+     *     tags:
+     *       - Person
+     *     summary: GET ALL PERSON AS CSV 
+     *     security:
+     *       - BearerAuth: [] 
+     *     responses:
+     *       200:
+     *         description: OK
+     *         content:
+     *           application/text:
+     *             schema:
+     *               type: array
+     *               items:
+     *                 $ref: "#/components/schemas/Person"
+     *       401:
+     *         description: Not Authorized
+     *       404:
+     *         description: Not Found
+     *       500:
+     *         description: Internal Server Error
+     */
+
+   getPersonCSV: async (req, res) => {
+
+    var payload = req.payload;
+    
+    var isSuper = await securable.hasRole("superadmin", payload.roles);
+    var isData =  await securable.hasRole("dataretriever", payload.roles);
+    
+    if (!(isSuper || isData)) {
+      return res.status(401).send({
+        status: "error",
+        message: MSG["NO-PERM"],
+      });
+    }
+
+/*     var filterByCompany = {};
+    if(isData){ //TODO: Usar el campo correspondiente de compañía
+      filterByCompany = { company: { $eq: payload.company} };}
+
+    console.log(filterByCompany); */
+
+    
+    personModel.find()
+/*     .where(filterByCompany) */
+    .exec((err, objects) => {
+      if (err) {
+        return res.status(500).send({
+          status: "error",
+          message: MSG["500"] + err.message,
+        });
+      }
+
+      if (!objects || objects.length == 0) {
+        return res.status(404).send({
+          status: "error",
+          message: MSG["NO-DATA"],
+          links: [ process.env.API_URL + "doc/#/Person/post_api_person" ]   
+        });
+      } else {
+        let json = JSON.parse(JSON.stringify(objects));
+        res.setHeader("content-type", "text/plain");
+        jsonexport(json, function (err, csv) {
+          if (err) {
+            return res.status(500).send({
+              status: "error",
+              message: MSG["500"] + err.message,
+            });
+          }
+          if (csv) return res.status(200).send(csv);
+        });
+      }
+    });
+  },
 
 
     /**
@@ -161,12 +254,7 @@ var personController = {
 
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
 
         //SIN PARAMETROS
         if (!data) {
@@ -251,12 +339,7 @@ var personController = {
         
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
 
         if (!id || id == undefined) {
             return (res.status(400).send({
@@ -332,12 +415,7 @@ var personController = {
 
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
 
         var id = req.params.id;
         if (!id || id == undefined) {
@@ -380,7 +458,7 @@ var personController = {
      *   put:
      *     tags: 
      *       - Person
-     *     summary: UPLOAD PERSON PICTURE BY ID
+     *     summary: UPLOAD PERSON IMAGE BY FIELDNAME AND ID
      *     security:
      *       - BearerAuth: []
      *     requestBody:
@@ -426,12 +504,7 @@ var personController = {
 
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
             
         //recojer fichero de petición
         var id = req.params.id;
@@ -540,7 +613,7 @@ var personController = {
      *   get:
      *     tags: 
      *       - Person
-     *     summary: GET PERSON PICTURE BY FILENAME
+     *     summary: GET PERSON IMAGE BY FILENAME
      *     parameters:
      *       - in: path
      *         name: filename
@@ -565,12 +638,7 @@ var personController = {
 
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
 
        var file = req.params.filename;
        if (validator.isEmpty(file)) {
