@@ -190,7 +190,6 @@ var certifierController = {
     
     certifierModel.find()
     .where(filterByCompany)
-    .populate("company")
     .exec((err, objects) => {
       if (err) {
         return res.status(500).send({

@@ -1,4 +1,4 @@
-﻿// Last Updated: 07/06/2021 03:06:31 a. m.
+﻿// Last Updated: 08/06/2021 09:59:40 p. m.
 // Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
@@ -28,6 +28,7 @@ router.put('/vehicle/:id',  verify(), vehicleController.editVehicle); //UPDATE V
 
 router.get('/vehicle/:id?',  verify(),vehicleController.getVehicle); //RETRIEVE VEHICLE
 router.get('/vehicle/images/:filename', vehicleController.getPicture); //RETRIEVE VEHICLE IMAGE 
+router.get('/csv/vehicle',  verify(),vehicleController.getVehicleCSV); //RETRIEVE VEHICLE CSV DATA 
 
 router.delete('/vehicle/:id',  verify(), vehicleController.deleteVehicle); //DELETE VEHICLE
 

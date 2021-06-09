@@ -1,4 +1,4 @@
-﻿// Last Updated: 07/06/2021 03:06:31 a. m.
+﻿// Last Updated: 08/06/2021 09:59:40 p. m.
 // Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
@@ -10,6 +10,8 @@ const { ObjectId } = require('mongodb');
 const { findOneAndDelete } = require('../models/vehicle.model');
 const  MSG  = require("../modules/message.module");
 const Log = require("cabin");
+const jsonexport = require("jsonexport");
+const securable = require("../modules/security.module");
 
 
 /**
@@ -74,18 +76,27 @@ var vehicleController = {
      *         description: Internal Server Error
      */
 
-    getVehicle: (req, res) => {
+    getVehicle: async (req, res) => {
 
         var id = req.params.id;
         
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+        var isSuper = await securable.hasRole("superadmin", payload.roles);
+        /*var isData =  await securable.hasRole("dataretriever", payload.roles);
+        
+        if (!(isSuper || isData)) {
+          return res.status(401).send({
+            status: "error",
+            message: MSG["NO-PERM"],
+          });
+        }*/
+
+        var filterByCompany = {};
+        if(!isSuper){ //TODO: Usar el campo correspondiente de compañía
+          filterByCompany = { company: { $eq: payload.company} };}
+
+        console.log(filterByCompany);
 
         var query = { '_id': { $eq: id } };
 
@@ -94,7 +105,12 @@ var vehicleController = {
 
         console.log(query);
 
-        vehicleModel.find(query, (err, objects) => {
+        vehicleModel.find()
+        .where(filterByCompany)
+        .where(query)
+        .populate("company")
+        .populate("owner")
+        .exec((err, objects) => {
 
 
             if (err) {
@@ -123,6 +139,87 @@ var vehicleController = {
             }
         });
     },
+
+
+
+    /**
+     * @openapi
+     * /api/csv/vehicle:
+     *   get:
+     *     tags:
+     *       - Vehicle
+     *     summary: GET ALL VEHICLE AS CSV 
+     *     security:
+     *       - BearerAuth: [] 
+     *     responses:
+     *       200:
+     *         description: OK
+     *         content:
+     *           application/text:
+     *             schema:
+     *               type: array
+     *               items:
+     *                 $ref: "#/components/schemas/Vehicle"
+     *       401:
+     *         description: Not Authorized
+     *       404:
+     *         description: Not Found
+     *       500:
+     *         description: Internal Server Error
+     */
+
+   getVehicleCSV: async (req, res) => {
+
+    var payload = req.payload;
+    
+    var isSuper = await securable.hasRole("superadmin", payload.roles);
+    var isData =  await securable.hasRole("dataretriever", payload.roles);
+    
+    if (!(isSuper || isData)) {
+      return res.status(401).send({
+        status: "error",
+        message: MSG["NO-PERM"],
+      });
+    }
+
+    var filterByCompany = {};
+    if(isData){ //TODO: Usar el campo correspondiente de compañía
+      filterByCompany = { company: { $eq: payload.company} };}
+
+    console.log(filterByCompany);
+
+    
+    vehicleModel.find()
+    .where(filterByCompany)
+    .exec((err, objects) => {
+      if (err) {
+        return res.status(500).send({
+          status: "error",
+          message: MSG["500"] + err.message,
+        });
+      }
+
+      if (!objects || objects.length == 0) {
+        return res.status(404).send({
+          status: "error",
+          message: MSG["NO-DATA"],
+          links: [ process.env.API_URL + "doc/#/Vehicle/post_api_vehicle" ]   
+        });
+      } else {
+        let json = JSON.parse(JSON.stringify(objects));
+        res.setHeader("content-type", "text/plain");
+        jsonexport(json, function (err, csv) {
+          if (err) {
+            return res.status(500).send({
+              status: "error",
+              message: MSG["500"] + err.message,
+            });
+          }
+          if (csv) return res.status(200).send(csv);
+        });
+      }
+    });
+  },
 
 
     /**
@@ -159,12 +256,7 @@ var vehicleController = {
 
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
 
         //SIN PARAMETROS
         if (!data) {
@@ -249,12 +341,7 @@ var vehicleController = {
         
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
 
         if (!id || id == undefined) {
             return (res.status(400).send({
@@ -330,12 +417,7 @@ var vehicleController = {
 
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
 
         var id = req.params.id;
         if (!id || id == undefined) {
@@ -395,7 +477,7 @@ var vehicleController = {
      *         name: field
      *         description: "fieldname for image"
      *         type: string
-     *         default: "picture | registration | insurance"
+     *         default: "registration | insurance | picture"
      *         required: true
      *       - in: path
      *         name: id
@@ -424,12 +506,7 @@ var vehicleController = {
 
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
             
         //recojer fichero de petición
         var id = req.params.id;
@@ -453,7 +530,7 @@ var vehicleController = {
 
 
         //TODO: Revisar y controlar los campos válidos para imagenes de la colección
-        var validFields = ["picture","registration","insurance"];
+        var validFields = ["registration","insurance","picture"];
 
         if (!(validFields.includes(fieldname))) {
           return res.status(400).send({
@@ -563,12 +640,7 @@ var vehicleController = {
 
         var payload = req.payload;
         
-        /*     if(!containsRole("admin",payload.roles)){
-              return res.status(401).send({
-                status: "error",
-                message: "ROL ADMINISTRADOR REQUERIDO"
-              });
-            } */
+
 
        var file = req.params.filename;
        if (validator.isEmpty(file)) {

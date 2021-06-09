@@ -1,4 +1,4 @@
-﻿// Last Updated: 07/06/2021 02:32:59 a. m.
+﻿// Last Updated: 08/06/2021 09:38:36 p. m.
 // Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
@@ -28,6 +28,7 @@ router.put('/warehouse/:id',  verify(), warehouseController.editWarehouse); //UP
 
 router.get('/warehouse/:id?',  verify(),warehouseController.getWarehouse); //RETRIEVE WAREHOUSE
 router.get('/warehouse/images/:filename', warehouseController.getPicture); //RETRIEVE WAREHOUSE IMAGE 
+router.get('/csv/warehouse',  verify(),warehouseController.getWarehouseCSV); //RETRIEVE WAREHOUSE CSV DATA 
 
 router.delete('/warehouse/:id',  verify(), warehouseController.deleteWarehouse); //DELETE WAREHOUSE
 

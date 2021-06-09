@@ -108,6 +108,7 @@ var processingcenterController = {
         processingcenterModel.find()
         .where(filterByCompany)
         .where(query)
+        .populate("company")
         .exec((err, objects) => {
 
 
