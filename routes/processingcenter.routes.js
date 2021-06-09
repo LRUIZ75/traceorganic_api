@@ -1,4 +1,4 @@
-﻿// Last Updated: 07/06/2021 02:42:00 a. m.
+﻿// Last Updated: 08/06/2021 09:15:26 p. m.
 // Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
@@ -28,6 +28,7 @@ router.put('/processingcenter/:id',  verify(), processingcenterController.editPr
 
 router.get('/processingcenter/:id?',  verify(),processingcenterController.getProcessingCenter); //RETRIEVE PROCESSINGCENTER
 router.get('/processingcenter/images/:filename', processingcenterController.getPicture); //RETRIEVE PROCESSINGCENTER IMAGE 
+router.get('/csv/processingcenter',  verify(),processingcenterController.getProcessingCenterCSV); //RETRIEVE PROCESSINGCENTER CSV DATA 
 
 router.delete('/processingcenter/:id',  verify(), processingcenterController.deleteProcessingCenter); //DELETE PROCESSINGCENTER
 
